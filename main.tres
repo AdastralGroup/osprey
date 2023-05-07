@@ -1,0 +1,32 @@
+[gd_resource type="Theme" load_steps=5 format=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0.329412, 0.588235, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+anti_aliasing_size = 0.01
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0.360784, 0.615686, 1 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+content_margin_left = 4.0
+bg_color = Color( 0, 0.329412, 0.588235, 0 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+
+[resource]
+Button/styles/normal = SubResource( 1 )
+Label/colors/font_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+ProgressBar/styles/bg = SubResource( 2 )
+ProgressBar/styles/fg = SubResource( 3 )
+ScrollContainer/styles/bg = SubResource( 4 )
