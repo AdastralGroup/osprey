@@ -18,8 +18,9 @@ config/features=PoolStringArray( "4.0", "Mobile" )
 
 [display]
 
-window/size/width=610
-window/size/height=256
+window/size/width=768
+window/size/height=350
+window/per_pixel_transparency/allowed=true
 window/size/viewport_width=610
 window/size/viewport_height=256
 
@@ -27,7 +28,7 @@ window/size/viewport_height=256
 
 threads/thread_model=2
 quality/filters/use_nearest_mipmap_filter=true
-environment/default_clear_color=Color( 0, 0.231373, 0.415686, 1 )
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 quality/filters/msaa=4
 quality/filters/use_fxaa=true
 quality/filters/use_debanding=true

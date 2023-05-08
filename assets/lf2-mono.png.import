@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bg.png-24bff804693ee063127ad100e04c5185.stex"
+path="res://.import/lf2-mono.png-32f5e2474d2d3a55dd422e81c40bfedb.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bg.png"
-dest_files=[ "res://.import/bg.png-24bff804693ee063127ad100e04c5185.stex" ]
+source_file="res://assets/lf2-mono.png"
+dest_files=[ "res://.import/lf2-mono.png-32f5e2474d2d3a55dd422e81c40bfedb.stex" ]
 
 [params]
 

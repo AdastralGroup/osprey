@@ -1,0 +1,7 @@
+[gd_resource type="DynamicFont" load_steps=2 format=2]
+
+[ext_resource path="res://fonts/font_data.tres" type="DynamicFontData" id=1]
+
+[resource]
+size = 33
+font_data = ExtResource( 1 )

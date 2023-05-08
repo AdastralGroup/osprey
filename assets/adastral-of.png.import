@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tf2c-0.png-e9147e6a4f1ffc58b12169842b69334b.stex"
+path="res://.import/adastral-of.png-6729c198d71802fb515256313a3fdf42.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tf2c-0.png"
-dest_files=[ "res://.import/tf2c-0.png-e9147e6a4f1ffc58b12169842b69334b.stex" ]
+source_file="res://assets/adastral-of.png"
+dest_files=[ "res://.import/adastral-of.png-6729c198d71802fb515256313a3fdf42.stex" ]
 
 [params]
 

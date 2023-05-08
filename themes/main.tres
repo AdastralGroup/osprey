@@ -1,0 +1,59 @@
+[gd_resource type="Theme" load_steps=12 format=2]
+
+[ext_resource path="res://fonts/font.tres" type="DynamicFont" id=1]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0.329412, 0.588235, 1 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+anti_aliasing_size = 0.01
+
+[sub_resource type="StyleBoxEmpty" id=8]
+
+[sub_resource type="StyleBoxEmpty" id=9]
+
+[sub_resource type="StyleBoxEmpty" id=10]
+
+[sub_resource type="StyleBoxEmpty" id=6]
+
+[sub_resource type="StyleBoxEmpty" id=7]
+
+[sub_resource type="StyleBoxFlat" id=11]
+bg_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0.360784, 0.615686, 1 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0, 0.329412, 0.588235, 0 )
+draw_center = false
+border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+
+[resource]
+default_font = ExtResource( 1 )
+Button/styles/normal = SubResource( 1 )
+HScrollBar/icons/decrement = null
+HScrollBar/icons/decrement_highlight = null
+HScrollBar/icons/decrement_pressed = null
+HScrollBar/icons/increment = null
+HScrollBar/icons/increment_highlight = null
+HScrollBar/icons/increment_pressed = null
+HScrollBar/styles/grabber = SubResource( 8 )
+HScrollBar/styles/grabber_highlight = SubResource( 9 )
+HScrollBar/styles/grabber_pressed = SubResource( 10 )
+HScrollBar/styles/scroll = SubResource( 6 )
+HScrollBar/styles/scroll_focus = SubResource( 7 )
+Label/colors/font_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+Panel/styles/panel = SubResource( 11 )
+ProgressBar/styles/bg = SubResource( 2 )
+ProgressBar/styles/fg = SubResource( 3 )
+ScrollContainer/styles/bg = SubResource( 4 )

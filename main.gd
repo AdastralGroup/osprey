@@ -1,67 +1,71 @@
 extends Control
-var of_theme = load("res://of_theme.tres")
-var of_font = load("res://of_normal_font.tres")
-var of_bg = load("res://ofbg.png")
-var of_logo = load("res://adastral-of.png")
+var of_theme = load("res://themes/of_theme.tres")
+var of_bg = load("res://assets/of-bg.png")
+var of_logo = load("res://assets/adastral-of.png")
 
-var tf2c_theme = load("res://of_theme.tres")
-var tf2c_font = load("res://tf2c_normal_font.tres")
-var tf2c_bg = load("res://ofbg.png")
-var tf2c_logo = load("res://adastral-tf2c.png")
+var tf2c_theme = load("res://themes/of_theme.tres")
+var tf2c_bg = load("res://assets/tf2c-bg.png")
+var tf2c_logo = load("res://assets/adastral-tf2c.png")
 
+var pf2_theme = load("res://themes/pf2_theme.tres")
+var pf2_bg = load("res://assets/pf2-bg.png")
+var pf2_logo = load("res://assets/adastral-pf2.png")
 
-var default_theme = load("res://main.tres")
-var default_font = load("res://font.tres")
-var default_bg = load("res://bg.png")
-var default_logo = load("res://adastral.png")
+var lf_theme = load("res://themes/of_theme.tres")
+var lf_bg = load("res://assets/of-bg.png")
+var lf_logo = load("res://assets/adastral-tf2c.png")
 
+var default_theme = load("res://themes/main.tres")
+var default_bg = load("res://assets/bg.png")
+var default_logo = load("res://assets/adastral.png")
+
+signal change_to(game)
 func _ready():
 	theme = default_theme
-	#getallnodes(self,default_font)
-	$TextureRect2.texture = default_bg
-	$TextureRect2.rect_position = Vector2(0,0)
-	$TextureRect2.rect_size = Vector2(610,381)
-	$Label.text = "This is Adastral. Click on a game!"
-	#$Label5.rect_position = Vector2(41,2)
-	#$Label5.rect_size = Vector2(111,45)
-	$TextureRect.texture = default_logo
+	$Background.texture = default_bg
+	$Background.rect_position = Vector2(0,64)
+	#$Background.rect_size = Vector2(610,381)
+	$GameText.text = "Welcome to Adastral. Click on a game!"
+	#$GameText5.rect_position = Vector2(41,2)
+	#$GameText5.rect_size = Vector2(111,45)
+	$AdastralLogo.texture = default_logo
 	
 func _on_TextureButton_pressed():
 	theme = of_theme
-	#getallnodes(self,of_font)
-	$TextureRect2.texture = of_bg
-	$TextureRect2.rect_position = Vector2(-220,-140)
-	$TextureRect2.rect_size = Vector2(1000,600)
-	$Label.text = "You're installing Open Fortress..."
-	#$Label5.rect_position = Vector2(41,-4)
-	$TextureRect.texture = of_logo
+	$Background.texture = of_bg
+	$Background.rect_position = Vector2(-220,-140)
+	$Background.rect_size = Vector2(1000,600)
+	$GameText.text = "You're installing Open Fortress..."
+	$AdastralLogo.texture = of_logo
+	$TextureRect3.material.set_shader_param("color",Color("#773d2951"))
+	emit_signal("change_to","of")
 
-func getallnodes(node,font):
-	for N in node.get_children():
-		if N.get_child_count() > 0:
-			print("["+N.get_name()+"]")
-			getallnodes(N,font)
-		else:
-			var z = font.duplicate()
-			var x = N.get_font("font")
-			if x.get_class() == "BitmapFont":
-				return
-			z.size = x.size
-			N.add_font_override("font", z)
-			print("font size is " + str(x.size))
-			print("- "+N.get_name())
+func _on_TextureButton2_pressed():
+	theme = default_theme
+	$Background.texture = tf2c_bg
+	$Background.rect_position = Vector2(0,-72)
+	$Background.rect_size = Vector2(768,500)
+	$GameText.text = "You're installing TF2 Classic..."
+	$AdastralLogo.texture = tf2c_logo
+	$TextureRect3.material.set_shader_param("color",Color("#aa401400"))
+	emit_signal("change_to","tf2c")
+
+func _on_PF2Button_pressed():
+	theme = default_theme
+	$Background.texture = pf2_bg
+	$Background.rect_position = Vector2(0,55)
+	$Background.rect_size = Vector2(768,500)
+	$GameText.text = "You're installing Pre-Fortress 2..."
+	
+	$AdastralLogo.texture = pf2_logo
+	$TextureRect3.material.set_shader_param("color",Color("#aab63538"))
+	emit_signal("change_to","pf2")
 
 
 func _on_Button4_pressed():
 	_ready()
 
 
-func _on_TextureButton2_pressed():
-	theme = default_theme
-	#getallnodes(self,tf2c_font)
-	$TextureRect2.texture = tf2c_bg
-	$TextureRect2.rect_position = Vector2(-220,-140)
-	$TextureRect2.rect_size = Vector2(1000,600)
-	$Label.text = "You're installing TF2 Classic..."
-	#$Label5.rect_position = Vector2(38,-4)
-	$TextureRect.texture = tf2c_logo
+
+
+

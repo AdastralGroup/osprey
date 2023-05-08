@@ -1,7 +1,7 @@
 [gd_resource type="Theme" load_steps=29 format=2]
 
-[ext_resource path="res://of_normal_font.tres" type="DynamicFont" id=1]
-[ext_resource path="res://of_bold_font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://fonts/of_normal_font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://fonts/of_bold_font.tres" type="DynamicFont" id=2]
 
 [sub_resource type="StyleBoxFlat" id=20]
 bg_color = Color( 0.184314, 0.101961, 0.258824, 1 )
