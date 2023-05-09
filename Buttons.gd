@@ -25,6 +25,14 @@ func clear():
 	$OFButton.texture_normal = of_mono
 	$PF2Button.texture_normal = pf2_mono
 	$LFButton.texture_normal = lf_mono
+	set_color(Color.white)
+
+
+func set_color(color):
+	$TF2CButton.modulate = color
+	$OFButton.modulate = color
+	$PF2Button.modulate = color
+	$LFButton.modulate = color
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
@@ -37,7 +45,7 @@ func _on_Control_change_to(game):
 			$TF2CButton.texture_normal = tf2c
 			return
 		"of":
-			$OFButton.texture_normal = of
+			set_color(Color("3d2951"))
 			return
 		"pf2":
 			$PF2Button.texture_normal = pf2

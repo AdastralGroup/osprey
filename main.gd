@@ -25,7 +25,7 @@ func _ready():
 	$Background.texture = default_bg
 	$Background.rect_position = Vector2(0,64)
 	#$Background.rect_size = Vector2(610,381)
-	$GameText.text = "Welcome to Adastral. Click on a game!"
+	$GameText.text = "Welcome to Adastral. Choose a game!"
 	#$GameText5.rect_position = Vector2(41,2)
 	#$GameText5.rect_size = Vector2(111,45)
 	$AdastralLogo.texture = default_logo
@@ -35,9 +35,8 @@ func _on_TextureButton_pressed():
 	$Background.texture = of_bg
 	$Background.rect_position = Vector2(-220,-140)
 	$Background.rect_size = Vector2(1000,600)
-	$GameText.text = "You're installing Open Fortress..."
+	$GameText.text = "You've chosen Open Fortress..."
 	$AdastralLogo.texture = of_logo
-	$TextureRect3.material.set_shader_param("color",Color("#773d2951"))
 	emit_signal("change_to","of")
 
 func _on_TextureButton2_pressed():
@@ -45,7 +44,7 @@ func _on_TextureButton2_pressed():
 	$Background.texture = tf2c_bg
 	$Background.rect_position = Vector2(0,-72)
 	$Background.rect_size = Vector2(768,500)
-	$GameText.text = "You're installing TF2 Classic..."
+	$GameText.text = "You've chosen TF2 Classic..."
 	$AdastralLogo.texture = tf2c_logo
 	$TextureRect3.material.set_shader_param("color",Color("#aa401400"))
 	emit_signal("change_to","tf2c")
@@ -55,7 +54,7 @@ func _on_PF2Button_pressed():
 	$Background.texture = pf2_bg
 	$Background.rect_position = Vector2(0,55)
 	$Background.rect_size = Vector2(768,500)
-	$GameText.text = "You're installing Pre-Fortress 2..."
+	$GameText.text = "You've chosen Pre-Fortress 2..."
 	
 	$AdastralLogo.texture = pf2_logo
 	$TextureRect3.material.set_shader_param("color",Color("#aab63538"))

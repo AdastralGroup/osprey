@@ -1,6 +1,12 @@
-[gd_resource type="Theme" load_steps=27 format=2]
+[gd_resource type="Theme" load_steps=33 format=2]
 
-[ext_resource path="res://fonts/of_normal_font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://fonts/font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://themes/of_gradient.tres" type="Gradient" id=2]
+
+[sub_resource type="StyleBoxFlat" id=33]
+bg_color = Color( 0.239216, 0.160784, 0.317647, 1 )
+shadow_color = Color( 0, 0, 0, 0.168627 )
+shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id=20]
 bg_color = Color( 0.184314, 0.101961, 0.258824, 1 )
@@ -12,17 +18,21 @@ bg_color = Color( 0.239216, 0.160784, 0.317647, 1 )
 border_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 
 [sub_resource type="StyleBoxFlat" id=11]
-bg_color = Color( 0.239216, 0.160784, 0.317647, 1 )
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+bg_color = Color( 0.270588, 0.145098, 0.352941, 1 )
 border_color = Color( 0.933333, 0.882353, 0.811765, 1 )
-border_blend = true
+shadow_color = Color( 0, 0, 0, 0.121569 )
+shadow_size = 4
 
 [sub_resource type="StyleBoxFlat" id=19]
 bg_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 border_color = Color( 0.239216, 0.160784, 0.317647, 1 )
+
+[sub_resource type="GradientTexture" id=35]
+gradient = ExtResource( 2 )
+
+[sub_resource type="StyleBoxTexture" id=36]
+texture = SubResource( 35 )
+region_rect = Rect2( 0, 0, 2048, 1 )
 
 [sub_resource type="StyleBoxFlat" id=16]
 bg_color = Color( 0.262745, 0.176471, 0.34902, 1 )
@@ -39,6 +49,11 @@ color = Color( 0.933333, 0.882353, 0.811765, 1 )
 grow_begin = -16.0
 grow_end = -16.0
 thickness = 5
+
+[sub_resource type="StyleBoxFlat" id=37]
+bg_color = Color( 0.933333, 0.882353, 0.811765, 1 )
+shadow_color = Color( 0, 0, 0, 0.14902 )
+shadow_size = 4
 
 [sub_resource type="DynamicFontData" id=32]
 font_path = "res://fonts/Oswald-Medium.ttf"
@@ -93,6 +108,9 @@ border_width_bottom = 10
 border_color = Color( 0.262745, 0.176471, 0.34902, 1 )
 corner_detail = 6
 
+[sub_resource type="StyleBoxFlat" id=38]
+bg_color = Color( 0, 0, 0, 1 )
+
 [sub_resource type="StyleBoxFlat" id=5]
 bg_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 
@@ -113,6 +131,8 @@ border_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 
 [resource]
 default_font = ExtResource( 1 )
+AccentPanel/base_type = "Panel"
+AccentPanel/styles/panel = SubResource( 33 )
 Button/colors/font_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 Button/colors/font_color_disabled = Color( 0.654902, 0.654902, 0.654902, 1 )
 Button/colors/font_color_focus = Color( 0.933333, 0.886275, 0.811765, 1 )
@@ -123,16 +143,23 @@ Button/styles/focus = SubResource( 21 )
 Button/styles/hover = SubResource( 22 )
 Button/styles/normal = SubResource( 11 )
 Button/styles/pressed = SubResource( 19 )
+GradientBar/base_type = "Panel"
+GradientBar/styles/panel = SubResource( 36 )
 HSeparator/styles/separator = SubResource( 16 )
 HSlider/styles/grabber_area = SubResource( 29 )
 HSlider/styles/grabber_area_highlight = SubResource( 30 )
 HSlider/styles/slider = SubResource( 31 )
+ImportantButton/base_type = "Button"
+ImportantButton/colors/font_color = Color( 0.239216, 0.160784, 0.317647, 1 )
+ImportantButton/styles/normal = SubResource( 37 )
 Label/colors/font_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 LineEdit/colors/cursor_color = Color( 0.239216, 0.160784, 0.317647, 1 )
 LineEdit/colors/font_color = Color( 0.239216, 0.160784, 0.317647, 1 )
 LineEdit/fonts/font = SubResource( 26 )
 LineEdit/styles/normal = SubResource( 27 )
-ProgressBar/colors/font_color = Color( 0.933333, 0.882353, 0.811765, 1 )
+PositiveRTL/base_type = "RichTextLabel"
+PositiveRTL/colors/default_color = Color( 0.239216, 0.160784, 0.317647, 1 )
+ProgressBar/colors/font_color = Color( 0.945098, 0.945098, 0.945098, 1 )
 ProgressBar/styles/bg = SubResource( 12 )
 ProgressBar/styles/fg = SubResource( 13 )
 RichTextLabel/colors/default_color = Color( 0.933333, 0.882353, 0.811765, 1 )
@@ -146,6 +173,8 @@ TabContainer/styles/panel = SubResource( 2 )
 TabContainer/styles/tab_bg = SubResource( 24 )
 TabContainer/styles/tab_disabled = SubResource( 25 )
 TabContainer/styles/tab_fg = SubResource( 23 )
+TopPanel/base_type = "Panel"
+TopPanel/styles/panel = SubResource( 38 )
 VScrollBar/styles/grabber = SubResource( 5 )
 VScrollBar/styles/grabber_highlight = SubResource( 6 )
 VScrollBar/styles/grabber_pressed = SubResource( 7 )

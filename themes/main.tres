@@ -1,15 +1,25 @@
-[gd_resource type="Theme" load_steps=12 format=2]
+[gd_resource type="Theme" load_steps=17 format=2]
 
 [ext_resource path="res://fonts/font.tres" type="DynamicFont" id=1]
+[ext_resource path="res://themes/adastral_gradient.tres" type="Gradient" id=2]
+
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0, 0.313726, 0.509804, 1 )
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0, 0.329412, 0.588235, 1 )
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
+bg_color = Color( 0, 0.360784, 0.615686, 1 )
 border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+corner_detail = 13
+shadow_color = Color( 0, 0, 0, 0.121569 )
+shadow_size = 6
 anti_aliasing_size = 0.01
+
+[sub_resource type="GradientTexture" id=17]
+gradient = ExtResource( 2 )
+
+[sub_resource type="StyleBoxTexture" id=15]
+texture = SubResource( 17 )
+region_rect = Rect2( 0, 0, 2048, 1 )
 
 [sub_resource type="StyleBoxEmpty" id=8]
 
@@ -21,6 +31,11 @@ anti_aliasing_size = 0.01
 
 [sub_resource type="StyleBoxEmpty" id=7]
 
+[sub_resource type="StyleBoxFlat" id=16]
+bg_color = Color( 0.717647, 0.576471, 0, 1 )
+shadow_color = Color( 0, 0, 0, 0.121569 )
+shadow_size = 5
+
 [sub_resource type="StyleBoxFlat" id=11]
 bg_color = Color( 0, 0, 0, 1 )
 
@@ -29,6 +44,11 @@ bg_color = Color( 0.972549, 0.952941, 0.933333, 1 )
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0, 0.360784, 0.615686, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
 
 [sub_resource type="StyleBoxFlat" id=4]
 content_margin_left = 4.0
@@ -40,7 +60,11 @@ border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
 
 [resource]
 default_font = ExtResource( 1 )
+AccentPanel/base_type = "Panel"
+AccentPanel/styles/panel = SubResource( 12 )
 Button/styles/normal = SubResource( 1 )
+GradientBar/base_type = "Panel"
+GradientBar/styles/panel = SubResource( 15 )
 HScrollBar/icons/decrement = null
 HScrollBar/icons/decrement_highlight = null
 HScrollBar/icons/decrement_pressed = null
@@ -52,8 +76,11 @@ HScrollBar/styles/grabber_highlight = SubResource( 9 )
 HScrollBar/styles/grabber_pressed = SubResource( 10 )
 HScrollBar/styles/scroll = SubResource( 6 )
 HScrollBar/styles/scroll_focus = SubResource( 7 )
+ImportantButton/base_type = "Button"
+ImportantButton/styles/normal = SubResource( 16 )
 Label/colors/font_color = Color( 0.972549, 0.952941, 0.933333, 1 )
 Panel/styles/panel = SubResource( 11 )
 ProgressBar/styles/bg = SubResource( 2 )
 ProgressBar/styles/fg = SubResource( 3 )
 ScrollContainer/styles/bg = SubResource( 4 )
+TopPanel/base_type = "Panel"
