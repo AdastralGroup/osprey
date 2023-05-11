@@ -11,7 +11,7 @@ var pf2_mono = load("res://assets/pf2-mono.png")
 var tf2c = load("res://assets/tf2c.png")
 var tf2c_mono = load("res://assets/tf2c-mono.png")
 var lf = load("res://assets/tf2c.png")
-var lf_mono = load("res://assets/lf2-mono.png")
+var lf_mono = load("res://assets/lf-mono.png")
 
 var from = null;
 # Called when the node enters the scene tree for the first time.
@@ -45,12 +45,14 @@ func _on_Control_change_to(game):
 			$TF2CButton.texture_normal = tf2c
 			return
 		"of":
-			set_color(Color("3d2951"))
+			set_color(Color("59416a"))
 			return
 		"pf2":
-			$PF2Button.texture_normal = pf2
+			set_color(Color("402311"))
+			#$PF2Button.texture_normal = pf2
 			return
 		"lf":
 			$LFButton.texture_normal = lf
 			return
-			
+		"adastral":
+			return

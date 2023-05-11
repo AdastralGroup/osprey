@@ -19,7 +19,15 @@ var default_theme = load("res://themes/main.tres")
 var default_bg = load("res://assets/bg.png")
 var default_logo = load("res://assets/adastral.png")
 
+
+
 signal change_to(game)
+
+func set_title_text(text):
+	$GameText.bbcode_text = "You're managing [b]%s[/b]" % text
+
+
+
 func _ready():
 	theme = default_theme
 	$Background.texture = default_bg
@@ -31,11 +39,15 @@ func _ready():
 	$AdastralLogo.texture = default_logo
 	
 func _on_TextureButton_pressed():
+#	var tween = get_tree().create_tween()
+#	tween.tween_property($Camera2D,"zoom",Vector2(100,100),4).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BOUNCE)
+#	tween.tween_property($Camera2D,"zoom",Vector2(1,1),4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BOUNCE)
+#	yield(get_tree().create_timer(4),"timeout")
 	theme = of_theme
 	$Background.texture = of_bg
-	$Background.rect_position = Vector2(-220,-140)
-	$Background.rect_size = Vector2(1000,600)
-	$GameText.text = "You've chosen Open Fortress..."
+	#$Background.rect_position = Vector2(-220,-140)
+	#$Background.rect_size = Vector2(1000,600)
+	set_title_text("Open Fortress")
 	$AdastralLogo.texture = of_logo
 	emit_signal("change_to","of")
 
@@ -44,24 +56,22 @@ func _on_TextureButton2_pressed():
 	$Background.texture = tf2c_bg
 	$Background.rect_position = Vector2(0,-72)
 	$Background.rect_size = Vector2(768,500)
-	$GameText.text = "You've chosen TF2 Classic..."
+	set_title_text("TF2 Classic")
 	$AdastralLogo.texture = tf2c_logo
-	$TextureRect3.material.set_shader_param("color",Color("#aa401400"))
 	emit_signal("change_to","tf2c")
 
 func _on_PF2Button_pressed():
-	theme = default_theme
+	theme = pf2_theme
 	$Background.texture = pf2_bg
-	$Background.rect_position = Vector2(0,55)
-	$Background.rect_size = Vector2(768,500)
-	$GameText.text = "You've chosen Pre-Fortress 2..."
-	
+	$Background.rect_position = Vector2(0,24)
+	$Background.rect_size = Vector2(808,456)
+	set_title_text("Pre-Fortress 2")
 	$AdastralLogo.texture = pf2_logo
-	$TextureRect3.material.set_shader_param("color",Color("#aab63538"))
 	emit_signal("change_to","pf2")
 
 
 func _on_Button4_pressed():
+	emit_signal("change_to","adastral")
 	_ready()
 
 
