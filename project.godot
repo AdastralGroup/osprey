@@ -18,11 +18,11 @@ config/features=PoolStringArray( "4.0", "Mobile" )
 
 [display]
 
-window/size/width=768
+window/size/width=770
 window/size/height=350
 window/per_pixel_transparency/allowed=true
-window/size/viewport_width=610
-window/size/viewport_height=256
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
 
 [rendering]
 

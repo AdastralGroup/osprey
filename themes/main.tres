@@ -1,7 +1,6 @@
-[gd_resource type="Theme" load_steps=17 format=2]
+[gd_resource type="Theme" load_steps=15 format=2]
 
 [ext_resource path="res://fonts/font.tres" type="DynamicFont" id=1]
-[ext_resource path="res://themes/adastral_gradient.tres" type="Gradient" id=2]
 
 [sub_resource type="StyleBoxFlat" id=12]
 bg_color = Color( 0, 0.313726, 0.509804, 1 )
@@ -14,12 +13,8 @@ shadow_color = Color( 0, 0, 0, 0.121569 )
 shadow_size = 6
 anti_aliasing_size = 0.01
 
-[sub_resource type="GradientTexture" id=17]
-gradient = ExtResource( 2 )
-
-[sub_resource type="StyleBoxTexture" id=15]
-texture = SubResource( 17 )
-region_rect = Rect2( 0, 0, 2048, 1 )
+[sub_resource type="StyleBoxFlat" id=17]
+bg_color = Color( 0.717647, 0.388235, 0, 1 )
 
 [sub_resource type="StyleBoxEmpty" id=8]
 
@@ -32,7 +27,7 @@ region_rect = Rect2( 0, 0, 2048, 1 )
 [sub_resource type="StyleBoxEmpty" id=7]
 
 [sub_resource type="StyleBoxFlat" id=16]
-bg_color = Color( 0.717647, 0.576471, 0, 1 )
+bg_color = Color( 0.717647, 0.388235, 0, 1 )
 shadow_color = Color( 0, 0, 0, 0.121569 )
 shadow_size = 5
 
@@ -64,7 +59,7 @@ AccentPanel/base_type = "Panel"
 AccentPanel/styles/panel = SubResource( 12 )
 Button/styles/normal = SubResource( 1 )
 GradientBar/base_type = "Panel"
-GradientBar/styles/panel = SubResource( 15 )
+GradientBar/styles/panel = SubResource( 17 )
 HScrollBar/icons/decrement = null
 HScrollBar/icons/decrement_highlight = null
 HScrollBar/icons/decrement_pressed = null

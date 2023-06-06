@@ -3,7 +3,7 @@ var of_theme = load("res://themes/of_theme.tres")
 var of_bg = load("res://assets/of-bg.png")
 var of_logo = load("res://assets/adastral-of.png")
 
-var tf2c_theme = load("res://themes/of_theme.tres")
+var tf2c_theme = load("res://themes/tf2c_theme.tres")
 var tf2c_bg = load("res://assets/tf2c-bg.png")
 var tf2c_logo = load("res://assets/adastral-tf2c.png")
 
@@ -24,57 +24,73 @@ var default_logo = load("res://assets/adastral.png")
 signal change_to(game)
 
 func set_title_text(text):
-	$GameText.bbcode_text = "You're managing [b]%s[/b]" % text
+	$GameText.bbcode_text = "You've selected [b]%s[/b]" % text
 
 
 
 func _ready():
+	$TextureRect2.show()
 	theme = default_theme
 	$Background.texture = default_bg
-	$Background.rect_position = Vector2(0,64)
-	#$Background.rect_size = Vector2(610,381)
-	$GameText.text = "Welcome to Adastral. Choose a game!"
+	$Background.rect_position = Vector2(0,0)
+	$Background.rect_size = Vector2(770,352)
+	$GameText.bbcode_text = "[b]Welcome to Adastral![/b] Select a game to install."
 	#$GameText5.rect_position = Vector2(41,2)
 	#$GameText5.rect_size = Vector2(111,45)
-	$AdastralLogo.texture = default_logo
+	$TopPanel/AboutButton.modulate = Color("f8f3ee")
+	$TopPanel/AdvancedButton.modulate = Color("f8f3ee")
+	$TopPanel/AdastralLogo.texture = default_logo
 	
-func _on_TextureButton_pressed():
+
+func _on_OFButton_pressed():
 #	var tween = get_tree().create_tween()
 #	tween.tween_property($Camera2D,"zoom",Vector2(100,100),4).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BOUNCE)
 #	tween.tween_property($Camera2D,"zoom",Vector2(1,1),4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BOUNCE)
 #	yield(get_tree().create_timer(4),"timeout")
+	$TextureRect2.hide()
 	theme = of_theme
 	$Background.texture = of_bg
-	#$Background.rect_position = Vector2(-220,-140)
-	#$Background.rect_size = Vector2(1000,600)
+	$Background.rect_position = Vector2(0,24)
+	$Background.rect_size = Vector2(810,456)
 	set_title_text("Open Fortress")
-	$AdastralLogo.texture = of_logo
+	$TopPanel/AdastralLogo.texture = of_logo
+	$TopPanel/AboutButton.modulate = Color("eee1cf") ## this isn't flexible but we're doing it untill I figure out a better way
+	$TopPanel/AdvancedButton.modulate = Color("eee1cf")
 	emit_signal("change_to","of")
 
-func _on_TextureButton2_pressed():
-	theme = default_theme
+
+
+func _on_TF2CButton_pressed():
+	$TextureRect2.hide()
+	theme = tf2c_theme
 	$Background.texture = tf2c_bg
-	$Background.rect_position = Vector2(0,-72)
-	$Background.rect_size = Vector2(768,500)
+	$Background.rect_position = Vector2(-40,0) # bg positioning, we won't need this with proper assets
+	$Background.rect_size = Vector2(810,266)
 	set_title_text("TF2 Classic")
-	$AdastralLogo.texture = tf2c_logo
-	emit_signal("change_to","tf2c")
+	$TopPanel/AdastralLogo.texture = tf2c_logo
+	$TopPanel/AboutButton.modulate = Color("e7daad") ## we can't set this in themes so we do it manually
+	$TopPanel/AdvancedButton.modulate = Color("e7daad")
+	emit_signal("change_to","tf2c") # to change the colour buttons in a different file
 
 func _on_PF2Button_pressed():
+	$TextureRect2.hide()
 	theme = pf2_theme
 	$Background.texture = pf2_bg
 	$Background.rect_position = Vector2(0,24)
-	$Background.rect_size = Vector2(808,456)
+	$Background.rect_size = Vector2(810,458)
 	set_title_text("Pre-Fortress 2")
-	$AdastralLogo.texture = pf2_logo
+	$TopPanel/AdastralLogo.texture = pf2_logo
+	$TopPanel/AboutButton.modulate = Color("e6e6dc")
+	$TopPanel/AdvancedButton.modulate = Color("e6e6dc")
 	emit_signal("change_to","pf2")
 
 
 func _on_Button4_pressed():
+	print("clicked")
 	emit_signal("change_to","adastral")
 	_ready()
 
 
 
-
-
+func _on_AboutButton_pressed():
+	OS.set_window_size(Vector2(770, 350))

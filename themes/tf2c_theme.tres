@@ -3,36 +3,36 @@
 [ext_resource path="res://fonts/font.tres" type="DynamicFont" id=1]
 
 [sub_resource type="StyleBoxFlat" id=12]
-bg_color = Color( 0.345098, 0.227451, 0.192157, 1 )
+bg_color = Color( 0.25098, 0.137255, 0.0666667, 1 )
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.345098, 0.227451, 0.192157, 1 )
+bg_color = Color( 0.25098, 0.137255, 0.0666667, 1 )
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 
 [sub_resource type="StyleBoxFlat" id=17]
-bg_color = Color( 0.717647, 0.215686, 0.215686, 1 )
+bg_color = Color( 1, 0.486275, 0.266667, 1 )
 
 [sub_resource type="StyleBoxFlat" id=16]
-bg_color = Color( 0.717647, 0.215686, 0.215686, 1 )
+bg_color = Color( 1, 0.486275, 0.266667, 1 )
 
 [sub_resource type="StyleBoxFlat" id=11]
 bg_color = Color( 0.901961, 0.901961, 0.862745, 1 )
 border_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 
 [sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.901961, 0.901961, 0.862745, 1 )
+bg_color = Color( 0.905882, 0.854902, 0.678431, 1 )
 border_color = Color( 0.933333, 0.882353, 0.811765, 1 )
 
 [sub_resource type="StyleBoxFlat" id=3]
-bg_color = Color( 0.952941, 0.568627, 0.34902, 1 )
+bg_color = Color( 1, 0.486275, 0.266667, 1 )
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color( 0.901961, 0.901961, 0.862745, 1 )
+border_color = Color( 0.905882, 0.854902, 0.678431, 1 )
 
 [sub_resource type="StyleBoxFlat" id=4]
 content_margin_left = 4.0
@@ -43,7 +43,7 @@ draw_center = false
 border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
 
 [sub_resource type="StyleBoxFlat" id=18]
-bg_color = Color( 0.168627, 0.152941, 0.14902, 1 )
+bg_color = Color( 0.137255, 0.121569, 0.12549, 1 )
 
 [resource]
 default_font = ExtResource( 1 )
@@ -53,9 +53,9 @@ Button/styles/normal = SubResource( 1 )
 GradientBar/base_type = "Panel"
 GradientBar/styles/panel = SubResource( 17 )
 ImportantButton/base_type = "Button"
-ImportantButton/colors/font_color = Color( 0, 0, 0, 1 )
+ImportantButton/colors/font_color = Color( 0.137255, 0.121569, 0.12549, 1 )
 ImportantButton/styles/normal = SubResource( 16 )
-Label/colors/font_color = Color( 0.901961, 0.901961, 0.862745, 1 )
+Label/colors/font_color = Color( 0.905882, 0.854902, 0.678431, 1 )
 Panel/styles/panel = SubResource( 11 )
 PositiveRTL/base_type = "RichTextLabel"
 PositiveRTL/colors/default_color = Color( 0.25098, 0.137255, 0.0666667, 1 )

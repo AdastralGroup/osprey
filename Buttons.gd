@@ -38,18 +38,19 @@ func set_color(color):
 #	pass
 
 
-func _on_Control_change_to(game):
+
+func _on_Main_change_to(game):
+	print("called")
 	clear()
 	match game:
 		"tf2c":
-			$TF2CButton.texture_normal = tf2c
+			$TF2CButton.modulate = Color("402311")
 			return
 		"of":
-			set_color(Color("59416a"))
+			$OFButton.modulate = Color("59416a")
 			return
 		"pf2":
-			set_color(Color("402311"))
-			#$PF2Button.texture_normal = pf2
+			$PF2Button.modulate = Color("402311")
 			return
 		"lf":
 			$LFButton.texture_normal = lf
