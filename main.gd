@@ -24,7 +24,7 @@ var default_logo = load("res://assets/adastral.png")
 signal change_to(game)
 
 func set_title_text(text):
-	$GameText.bbcode_text = "You've selected [b]%s[/b]" % text
+	$GameText.text = "You've selected [b]%s[/b]" % text
 
 
 
@@ -32,9 +32,9 @@ func _ready():
 	$TextureRect2.show()
 	theme = default_theme
 	$Background.texture = default_bg
-	$Background.rect_position = Vector2(0,0)
-	$Background.rect_size = Vector2(770,352)
-	$GameText.bbcode_text = "[b]Welcome to Adastral![/b] Select a game to install."
+	$Background.position = Vector2(0,0)
+	$Background.size = Vector2(770,352)
+	$GameText.text = "[b]Welcome to Adastral![/b] Select a game to install."
 	#$GameText5.rect_position = Vector2(41,2)
 	#$GameText5.rect_size = Vector2(111,45)
 	$TopPanel/AboutButton.modulate = Color("f8f3ee")
@@ -50,8 +50,8 @@ func _on_OFButton_pressed():
 	$TextureRect2.hide()
 	theme = of_theme
 	$Background.texture = of_bg
-	$Background.rect_position = Vector2(0,24)
-	$Background.rect_size = Vector2(810,456)
+	$Background.position = Vector2(0,24)
+	$Background.size = Vector2(810,456)
 	set_title_text("Open Fortress")
 	$TopPanel/AdastralLogo.texture = of_logo
 	$TopPanel/AboutButton.modulate = Color("eee1cf") ## this isn't flexible but we're doing it untill I figure out a better way
@@ -64,8 +64,8 @@ func _on_TF2CButton_pressed():
 	$TextureRect2.hide()
 	theme = tf2c_theme
 	$Background.texture = tf2c_bg
-	$Background.rect_position = Vector2(-40,0) # bg positioning, we won't need this with proper assets
-	$Background.rect_size = Vector2(810,266)
+	$Background.position = Vector2(-40,0) # bg positioning, we won't need this with proper assets
+	$Background.size = Vector2(810,266)
 	set_title_text("TF2 Classic")
 	$TopPanel/AdastralLogo.texture = tf2c_logo
 	$TopPanel/AboutButton.modulate = Color("e7daad") ## we can't set this in themes so we do it manually
@@ -76,8 +76,8 @@ func _on_PF2Button_pressed():
 	$TextureRect2.hide()
 	theme = pf2_theme
 	$Background.texture = pf2_bg
-	$Background.rect_position = Vector2(0,24)
-	$Background.rect_size = Vector2(810,458)
+	$Background.position = Vector2(0,24)
+	$Background.size = Vector2(810,458)
 	set_title_text("Pre-Fortress 2")
 	$TopPanel/AdastralLogo.texture = pf2_logo
 	$TopPanel/AboutButton.modulate = Color("e6e6dc")
@@ -93,4 +93,4 @@ func _on_Button4_pressed():
 
 
 func _on_AboutButton_pressed():
-	OS.set_window_size(Vector2(770, 350))
+	get_window().set_size(Vector2(770, 350))

@@ -1,28 +1,29 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=22 format=3 uid="uid://d2fac2xibuh1b"]
 
-[ext_resource path="res://assets/adastral.png" type="Texture" id=1]
-[ext_resource path="res://fonts/bold_font_data.tres" type="DynamicFontData" id=2]
-[ext_resource path="res://themes/main.tres" type="Theme" id=3]
-[ext_resource path="res://assets/bg.png" type="Texture" id=4]
-[ext_resource path="res://assets/adastral256.png" type="Texture" id=5]
-[ext_resource path="res://main.gd" type="Script" id=6]
-[ext_resource path="res://assets/mockup3.png" type="Texture" id=7]
-[ext_resource path="res://assets/of-mono.png" type="Texture" id=8]
-[ext_resource path="res://fonts/font_data.tres" type="DynamicFontData" id=9]
-[ext_resource path="res://assets/settings.png" type="Texture" id=10]
-[ext_resource path="res://assets/tf2c-mono.png" type="Texture" id=11]
-[ext_resource path="res://assets/about.png" type="Texture" id=12]
-[ext_resource path="res://assets/lf-mono.png" type="Texture" id=13]
-[ext_resource path="res://assets/pf2-mono.png" type="Texture" id=14]
-[ext_resource path="res://Buttons.gd" type="Script" id=15]
-[ext_resource path="res://starspin.gd" type="Script" id=16]
+[ext_resource type="Texture2D" uid="uid://safo5048n3h2" path="res://assets/adastral.png" id="1"]
+[ext_resource type="Theme" uid="uid://5jc5whi15673" path="res://themes/main.tres" id="3"]
+[ext_resource type="Texture2D" uid="uid://b2ttcp5fvn0m8" path="res://assets/bg.png" id="4"]
+[ext_resource type="Texture2D" uid="uid://be3nfp6wctbau" path="res://assets/adastral256.png" id="5"]
+[ext_resource type="Script" path="res://main.gd" id="6"]
+[ext_resource type="FontFile" uid="uid://cknx8yer7op7k" path="res://fonts/HankenGrotesk.ttf" id="6_e4w67"]
+[ext_resource type="Texture2D" uid="uid://bdp5wiff6aiwu" path="res://assets/mockup3.png" id="7"]
+[ext_resource type="Texture2D" uid="uid://dh6dr2lq4d3w7" path="res://assets/of-mono.png" id="8"]
+[ext_resource type="Texture2D" uid="uid://b21fcl1p2qpc8" path="res://assets/settings.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://caxdj60y0ovde" path="res://assets/tf2c-mono.png" id="11"]
+[ext_resource type="Texture2D" uid="uid://bjvrgo2shmf48" path="res://assets/about.png" id="12"]
+[ext_resource type="Texture2D" uid="uid://bp2qrdcadmyeu" path="res://assets/lf-mono.png" id="13"]
+[ext_resource type="Texture2D" uid="uid://drnhw13v2dand" path="res://assets/pf2-mono.png" id="14"]
+[ext_resource type="Script" path="res://Buttons.gd" id="15"]
+[ext_resource type="FontFile" uid="uid://pskwpwxk0pd4" path="res://fonts/HankenGrotesk-SemiBold.ttf" id="15_m18sp"]
+[ext_resource type="Script" path="res://starspin.gd" id="16"]
 
-[sub_resource type="DynamicFont" id=16]
-size = 21
-font_data = ExtResource( 9 )
+[sub_resource type="FontVariation" id="FontVariation_qo1cp"]
+base_font = ExtResource("6_e4w67")
+spacing_glyph = -1
 
-[sub_resource type="Shader" id=22]
+[sub_resource type="Shader" id="22"]
 code = "shader_type canvas_item;
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
 uniform float divide = 1;
 uniform float blur = 0.8;
 void fragment() {
@@ -33,319 +34,286 @@ void fragment() {
     COLOR.a = min(COLOR.a,smoothstep(divide,blur,UV.x));
 }"
 
-[sub_resource type="ShaderMaterial" id=23]
-shader = SubResource( 22 )
-shader_param/divide = 1.0
-shader_param/blur = 0.7
+[sub_resource type="ShaderMaterial" id="23"]
+shader = SubResource("22")
+shader_parameter/divide = 1.0
+shader_parameter/blur = 0.8
 
-[sub_resource type="StyleBoxEmpty" id=32]
+[sub_resource type="StyleBoxEmpty" id="32"]
 
-[sub_resource type="StyleBoxEmpty" id=33]
-
-[sub_resource type="DynamicFont" id=31]
-size = 33
-font_data = ExtResource( 2 )
-
-[sub_resource type="DynamicFont" id=29]
-size = 20
-font_data = ExtResource( 2 )
-
-[sub_resource type="DynamicFont" id=30]
-size = 20
-font_data = ExtResource( 9 )
-
-[sub_resource type="DynamicFont" id=9]
-size = 14
-font_data = ExtResource( 9 )
-
-[sub_resource type="DynamicFont" id=11]
-size = 22
-font_data = ExtResource( 9 )
-
-[sub_resource type="DynamicFont" id=15]
-size = 22
-font_data = ExtResource( 9 )
+[sub_resource type="StyleBoxEmpty" id="33"]
 
 [node name="Control" type="Control"]
-margin_right = 40.0
-margin_bottom = 40.0
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="Main" type="Control" parent="."]
+anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme = ExtResource( 3 )
-script = ExtResource( 6 )
+theme = ExtResource("3")
+script = ExtResource("6")
 
 [node name="Background" type="TextureRect" parent="Main"]
-margin_right = 808.0
-margin_bottom = 456.0
-texture = ExtResource( 4 )
-expand = true
+layout_mode = 0
+offset_top = -3.0
+offset_right = 808.0
+offset_bottom = 453.0
+texture = ExtResource("4")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="TextureRect2" type="TextureRect" parent="Main"]
-modulate = Color( 1, 1, 1, 0.243137 )
-margin_left = 577.0
-margin_top = -29.0
-margin_right = 957.0
-margin_bottom = 351.0
-rect_pivot_offset = Vector2( 190, 190 )
-texture = ExtResource( 5 )
-expand = true
-stretch_mode = 1
-script = ExtResource( 16 )
+modulate = Color(1, 1, 1, 0.243137)
+layout_mode = 0
+offset_left = 577.0
+offset_top = -29.0
+offset_right = 957.0
+offset_bottom = 351.0
+pivot_offset = Vector2(190, 190)
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("16")
 
 [node name="TopPanel" type="Panel" parent="Main"]
-margin_right = 770.0
-margin_bottom = 64.0
-theme_type_variation = "TopPanel"
+layout_mode = 0
+offset_right = 770.0
+offset_bottom = 64.0
+theme_type_variation = &"TopPanel"
 
 [node name="Adastral" type="Label" parent="Main/TopPanel"]
-margin_left = 85.0
-margin_top = 20.0
-margin_right = 158.0
-margin_bottom = 47.0
-custom_fonts/font = SubResource( 16 )
+layout_mode = 0
+offset_left = 80.0
+offset_top = 16.0
+offset_right = 176.0
+offset_bottom = 52.0
+theme_override_fonts/font = SubResource("FontVariation_qo1cp")
+theme_override_font_sizes/font_size = 25
 text = "Adastral"
-align = 1
-valign = 1
 
 [node name="AdastralLogo" type="TextureRect" parent="Main/TopPanel"]
-margin_left = 30.0
-margin_top = 12.0
-margin_right = 72.0
-margin_bottom = 54.0
-texture = ExtResource( 1 )
-expand = true
+layout_mode = 0
+offset_left = 30.0
+offset_top = 12.0
+offset_right = 72.0
+offset_bottom = 54.0
+texture = ExtResource("1")
+expand_mode = 1
 
 [node name="AboutButton" type="TextureButton" parent="Main/TopPanel"]
-margin_left = 668.0
-margin_top = 17.0
-margin_right = 698.0
-margin_bottom = 47.0
-theme_type_variation = "TopButton"
-texture_normal = ExtResource( 12 )
-expand = true
+layout_mode = 0
+offset_left = 656.0
+offset_top = 16.0
+offset_right = 688.0
+offset_bottom = 48.0
+theme_type_variation = &"TopButton"
+texture_normal = ExtResource("12")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="AdvancedButton" type="TextureButton" parent="Main/TopPanel"]
-margin_left = 714.0
-margin_top = 18.0
-margin_right = 742.0
-margin_bottom = 46.0
-theme_type_variation = "TopButton"
+layout_mode = 0
+offset_left = 712.0
+offset_top = 16.0
+offset_right = 744.0
+offset_bottom = 48.0
+theme_type_variation = &"TopButton"
 action_mode = 0
-texture_normal = ExtResource( 10 )
-expand = true
+texture_normal = ExtResource("10")
+ignore_texture_size = true
+stretch_mode = 0
 
-[node name="ViewportContainer" type="ViewportContainer" parent="Main"]
-material = SubResource( 23 )
-margin_left = 36.0
-margin_top = 118.0
-margin_right = 520.0
-margin_bottom = 242.0
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Main"]
+material = SubResource("23")
+layout_mode = 0
+offset_left = 40.0
+offset_top = 112.0
+offset_right = 524.0
+offset_bottom = 236.0
 stretch = true
 
-[node name="Viewport" type="Viewport" parent="Main/ViewportContainer"]
-size = Vector2( 484, 124 )
-size_override_stretch = true
+[node name="SubViewport" type="SubViewport" parent="Main/SubViewportContainer"]
+disable_3d = true
 transparent_bg = true
 handle_input_locally = false
-msaa = 2
-debanding = true
-hdr = false
-disable_3d = true
-usage = 0
-render_target_update_mode = 3
+size = Vector2i(484, 124)
+size_2d_override_stretch = true
+render_target_update_mode = 4
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Main/ViewportContainer/Viewport"]
-margin_right = 520.0
-margin_bottom = 128.0
-theme = ExtResource( 3 )
+[node name="ScrollContainer" type="ScrollContainer" parent="Main/SubViewportContainer/SubViewport"]
+offset_right = 520.0
+offset_bottom = 128.0
+theme = ExtResource("3")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Main/ViewportContainer/Viewport/ScrollContainer"]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 492.0
-margin_bottom = 124.0
+[node name="HBoxContainer" type="HBoxContainer" parent="Main/SubViewportContainer/SubViewport/ScrollContainer"]
+layout_mode = 2
 size_flags_vertical = 3
-script = ExtResource( 15 )
+script = ExtResource("15")
 
-[node name="OFButton" type="TextureButton" parent="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer"]
-margin_top = 5.0
-margin_right = 110.0
-margin_bottom = 115.0
-rect_min_size = Vector2( 110, 110 )
+[node name="OFButton" type="TextureButton" parent="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = ExtResource( 8 )
-expand = true
+texture_normal = ExtResource("8")
 
-[node name="VSeparator" type="VSeparator" parent="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer"]
-margin_left = 114.0
-margin_right = 122.0
-margin_bottom = 120.0
-rect_min_size = Vector2( 8, 0 )
+[node name="VSeparator" type="VSeparator" parent="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/separator = SubResource( 32 )
+theme_override_styles/separator = SubResource("32")
 
-[node name="TF2CButton" type="TextureButton" parent="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer"]
-margin_left = 126.0
-margin_top = 5.0
-margin_right = 236.0
-margin_bottom = 115.0
-rect_min_size = Vector2( 110, 110 )
+[node name="TF2CButton" type="TextureButton" parent="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
-texture_normal = ExtResource( 11 )
-texture_hover = ExtResource( 11 )
-expand = true
+texture_normal = ExtResource("11")
+texture_hover = ExtResource("11")
 
-[node name="VSeparator2" type="VSeparator" parent="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer"]
-margin_left = 240.0
-margin_right = 248.0
-margin_bottom = 120.0
-rect_min_size = Vector2( 8, 0 )
+[node name="VSeparator2" type="VSeparator" parent="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/separator = SubResource( 33 )
+theme_override_styles/separator = SubResource("33")
 
-[node name="PF2Button" type="TextureButton" parent="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer"]
-margin_left = 252.0
-margin_top = 5.0
-margin_right = 362.0
-margin_bottom = 115.0
-rect_min_size = Vector2( 110, 110 )
+[node name="PF2Button" type="TextureButton" parent="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
-texture_normal = ExtResource( 14 )
-expand = true
+texture_normal = ExtResource("14")
 
-[node name="VSeparator3" type="VSeparator" parent="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer"]
-margin_left = 366.0
-margin_right = 374.0
-margin_bottom = 120.0
-rect_min_size = Vector2( 8, 0 )
+[node name="VSeparator3" type="VSeparator" parent="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/separator = SubResource( 32 )
+theme_override_styles/separator = SubResource("32")
 
-[node name="LFButton" type="TextureButton" parent="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer"]
-margin_left = 378.0
-margin_top = 5.0
-margin_right = 488.0
-margin_bottom = 115.0
-rect_min_size = Vector2( 110, 110 )
+[node name="LFButton" type="TextureButton" parent="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
-texture_normal = ExtResource( 13 )
-expand = true
+texture_normal = ExtResource("13")
 
 [node name="TextureRect3" type="Panel" parent="Main"]
-margin_top = 255.0
-margin_right = 770.0
-margin_bottom = 350.0
-theme_type_variation = "AccentPanel"
+layout_mode = 0
+offset_top = 255.0
+offset_right = 770.0
+offset_bottom = 350.0
+theme_type_variation = &"AccentPanel"
 
 [node name="GameText" type="RichTextLabel" parent="Main"]
-margin_left = 31.0
-margin_top = 69.0
-margin_right = 752.0
-margin_bottom = 120.0
-theme_type_variation = "PositiveRTL"
-custom_fonts/bold_font = SubResource( 31 )
+layout_mode = 0
+offset_left = 31.0
+offset_top = 69.0
+offset_right = 752.0
+offset_bottom = 120.0
+theme_type_variation = &"PositiveRTL"
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
 bbcode_enabled = true
-bbcode_text = "[b]Welcome to Adastral![/b] Select a game to install."
-text = "Welcome to Adastral! Select a game to install."
+text = "[b]Welcome to Adastral! [/b]Select a game to install."
 
 [node name="Adastral2" type="Label" parent="Main"]
-margin_left = 593.0
-margin_top = 19.0
-margin_right = 648.0
-margin_bottom = 46.0
-custom_fonts/font = SubResource( 16 )
+layout_mode = 0
+offset_left = 576.0
+offset_top = 16.0
+offset_right = 632.0
+offset_bottom = 47.0
+theme_override_fonts/font = ExtResource("15_m18sp")
+theme_override_font_sizes/font_size = 22
 text = "v0.0.1"
-align = 1
-valign = 1
 
 [node name="LatestVersion" type="RichTextLabel" parent="Main"]
-margin_left = 544.0
-margin_top = 120.0
-margin_right = 730.0
-margin_bottom = 146.0
-theme_type_variation = "PositiveRTL"
-custom_fonts/bold_font = SubResource( 29 )
-custom_fonts/normal_font = SubResource( 30 )
+layout_mode = 0
+offset_left = 520.0
+offset_top = 184.0
+offset_right = 768.0
+offset_bottom = 216.0
+theme_type_variation = &"PositiveRTL"
+theme_override_font_sizes/normal_font_size = 22
+theme_override_font_sizes/bold_font_size = 22
 bbcode_enabled = true
-bbcode_text = "Latest Version: [b]2.1.3[/b]"
-text = "Latest Version: 2.1.3"
+text = "Latest Version: [b]2.1.3[/b]"
 scroll_active = false
 
 [node name="InstalledVersion" type="RichTextLabel" parent="Main"]
-margin_left = 544.0
-margin_top = 145.0
-margin_right = 730.0
-margin_bottom = 171.0
-theme_type_variation = "PositiveRTL"
-custom_fonts/bold_font = SubResource( 29 )
-custom_fonts/normal_font = SubResource( 30 )
+layout_mode = 0
+offset_left = 520.0
+offset_top = 208.0
+offset_right = 784.0
+offset_bottom = 234.0
+theme_type_variation = &"PositiveRTL"
+theme_override_font_sizes/normal_font_size = 22
+theme_override_font_sizes/bold_font_size = 22
 bbcode_enabled = true
-bbcode_text = "Installed Version: [b]2.1.2[/b]"
-text = "Installed Version: 2.1.2"
+text = "Installed Version: [b]2.1.2[/b]"
 scroll_active = false
 
-[node name="Path" type="Label" parent="Main"]
-margin_left = 35.0
-margin_top = 301.0
-margin_right = 408.0
-margin_bottom = 321.0
-custom_fonts/font = SubResource( 9 )
+[node name="Path3D" type="Label" parent="Main"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 301.0
+offset_right = 408.0
+offset_bottom = 321.0
+theme_override_font_sizes/font_size = 18
 text = "Installing to: /this/is/a/very/long/directory/open_fortress"
-valign = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="Main"]
-margin_left = 33.0
-margin_top = 277.0
-margin_right = 558.0
-margin_bottom = 300.0
+layout_mode = 0
+offset_left = 33.0
+offset_top = 277.0
+offset_right = 558.0
+offset_bottom = 300.0
 value = 50.0
-percent_visible = false
 
 [node name="Install" type="Button" parent="Main"]
-margin_left = 656.0
-margin_top = 277.0
-margin_right = 740.0
-margin_bottom = 318.0
-theme_type_variation = "ImportantButton"
-custom_fonts/font = SubResource( 11 )
+layout_mode = 0
+offset_left = 656.0
+offset_top = 277.0
+offset_right = 740.0
+offset_bottom = 318.0
+theme_type_variation = &"ImportantButton"
+theme_override_font_sizes/font_size = 22
 text = "Install"
 
 [node name="Verify" type="Button" parent="Main"]
-margin_left = 567.0
-margin_top = 277.0
-margin_right = 651.0
-margin_bottom = 318.0
-custom_fonts/font = SubResource( 15 )
+layout_mode = 0
+offset_left = 567.0
+offset_top = 277.0
+offset_right = 651.0
+offset_bottom = 318.0
+theme_override_font_sizes/font_size = 22
 text = "Verify"
 
 [node name="TextureRect" type="TextureRect" parent="Main"]
 visible = false
-modulate = Color( 1, 1, 1, 0.607843 )
-margin_right = 768.0
-margin_bottom = 387.0
-texture = ExtResource( 7 )
-expand = true
+modulate = Color(1, 1, 1, 0.607843)
+layout_mode = 0
+offset_right = 768.0
+offset_bottom = 387.0
+texture = ExtResource("7")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="GradientBar" type="Panel" parent="Main"]
-margin_top = 64.0
-margin_right = 770.0
-margin_bottom = 68.0
-theme_type_variation = "GradientBar"
+layout_mode = 0
+offset_top = 64.0
+offset_right = 770.0
+offset_bottom = 68.0
+theme_type_variation = &"GradientBar"
 
-[connection signal="change_to" from="Main" to="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer" method="_on_Main_change_to"]
+[connection signal="change_to" from="Main" to="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer" method="_on_Main_change_to"]
 [connection signal="pressed" from="Main/TopPanel/AboutButton" to="Main" method="_on_AboutButton_pressed"]
 [connection signal="pressed" from="Main/TopPanel/AdvancedButton" to="Main" method="_on_Button4_pressed"]
-[connection signal="pressed" from="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer/OFButton" to="Main" method="_on_OFButton_pressed"]
-[connection signal="pressed" from="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer/TF2CButton" to="Main" method="_on_TF2CButton_pressed"]
-[connection signal="pressed" from="Main/ViewportContainer/Viewport/ScrollContainer/HBoxContainer/PF2Button" to="Main" method="_on_PF2Button_pressed"]
+[connection signal="pressed" from="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer/OFButton" to="Main" method="_on_OFButton_pressed"]
+[connection signal="pressed" from="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer/TF2CButton" to="Main" method="_on_TF2CButton_pressed"]
+[connection signal="pressed" from="Main/SubViewportContainer/SubViewport/ScrollContainer/HBoxContainer/PF2Button" to="Main" method="_on_PF2Button_pressed"]

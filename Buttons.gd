@@ -25,7 +25,7 @@ func clear():
 	$OFButton.texture_normal = of_mono
 	$PF2Button.texture_normal = pf2_mono
 	$LFButton.texture_normal = lf_mono
-	set_color(Color.white)
+	set_color(Color.WHITE)
 
 
 func set_color(color):
