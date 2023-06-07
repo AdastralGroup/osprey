@@ -1,66 +1,68 @@
-[gd_resource type="Theme" load_steps=11 format=2]
+[gd_resource type="Theme" load_steps=12 format=3 uid="uid://diaq7op1yuqdv"]
 
-[ext_resource path="res://fonts/font.tres" type="FontFile" id=1]
+[ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="1_e5pug"]
+[ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="1_ouwjh"]
 
-[sub_resource type="StyleBoxFlat" id=12]
-bg_color = Color( 0.345098, 0.227451, 0.192157, 1 )
+[sub_resource type="StyleBoxFlat" id="12"]
+bg_color = Color(0.345098, 0.227451, 0.192157, 1)
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.345098, 0.227451, 0.192157, 1 )
+[sub_resource type="StyleBoxFlat" id="1"]
+bg_color = Color(0.345098, 0.227451, 0.192157, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 
-[sub_resource type="StyleBoxFlat" id=17]
-bg_color = Color( 0.717647, 0.215686, 0.215686, 1 )
+[sub_resource type="StyleBoxFlat" id="17"]
+bg_color = Color(0.717647, 0.215686, 0.215686, 1)
 
-[sub_resource type="StyleBoxFlat" id=16]
-bg_color = Color( 0.717647, 0.215686, 0.215686, 1 )
+[sub_resource type="StyleBoxFlat" id="16"]
+bg_color = Color(0.717647, 0.215686, 0.215686, 1)
 
-[sub_resource type="StyleBoxFlat" id=11]
-bg_color = Color( 0.901961, 0.901961, 0.862745, 1 )
-border_color = Color( 0.933333, 0.882353, 0.811765, 1 )
+[sub_resource type="StyleBoxFlat" id="11"]
+bg_color = Color(0.901961, 0.901961, 0.862745, 1)
+border_color = Color(0.933333, 0.882353, 0.811765, 1)
 
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.901961, 0.901961, 0.862745, 1 )
-border_color = Color( 0.933333, 0.882353, 0.811765, 1 )
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(0.901961, 0.901961, 0.862745, 1)
+border_color = Color(0.933333, 0.882353, 0.811765, 1)
 
-[sub_resource type="StyleBoxFlat" id=3]
-bg_color = Color( 0.952941, 0.568627, 0.34902, 1 )
+[sub_resource type="StyleBoxFlat" id="3"]
+bg_color = Color(0.952941, 0.568627, 0.34902, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color( 0.901961, 0.901961, 0.862745, 1 )
+border_color = Color(0.901961, 0.901961, 0.862745, 1)
 
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="StyleBoxFlat" id="4"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_bottom = 4.0
-bg_color = Color( 0, 0.329412, 0.588235, 0 )
+bg_color = Color(0, 0.329412, 0.588235, 0)
 draw_center = false
-border_color = Color( 0.972549, 0.952941, 0.933333, 1 )
+border_color = Color(0.972549, 0.952941, 0.933333, 1)
 
-[sub_resource type="StyleBoxFlat" id=18]
-bg_color = Color( 0.168627, 0.152941, 0.14902, 1 )
+[sub_resource type="StyleBoxFlat" id="18"]
+bg_color = Color(0.168627, 0.152941, 0.14902, 1)
 
 [resource]
-default_font = ExtResource( 1 )
-AccentPanel/base_type = "Panel"
-AccentPanel/styles/panel = SubResource( 12 )
-Button/styles/normal = SubResource( 1 )
-GradientBar/base_type = "Panel"
-GradientBar/styles/panel = SubResource( 17 )
-ImportantButton/base_type = "Button"
-ImportantButton/colors/font_color = Color( 0, 0, 0, 1 )
-ImportantButton/styles/normal = SubResource( 16 )
-Label/colors/font_color = Color( 0.901961, 0.901961, 0.862745, 1 )
-Panel/styles/panel = SubResource( 11 )
-PositiveRTL/base_type = "RichTextLabel"
-PositiveRTL/colors/default_color = Color( 0.25098, 0.137255, 0.0666667, 1 )
-ProgressBar/styles/bg = SubResource( 2 )
-ProgressBar/styles/fg = SubResource( 3 )
-ScrollContainer/styles/bg = SubResource( 4 )
-TopPanel/base_type = "Panel"
-TopPanel/styles/panel = SubResource( 18 )
+default_font = ExtResource("1_e5pug")
+AccentPanel/base_type = &"Panel"
+AccentPanel/styles/panel = SubResource("12")
+Button/styles/normal = SubResource("1")
+GradientBar/base_type = &"Panel"
+GradientBar/styles/panel = SubResource("17")
+ImportantButton/base_type = &"Button"
+ImportantButton/colors/font_color = Color(0, 0, 0, 1)
+ImportantButton/styles/normal = SubResource("16")
+Label/colors/font_color = Color(0.901961, 0.901961, 0.862745, 1)
+Panel/styles/panel = SubResource("11")
+PositiveRTL/base_type = &"RichTextLabel"
+PositiveRTL/colors/default_color = Color(0.25098, 0.137255, 0.0666667, 1)
+PositiveRTL/fonts/bold_font = ExtResource("1_ouwjh")
+ProgressBar/styles/bg = SubResource("2")
+ProgressBar/styles/fg = SubResource("3")
+ScrollContainer/styles/bg = SubResource("4")
+TopPanel/base_type = &"Panel"
+TopPanel/styles/panel = SubResource("18")
