@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2ttcp5fvn0m8"
-path="res://.godot/imported/bg.png-23a59c2e9cba2223a50fa3fe41b70b25.ctex"
+uid="uid://dl1pb2qorhyek"
+path="res://.godot/imported/pf2_wordmark_big.png-e1b53a0033de323b1a43c92955ef091d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/bg.png"
-dest_files=["res://.godot/imported/bg.png-23a59c2e9cba2223a50fa3fe41b70b25.ctex"]
+source_file="res://assets/pf2_wordmark_big.png"
+dest_files=["res://.godot/imported/pf2_wordmark_big.png-e1b53a0033de323b1a43c92955ef091d.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1

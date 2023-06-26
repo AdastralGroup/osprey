@@ -1,39 +1,54 @@
-[gd_resource type="Theme" load_steps=12 format=3 uid="uid://diaq7op1yuqdv"]
+[gd_resource type="Theme" load_steps=16 format=3 uid="uid://diaq7op1yuqdv"]
 
 [ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="1_e5pug"]
 [ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="1_ouwjh"]
 
 [sub_resource type="StyleBoxFlat" id="12"]
-bg_color = Color(0.345098, 0.227451, 0.192157, 1)
+bg_color = Color(0.278431, 0.184314, 0.180392, 1)
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 5
+
+[sub_resource type="Gradient" id="Gradient_21lqh"]
+colors = PackedColorArray(0.901961, 0.901961, 0.862745, 1, 0.901961, 0.901961, 0.862745, 0.188235)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_yrm5e"]
+gradient = SubResource("Gradient_21lqh")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pgpmm"]
+texture = SubResource("GradientTexture1D_yrm5e")
 
 [sub_resource type="StyleBoxFlat" id="1"]
 bg_color = Color(0.345098, 0.227451, 0.192157, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="17"]
-bg_color = Color(0.717647, 0.215686, 0.215686, 1)
+bg_color = Color(0.717647, 0.215686, 0.223529, 1)
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="16"]
-bg_color = Color(0.717647, 0.215686, 0.215686, 1)
+bg_color = Color(0.717647, 0.215686, 0.223529, 1)
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="11"]
 bg_color = Color(0.901961, 0.901961, 0.862745, 1)
 border_color = Color(0.933333, 0.882353, 0.811765, 1)
 
-[sub_resource type="StyleBoxFlat" id="2"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dc2hh"]
 bg_color = Color(0.901961, 0.901961, 0.862745, 1)
-border_color = Color(0.933333, 0.882353, 0.811765, 1)
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 5
 
-[sub_resource type="StyleBoxFlat" id="3"]
-bg_color = Color(0.952941, 0.568627, 0.34902, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cheit"]
+bg_color = Color(0.717647, 0.215686, 0.223529, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.901961, 0.901961, 0.862745, 1)
+shadow_color = Color(0, 0, 0, 0.168627)
 
 [sub_resource type="StyleBoxFlat" id="4"]
 content_margin_left = 4.0
@@ -43,6 +58,11 @@ bg_color = Color(0, 0.329412, 0.588235, 0)
 draw_center = false
 border_color = Color(0.972549, 0.952941, 0.933333, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5di0"]
+bg_color = Color(0.345098, 0.227451, 0.192157, 1)
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 5
+
 [sub_resource type="StyleBoxFlat" id="18"]
 bg_color = Color(0.168627, 0.152941, 0.14902, 1)
 
@@ -50,19 +70,22 @@ bg_color = Color(0.168627, 0.152941, 0.14902, 1)
 default_font = ExtResource("1_e5pug")
 AccentPanel/base_type = &"Panel"
 AccentPanel/styles/panel = SubResource("12")
+BigGrad/base_type = &"Panel"
+BigGrad/styles/panel = SubResource("StyleBoxTexture_pgpmm")
 Button/styles/normal = SubResource("1")
 GradientBar/base_type = &"Panel"
 GradientBar/styles/panel = SubResource("17")
 ImportantButton/base_type = &"Button"
-ImportantButton/colors/font_color = Color(0, 0, 0, 1)
 ImportantButton/styles/normal = SubResource("16")
 Label/colors/font_color = Color(0.901961, 0.901961, 0.862745, 1)
 Panel/styles/panel = SubResource("11")
 PositiveRTL/base_type = &"RichTextLabel"
 PositiveRTL/colors/default_color = Color(0.25098, 0.137255, 0.0666667, 1)
 PositiveRTL/fonts/bold_font = ExtResource("1_ouwjh")
-ProgressBar/styles/bg = SubResource("2")
-ProgressBar/styles/fg = SubResource("3")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_dc2hh")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_cheit")
 ScrollContainer/styles/bg = SubResource("4")
+SidePanel/base_type = &"Panel"
+SidePanel/styles/panel = SubResource("StyleBoxFlat_d5di0")
 TopPanel/base_type = &"Panel"
 TopPanel/styles/panel = SubResource("18")

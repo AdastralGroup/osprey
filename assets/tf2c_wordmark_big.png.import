@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dh6dr2lq4d3w7"
-path="res://.godot/imported/of-mono.png-e9cac8062c780e6c7d8981c1fa589114.ctex"
+uid="uid://da68tupgs0578"
+path="res://.godot/imported/tf2c_wordmark_big.png-d51d6474532ec1c94aa0e833ef8fc1af.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/of-mono.png"
-dest_files=["res://.godot/imported/of-mono.png-e9cac8062c780e6c7d8981c1fa589114.ctex"]
+source_file="res://assets/tf2c_wordmark_big.png"
+dest_files=["res://.godot/imported/tf2c_wordmark_big.png-d51d6474532ec1c94aa0e833ef8fc1af.ctex"]
 
 [params]
 
