@@ -14,7 +14,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+ /// NOTE: Visual Studio will give out false errors when compiling for the first time. this is normal with gd. the manager SHOULD compile normally after building godot.
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
 
