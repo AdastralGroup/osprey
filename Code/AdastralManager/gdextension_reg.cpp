@@ -15,7 +15,9 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 #include <AdastralManager/AdastralDefines.h>
+
 
 #include <AdastralManager/GDRegister/register_adastral_types.h>
 
