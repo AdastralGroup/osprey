@@ -350,6 +350,7 @@ MigrationBackup/
 
 
 # Visual Studio Rubbish
+.vscode/
 Workspace/
 Output/
 _deps/

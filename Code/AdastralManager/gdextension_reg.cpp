@@ -14,11 +14,14 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- /// NOTE: Visual Studio will give out false errors when compiling for the first time. this is normal with gd. the manager SHOULD compile normally after building godot.
-#include <godot_cpp/godot.hpp>
-#include <godot_cpp/core/class_db.hpp>
 
-void register_gameplay_types(godot::ModuleInitializationLevel p_level) {
+
+#include <AdastralManager/AdastralDefines.h>
+
+
+#include <AdastralManager/GDRegister/register_adastral_types.h>
+
+void register_adastral_types(godot::ModuleInitializationLevel p_level) {
 	if (p_level != godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
@@ -26,16 +29,16 @@ void register_gameplay_types(godot::ModuleInitializationLevel p_level) {
 	// REGISTER CLASSES HERE LATER
 }
 
-void unregister_gameplay_types(godot::ModuleInitializationLevel p_level) {
+void unregister_adastral_types(godot::ModuleInitializationLevel p_level) {
 	// DO NOTHING
 }
 
 extern "C" {
-	GDExtensionBool GDE_EXPORT gameplay_library_init(const GDExtensionInterface* p_interface, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization* r_initialization) {
+	GDExtensionBool GDE_EXPORT adastral_library_init(const GDExtensionInterface* p_interface, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization* r_initialization) {
 		godot::GDExtensionBinding::InitObject init_object(p_interface, p_library, r_initialization);
 
-		init_object.register_initializer(register_gameplay_types);
-		init_object.register_terminator(unregister_gameplay_types);
+		init_object.register_initializer(register_adastral_types);
+		init_object.register_terminator(unregister_adastral_types);
 		init_object.set_minimum_library_initialization_level(godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE);
 
 		return init_object.init();
