@@ -39,7 +39,7 @@ namespace adastral
 		template<class s>
 		void BindGodotMethod(s& method, godot::String& _methodname);
 
-		/// @brIef Destroys the class db, which in turn, deinit's all registered classes.
+		/// @brIef Destroys the class db, which in turn, de-init's all registered classes.
 		void KillClasses(GDExtensionInitializationLevel a);
 	protected:
 	private:
