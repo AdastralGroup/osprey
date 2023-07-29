@@ -19,10 +19,18 @@
 
  // Configure the DLL Import/Export Define
 
-#  ifdef BUILDSYSTEM_BUILDING_ADASTRALMANAGER_LIB
-#    define AD_ADASTRALMANAGER_DLL __declspec(dllexport)
+#  ifdef BUILDSYSTEM_BUILDING_ADASTRALMANAGER_LIB 
+#    ifdef _WIN32
+#      define AD_ADASTRALMANAGER_DLL __declspec(dllexport)
+#    else
+#      define AD_ADASTRALMANAGER_DLL [[gnu::visibility("default")]]
+#    endif
 #  else
-#    define AD_ADASTRALMANAGER_DLL __declspec(dllimport)
+#      ifdef _WIN32
+#           define AD_ADASTRALMANAGER_DLL __declspec(dllimport)
+#      else
+#         define define AD_ADASTRALMANAGER_DLL [[gnu::visibility("default")]]
+#       endif
 #  endif
 
 #include <godot_cpp/godot.hpp>
