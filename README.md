@@ -1,2 +1,2 @@
 # Emley
-The deepest level for Adastral (used for versioning, patching & veryfing files)
+The first L1 module for Adastral (used for versioning, patching & verifying files)
