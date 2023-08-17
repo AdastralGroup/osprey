@@ -1,10 +1,11 @@
-[gd_resource type="Theme" load_steps=19 format=3 uid="uid://bjlpjpea0xxp1"]
+[gd_resource type="Theme" load_steps=21 format=3 uid="uid://bqpi1momfja7u"]
 
-[ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="1_7qscj"]
-[ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="2_3hvfu"]
+[ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="1_0qd58"]
+[ext_resource type="Texture2D" uid="uid://k26yaq7v8rdk" path="res://assets/of_wordmark_big.png" id="2_j1ntd"]
+[ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="3_x1of1"]
 
 [sub_resource type="StyleBoxFlat" id="33"]
-bg_color = Color(0.290196, 0.203922, 0.313726, 1)
+bg_color = Color(0.34902, 0.254902, 0.415686, 1)
 shadow_color = Color(0, 0, 0, 0.168627)
 shadow_size = 5
 
@@ -27,7 +28,11 @@ bg_color = Color(0.239216, 0.160784, 0.317647, 1)
 border_color = Color(0.933333, 0.882353, 0.811765, 1)
 
 [sub_resource type="StyleBoxFlat" id="11"]
-bg_color = Color(0.34902, 0.254902, 0.415686, 1)
+bg_color = Color(0.933333, 0.882353, 0.811765, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 shadow_color = Color(0, 0, 0, 0.121569)
 shadow_size = 4
 
@@ -42,9 +47,12 @@ shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="37"]
 bg_color = Color(0.831373, 0.611765, 0.419608, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 shadow_color = Color(0, 0, 0, 0.14902)
 shadow_size = 4
-anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="27"]
 bg_color = Color(0.933333, 0.882353, 0.811765, 1)
@@ -52,7 +60,6 @@ bg_color = Color(0.933333, 0.882353, 0.811765, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n6rfq"]
 bg_color = Color(0.933333, 0.882353, 0.811765, 1)
 shadow_color = Color(0, 0, 0, 0.168627)
-shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mr3yy"]
 bg_color = Color(0.831373, 0.611765, 0.419608, 1)
@@ -64,19 +71,23 @@ border_color = Color(0.933333, 0.882353, 0.811765, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldpv0"]
 bg_color = Color(0.34902, 0.254902, 0.415686, 1)
+corner_radius_top_right = 18
 shadow_color = Color(0, 0, 0, 0.168627)
 shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="38"]
 bg_color = Color(0.137255, 0.121569, 0.12549, 1)
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5kdb5"]
+texture = ExtResource("2_j1ntd")
+
 [resource]
-default_font = ExtResource("1_7qscj")
+default_font = ExtResource("3_x1of1")
 AccentPanel/base_type = &"Panel"
 AccentPanel/styles/panel = SubResource("33")
 BigGrad/base_type = &"Panel"
 BigGrad/styles/panel = SubResource("StyleBoxTexture_85s06")
-Button/colors/font_color = Color(0.933333, 0.882353, 0.811765, 1)
+Button/colors/font_color = Color(0.552941, 0.517647, 0.482353, 1)
 Button/colors/font_color_disabled = Color(0.654902, 0.654902, 0.654902, 1)
 Button/colors/font_color_focus = Color(0.933333, 0.886275, 0.811765, 1)
 Button/colors/font_color_hover = Color(0.933333, 0.886275, 0.811765, 1)
@@ -97,16 +108,18 @@ LineEdit/colors/font_color = Color(0.239216, 0.160784, 0.317647, 1)
 LineEdit/styles/normal = SubResource("27")
 PositiveRTL/base_type = &"RichTextLabel"
 PositiveRTL/colors/default_color = Color(0.34902, 0.254902, 0.415686, 1)
-PositiveRTL/fonts/bold_font = ExtResource("2_3hvfu")
+PositiveRTL/fonts/bold_font = ExtResource("1_0qd58")
 ProgressBar/colors/font_color = Color(0.945098, 0.945098, 0.945098, 1)
 ProgressBar/styles/background = SubResource("StyleBoxFlat_n6rfq")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_mr3yy")
 RichTextLabel/colors/default_color = Color(0.933333, 0.882353, 0.811765, 1)
 RichTextLabel/colors/font_color_shadow = Color(0, 0, 0, 0)
 RichTextLabel/constants/line_separation = 8
-RichTextLabel/fonts/bold_font = ExtResource("2_3hvfu")
+RichTextLabel/fonts/bold_font = ExtResource("1_0qd58")
 RichTextLabel/styles/normal = null
 SidePanel/base_type = &"Panel"
 SidePanel/styles/panel = SubResource("StyleBoxFlat_ldpv0")
 TopPanel/base_type = &"Panel"
 TopPanel/styles/panel = SubResource("38")
+WMPanel/base_type = &"Panel"
+WMPanel/styles/panel = SubResource("StyleBoxTexture_5kdb5")

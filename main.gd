@@ -1,119 +1,95 @@
 extends Control
-var of_theme = load("res://themes/of_theme.tres")
-var of_bg = load("res://assets/of-bg.jpg")
-var of_logo = load("res://assets/adastral-of.png")
-var of_word = load("res://assets/of_wordmark_big.png")
 
-var tf2c_theme = load("res://themes/tf2c_theme.tres")
-var tf2c_bg = load("res://assets/tf2c-bg.jpg")
-var tf2c_logo = load("res://assets/adastral-tf2c.png")
-var tf2c_word = load("res://assets/tf2c_wordmark_big.png")
-
-var pf2_theme = load("res://themes/pf2_theme.tres")
-var pf2_bg = load("res://assets/pf2-bg.png")
-var pf2_logo = load("res://assets/adastral-pf2.png")
-var pf2_word = load("res://assets/pf2_wordmark_big.png")
-
-#var lf_theme = load("res://themes/of_theme.tres")
-#var lf_bg = load("res://assets/of-bg.png")
-#var lf_logo = load("res://assets/adastral-tf2c.png")
-
-var default_theme = load("res://themes/main.tres")
-var default_bg = load("res://assets/bg.png")
-var default_logo = load("res://assets/adastral.svg")
-
-
+#var big_json='{"adastral":{"dark":"#000000","light":"#f8f3ee","main":"#005c9d","accent":"#b76300","lightfg":"#8d847b","bgpath":"res://assets/bg.png","logo":"res://assets/adastral.svg","wordmark":"res://assets/adastral.svg"},"open_fortress":{"dark":"#231f20","light":"#eee1cf","main":"#59416a","accent":"#d49c6b","lightfg":"#8d847b","bgpath":"res://assets/of-bg.jpg","logo":"res://assets/adastral-of.png","wordmark":"res://assets/of_wordmark_big.png"}}'
+@onready var theme_json
+@onready var pallete: Dictionary
 
 signal change_to(game)
 
-func set_title_text(text):
-	$GameText.text = "You've selected [b]%s[/b]" % text
 
 func set_button_colours(colour):
 	$TopPanel/AboutButton.modulate = colour
 	$TopPanel/AdvancedButton.modulate = colour
 	$TopPanel/HomeButton.modulate = colour
 	$TopPanel/DownloadTab.modulate = colour
+	for x in $HBoxContainer.get_children():
+		if x.get_class() == "TextureButton":
+			x.modulate = colour
 
 
 func _ready():
-	var z = JSON.stringify(pf2_theme)
-	print(z)
-	$Wordmark.hide()
-	$TextureRect2.show()
-	theme = default_theme
-	$Background.texture = default_bg
-	$Background.position = Vector2(0,0)
-	$Background.size = Vector2(770,352)
-	$GameText.text = "[b]Welcome to Adastral![/b] Select a game to install."
-	#$GameText5.rect_position = Vector2(41,2)
-	#$GameText5.rect_size = Vector2(111,45)
-	set_button_colours(Color("f8f3ee"))
-	$TopPanel/AdastralLogo.texture = default_logo
+	var json_handler = JSON.new()
+	var file = FileAccess.open("res://assets/themes.json", FileAccess.READ)
+	theme_json = json_handler.parse_string(file.get_as_text())
+	#theme = load("res://themes/pf2_theme.tres")
+	apply_theme("adastral")
+	do_thing()
 	
-
-func _on_OFButton_pressed():
-#	var tween = get_tree().create_tween()
-#	tween.tween_property($Camera2D,"zoom",Vector2(100,100),4).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BOUNCE)
-#	tween.tween_property($Camera2D,"zoom",Vector2(1,1),4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BOUNCE)
-#	yield(get_tree().create_timer(4),"timeout")
-	$Wordmark.show()
-	$TextureRect2.hide()
-	theme = of_theme
-	$Background.texture = of_bg
-	$Background.position = Vector2(65,68)
-	$Background.size = Vector2(1135,397)
-	$Wordmark.texture = of_word
-	$Wordmark.position = Vector2(77,181)
-	$Wordmark.size = Vector2(338,64)
-	set_title_text("Open Fortress")
-	$TopPanel/AdastralLogo.texture = of_logo
-	set_button_colours(Color("eee1cf"))
-	emit_signal("change_to","of")
-
-
-
-func _on_TF2CButton_pressed():
-	$Wordmark.show()
-	$TextureRect2.hide()
-	theme = tf2c_theme
-	$Background.texture = tf2c_bg
-	$Background.position = Vector2(-24,36) # bg positioning, we won't need this with proper assets
-	$Background.size = Vector2(876,332)
-	$Wordmark.texture = tf2c_word
-	$Wordmark.position = Vector2(77,139)
-	$Wordmark.size = Vector2(338,106)
-	set_title_text("TF2 Classic")
-	$TopPanel/AdastralLogo.texture = tf2c_logo
-	set_button_colours(Color("e7daad"))
-	emit_signal("change_to","tf2c") # to change the colour buttons in a different file
-
-func _on_PF2Button_pressed():
-	$Wordmark.show()
-	$TextureRect2.hide()
-	theme = pf2_theme
-	$Background.texture = pf2_bg
-	$Background.position = Vector2(-24,36)
-	$Background.size = Vector2(876,332)
-	$Wordmark.texture = pf2_word
-	$Wordmark.position = Vector2(77,139)
-	$Wordmark.size = Vector2(338,106)
-	set_title_text("Pre-Fortress 2")
-	$TopPanel/AdastralLogo.texture = pf2_logo
-	set_button_colours(Color("e6e6dc"))
-	emit_signal("change_to","pf2")
-
-
+	
 func _on_Button4_pressed():
 	pass
 
-
-
 func _on_AboutButton_pressed():
-	get_window().set_size(Vector2(770, 350))
+	pass
 
 
 func _on_HomeButton_pressed():
-	print("clicked")
-	emit_signal("change_to","adastral")
-	_ready()
+	apply_theme("adastral")
+
+func set_stylebox_colour(stylebox,colour):
+	stylebox.bg_color = colour
+
+func apply_theme(theme_name):
+	pallete = theme_json[theme_name]
+	var base_theme = load("res://themes/base.tres") 
+	if not pallete.has("secondary"):
+		pallete["secondary"] = pallete["main"]
+	if pallete["id"] == "adastral":
+		$TextureRect2.show()
+	else:
+		$TextureRect2.hide()
+	if not pallete.has("wordmark"):
+		$Wordmark.hide()
+	else:
+		$Wordmark.texture = load(pallete["wordmark"])
+		$Wordmark.show()
+	$Panel2/Background.texture = load(pallete["bgpath"])
+	$TopPanel/AdastralLogo.texture = load(pallete["star"])
+	set_stylebox_colour(base_theme.get_stylebox("panel","TopPanel"),Color(pallete["dark"]))
+	set_stylebox_colour(base_theme.get_stylebox("panel","SidePanel"),Color(pallete["secondary"]))
+	set_stylebox_colour(base_theme.get_stylebox("panel","AccentPanel"),Color(pallete["main"]))
+	set_stylebox_colour(base_theme.get_stylebox("normal","Button"),Color(pallete["light"]))
+	set_stylebox_colour(base_theme.get_stylebox("normal","ImportantButton"),Color(pallete["accent"]))
+	set_stylebox_colour(base_theme.get_stylebox("background","TopPanel"),Color(pallete["light"]))
+	set_stylebox_colour(base_theme.get_stylebox("fill","ProgressBar"),Color(pallete["accent"]))
+	set_stylebox_colour(base_theme.get_stylebox("panel","TopPanel"),Color(pallete["dark"]))
+	base_theme.set_color("font_color","Button",Color(pallete["lightfg"]))
+	base_theme.set_color("font_color","ImportantButton",Color(pallete["light"]))
+	theme = base_theme
+	set_button_colours(Color(pallete["light"]))
+	
+	
+
+func add_new_sep():
+	var new = VSeparator.new()
+	new.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	new.add_theme_stylebox_override("separator",StyleBoxEmpty.new())
+	$HBoxContainer.add_child(new)
+
+func do_thing():
+	for x in theme_json.values():
+		if x["id"] != "adastral":
+			if $HBoxContainer.get_child_count() != 0:
+				add_new_sep()
+			var new = TextureButton.new()
+			new.ignore_texture_size = true
+			new.stretch_mode = TextureButton.STRETCH_SCALE
+			new.custom_minimum_size= Vector2(42,42)
+			new.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			new.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			new.texture_normal = load(x["icon"])
+			$HBoxContainer.add_child(new)
+			new.pressed.connect(func(): apply_theme(x["id"]))
+	
+	
+	
