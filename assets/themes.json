@@ -20,7 +20,7 @@
 		"bgpath": "res://assets/of-bg.jpg",
 		"star": "res://assets/adastral-of.png",
 		"icon": "res://assets/of-logo-new.svg",
-		"wordmark": "res://assets/of_wordmark_big.png"
+		"wordmark": "res://assets/of_wordmark_trimmed.png"
 	},
 	"tf2classic": {
 		"id": "tf2classic",
@@ -33,7 +33,7 @@
 		"bgpath": "res://assets/tf2c-bg.jpg",
 		"star": "res://assets/adastral-tf2c.png",
 		"icon": "res://assets/tf2c-logo-mono.svg",
-		"wordmark": "res://assets/tf2c_wordmark_big.png"
+		"wordmark": "res://assets/tf2c_wordmark_trimmed.png"
 	},
 	"prefortress2": {
 		"id": "prefortress2",
@@ -46,6 +46,6 @@
 		"bgpath": "res://assets/pf2-bg.png",
 		"star": "res://assets/adastral-pf2.png",
 		"icon": "res://assets/pf2-logo-mono.svg",
-		"wordmark": "res://assets/pf2_wordmark_big.png"
+		"wordmark": "res://assets/pf2_wordmark_trimmed.png"
 	}
 }
