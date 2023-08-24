@@ -10,6 +10,7 @@ adastral::ADProjectRegister::~ADProjectRegister()
 	_registeredprojects.clear();
 }
 
-void adastral::ADProjectRegister::KillClasses(GDExtensionInitializationLevel a)
+void adastral::ADProjectRegister::KillClasses(GDExtensionInitializationLevel& a)
 {
+	
 }

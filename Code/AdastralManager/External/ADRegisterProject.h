@@ -17,11 +17,12 @@
 
 #pragma once
 
+//====== Needed Headers ===========
 #include <AdastralManager/AdastralDefines.h>
 #include <godot_cpp/classes/jni_singleton.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <map>
-
+//=============================
 namespace adastral
 {
 	/// @brief Helper class to assist with registering external libraries to godot.
@@ -35,12 +36,12 @@ namespace adastral
 		template<class a>
 		void RegisterClass(godot::String _classname, a& regclass);
 
-		/// @brief Binds a godot method. NOTE: This should be used for static methods/classes. it will not be assigned to a class.
+		/// @brief Binds a godot method. NOTE: This should be used for static methods/classes. it will not be assigned to a class (In-terms of godot).
 		template<class s>
 		void BindGodotMethod(s& method, godot::String& _methodname);
 
-		/// @brIef Destroys the class db, which in turn, de-init's all registered classes.
-		void KillClasses(GDExtensionInitializationLevel a);
+		/// @brief Destroys the class db, which in turn, de-init's all registered classes.
+		void KillClasses(GDExtensionInitializationLevel& a);
 	protected:
 	private:
 		std::map<godot::String, void*> _registeredprojects;
