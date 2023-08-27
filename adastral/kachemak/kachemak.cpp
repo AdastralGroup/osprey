@@ -1,6 +1,10 @@
 #include <kachemak/kachemak.hpp>
 
-Kachemak::Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory, const std::string& szSourceUrl) : Version(szInstallPath, szDataDirectory, szSourceUrl)
+Kachemak::Kachemak(
+	const std::filesystem::path& szInstallPath,
+	const std::filesystem::path& szDataDirectory,
+	const std::string& szSourceUrl)
+	: Version(szInstallPath, szDataDirectory, szSourceUrl)
 {
 	// placeholder
 	m_parsedVersion = R"({
@@ -20,6 +24,8 @@ Kachemak::Kachemak(const std::filesystem::path& szInstallPath, const std::filesy
 			"210" : {"url": "tf2classic-patch-210-211.meta4", "file" : "tf2classic-patch-210-211.pwr", "tempreq" : 7500000000}
 		}
 	})"_json;
+
+	m_szTempPath = std::filesystem::temp_directory_path().string();
 
 }
 

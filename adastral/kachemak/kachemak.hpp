@@ -21,4 +21,5 @@ public:
 	KachemakVersion GetLatestVersion();
 private:
 	nlohmann::json m_parsedVersion;
+	std::filesystem::path m_szTempPath;
 };
