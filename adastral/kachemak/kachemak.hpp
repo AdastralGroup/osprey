@@ -28,4 +28,7 @@ public:
 private:
 	nlohmann::json m_parsedVersion;
 	std::filesystem::path m_szTempPath;
+
+	std::string m_szButlerLocation;
+	std::string m_szAria2cLocation;
 };
