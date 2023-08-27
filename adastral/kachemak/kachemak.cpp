@@ -88,6 +88,56 @@ int Kachemak::ButlerVerify(
 
 	return 0;
 }
+/*
+description:
+  routine for updating whatever is installed
+res:
+  0: success
+  1: symlink fail
+*/
+int Kachemak::Update()
+{
+	int symlinkRes = PrepareSymlink();
+	if (symlinkRes != 0)
+	{
+		return 1;
+	}
+
+	std::string local_version = "204";
+
+	nlohmann::json patch_json = m_parsedVersion["patches"];
+	std::string patch_url = patch_json[local_version]["url"].get<std::string>();
+	std::string patch_file = patch_json[local_version]["file"].get<std::string>();
+	std::string patch_tempreq = patch_json[local_version]["tempreq"].get<std::string>();
+
+	nlohmann::json version_json = m_parsedVersion["versions"];
+	std::string signature_url = version_json[local_version]["signature"].get<std::string>();
+	std::string heal_url = version_json[local_version]["heal"].get<std::string>();
+
+	// full signature url
+	std::stringstream sigUrlFull_ss;
+	sigUrlFull_ss << m_szSourceUrl << signature_url;
+	// Data path for current install
+	std::filesystem::path dataDir_path = m_szInstallPath / m_szDataDirectory;
+	std::stringstream healUrl_ss;
+	healUrl_ss << m_szSourceUrl << heal_url;
+	int verifyRes = ButlerVerify(
+		sigUrlFull_ss.str(),
+		dataDir_path.string(),
+		healUrl_ss.str());
+
+	std::stringstream patchUrlFull_ss;
+	patchUrlFull_ss << m_szSourceUrl << patch_url;
+	std::filesystem::path stagingPath = m_szInstallPath / "butler-staging";
+	int patchRes = ButlerPatch(
+		patchUrlFull_ss.str(),
+		stagingPath.string(),
+		patch_file,
+		dataDir_path.string());
+
+	return 0;
+}
+
 // TODO - 
 int Kachemak::PrepareSymlink()
 {
