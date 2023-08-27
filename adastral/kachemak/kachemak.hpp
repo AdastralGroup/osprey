@@ -1,8 +1,14 @@
 #pragma once
 
+#include <utility/utility.hpp>
 #include <version/version.hpp>
 #include <json/single_include/nlohmann/json.hpp>
-
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <system_error>
+#include <array>
+#include <filesystem>
 
 struct KachemakVersion {
 	std::string szFileName;
