@@ -25,6 +25,9 @@ public:
 	Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory, const std::string& szSourceUrl = "https://wiki.tf2classic.com/kachemak/");
 	KachemakVersion GetVersion(const std::string& version);
 	KachemakVersion GetLatestVersion();
+	int FreeSpaceCheck(
+		const uintmax_t size,
+		const FreeSpaceCheckCategory& category);
 private:
 	nlohmann::json m_parsedVersion;
 	std::filesystem::path m_szTempPath;

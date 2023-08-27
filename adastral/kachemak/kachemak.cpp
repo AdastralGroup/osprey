@@ -56,3 +56,32 @@ KachemakVersion Kachemak::GetLatestVersion()
 
 	return GetVersion(versionId);
 }
+/*
+description:
+  check free space for specific category provided.
+res:
+  0: success
+  1: not enough temp storage
+  2: not enough permanent storage
+*/
+int Kachemak::FreeSpaceCheck(
+	const uintmax_t size,
+	const FreeSpaceCheckCategory& category)
+{
+	switch(category)
+	{
+		case FreeSpaceCheckCategory::Temporary:
+			if (std::filesystem::space(m_szTempPath).free < size)
+			{
+				return 1;
+			}
+			break;
+		case FreeSpaceCheckCategory::Permanent:
+			if (std::filesystem::space(m_szInstallPath).free < size)
+			{
+				return 2;
+			}
+			break;
+	}
+	return 0;
+}
