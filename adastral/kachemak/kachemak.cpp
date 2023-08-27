@@ -56,6 +56,38 @@ KachemakVersion Kachemak::GetLatestVersion()
 
 	return GetVersion(versionId);
 }
+
+/*
+description:
+  wrapper for butler cli to verify installation
+res:
+  0: success
+  i: return code from butler (when not 0)
+*/
+int Kachemak::ButlerVerify(
+	const std::string& szSignature,
+	const std::string& szGameDir,
+	const std::string& szRemote)
+{
+	std::stringstream params;
+
+	// {m_butlerLoation} verify {szSignature} {szGameDir} --heal=archive{szRemote}
+	params << m_szButlerLocation.c_str()
+	<< " verify "
+	<< szSignature.c_str() << " "
+	<< szGameDir.c_str() << " "
+	<< "--heal=archive" << szRemote;
+
+
+	int res = system(params.str().c_str());
+	if (res != 0)
+	{
+		std::cerr << "Failed to verify with butler: " << res << std::endl;
+		return res;
+	}
+
+	return 0;
+}
 /*
 description:
   check free space for specific category provided.

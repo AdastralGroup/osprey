@@ -20,11 +20,21 @@ struct KachemakVersion {
 	std::string szSignature;
 };
 
+enum class FreeSpaceCheckCategory
+{
+	Temporary,
+	Permanent
+};
+
 class Kachemak : public Version {
 public:
 	Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory, const std::string& szSourceUrl = "https://wiki.tf2classic.com/kachemak/");
 	KachemakVersion GetVersion(const std::string& version);
 	KachemakVersion GetLatestVersion();
+	int ButlerVerify(
+		const std::string& szSignature,
+		const std::string& szGameDir,
+		const std::string& szRemote);
 	int FreeSpaceCheck(
 		const uintmax_t size,
 		const FreeSpaceCheckCategory& category);
