@@ -32,3 +32,11 @@
 *.app
 .vs
 /out
+
+# CMake stuff
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+build
+CMakeFiles
+adastral/adastral
