@@ -35,6 +35,11 @@ public:
 		const std::string& szSignature,
 		const std::string& szGameDir,
 		const std::string& szRemote);
+	int ButlerPatch(
+		const std::string& sz_url,
+		const std::filesystem::path& sz_stagingDir,
+		const std::string& sz_patchFileName,
+		const std::string& sz_gameDir);
 	int FreeSpaceCheck(
 		const uintmax_t size,
 		const FreeSpaceCheckCategory& category);

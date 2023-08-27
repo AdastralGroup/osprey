@@ -117,3 +117,101 @@ int Kachemak::FreeSpaceCheck(
 	}
 	return 0;
 }
+
+/*
+description:
+  patch installation
+res:
+  0: success
+  1: failed to download patch
+  2: failed to apply patch*/
+int Kachemak::ButlerPatch(
+	const std::string& sz_url,
+	const std::filesystem::path& sz_stagingDir,
+	const std::string& sz_patchFileName,
+	const std::string& sz_gameDir)
+{
+	bool stagingDir_exists = std::filesystem::exists(sz_stagingDir);
+	bool stagingDir_isDir = std::filesystem::is_directory(sz_stagingDir);
+	if (!stagingDir_exists)
+	{
+		if (!std::filesystem::create_directory(sz_stagingDir))
+		{
+			std::cerr << "[ButlerPatch] Failed to create directory: " << sz_stagingDir.string() << std::endl;
+		}
+	}
+	if (stagingDir_exists && stagingDir_isDir)
+	{
+		switch(Utility::DeleteDirectoryContent(sz_stagingDir))
+		{
+			case 1:
+				std::cerr << "[ButlerPatch] Failed to delete staging directory content (doesn't exist)";
+				break;
+			case 2:
+				std::cerr << "[ButlerPatch] Failed to delete staging directory content (not a directory)";
+				break;
+		}
+	}
+
+	#pragma region Download Patch
+	std::vector<std::string> dl_params = 
+	{
+		m_szAria2cLocation,
+		"--max-connection-per-server=16",
+		"-UAdastral-master",
+		"--disable-ipv6=true",
+		"--allow-piece-length-change=true",
+		"--max-concurrent-downloads=16",
+		"--optimize-concurrent-downloads=true",
+		"--check-certificate=false",
+		"--check-integrity=true",
+		"--auto-file-renaming=false",
+		"--continue=true",
+		"--allow-overwrite=true",
+		"--console-log-level=error",
+		"--summary-interval=0",
+		"--bt-hash-check-seed=false",
+		"--seed-time=0",
+		"-d",
+		m_szTempPath.string(),
+		sz_url
+	};
+	std::cout << "[ButlerPatch] Downloading Patch" << std::endl;
+	int dl_res = Utility::ExecWithParam(dl_params);
+	if (dl_res != 0)
+	{
+		std::cerr << "[ButlerPatch] Failed to download patch: " << dl_res << std::endl;
+		return 1;
+	}
+	#pragma endregion
+
+	std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
+
+	std::vector<std::string> apply_params =
+	{
+		m_szButlerLocation,
+		"apply",
+		"--staging-dir" + sz_stagingDir.string(),
+		tempPath,
+		sz_gameDir
+	};
+	std::cout << "[ButlerPatch] Applying patch" << std::endl;
+	int apply_res = Utility::ExecWithParam(apply_params);
+	if (apply_res != 0)
+	{
+		std::cerr << "[ButlerPatch] Failed to apply patch: "<< apply_res << std::endl;
+		return 2;
+	}
+
+
+	switch(Utility::DeleteDirectoryContent(sz_stagingDir))
+	{
+		case 1:
+			std::cerr << "[ButlerPatch] Failed to delete staging directory content (doesn't exist)";
+			break;
+		case 2:
+			std::cerr << "[ButlerPatch] Failed to delete staging directory content (not a directory)";
+			break;
+	}
+	return 0;
+}
