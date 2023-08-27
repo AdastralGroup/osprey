@@ -88,6 +88,12 @@ int Kachemak::ButlerVerify(
 
 	return 0;
 }
+// TODO - 
+int Kachemak::PrepareSymlink()
+{
+	return 0;
+}
+
 /*
 description:
   check free space for specific category provided.

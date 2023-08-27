@@ -40,6 +40,7 @@ public:
 		const std::filesystem::path& sz_stagingDir,
 		const std::string& sz_patchFileName,
 		const std::string& sz_gameDir);
+	int PrepareSymlink();
 	int FreeSpaceCheck(
 		const uintmax_t size,
 		const FreeSpaceCheckCategory& category);
