@@ -176,6 +176,12 @@ int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutpu
 	int tar_res = Utility::ExtractTar(tmpf_loc, szOutputDirectory);
 	if (tar_res > 0)
 		return tar_res + 20;
+	int remove_res = remove(tmpf_loc.c_str());
+	if (!remove_res)
+	{
+		std::cerr << "[Kachemak::Extract] failed to delete tmp file: " << remove_res << std::endl;
+		return 2;
+	}
 
 	return 0;
 }
