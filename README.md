@@ -25,7 +25,9 @@ sudo apt update
 sudo apt install -y \
     build-essential \
     cmake \
-    g++
+    g++ \
+    libzstd-dev \
+    libarchive-dev
 ```
 
 Create CMake stuff
