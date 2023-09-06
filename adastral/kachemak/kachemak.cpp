@@ -153,22 +153,30 @@ desc:
 	extract .tar.zstd file to directory
 res:
 	0: success
-	1: failed to open input file
-	2: failed to create zstd context
-	3: failed to allocate memory
-	4: failed to decompress
-	11: failed to open tar file
+	1: not enough free space
+	2: failed to delete tmp file
+	11: failed to open input file
+	12: failed to create zstd context
+	13: failed to allocate memory
+	14: failed to decompress
+	21: failed to open tar file
 */
-int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutputDirectory)
+int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize)
 {
+	if (FreeSpaceCheck(szSize * 2, FreeSpaceCheckCategory::Permanent) != 0)
+	{
+		return 1;
+	}
+
 	std::FILE* tmpf = std::tmpfile();
 	std::string tmpf_loc = std::to_string(fileno(tmpf));
 	int zstd_res = Utility::ExtractZStd(szInputFile, tmpf_loc);
 	if (zstd_res > 0)
-		return zstd_res;
+		return zstd_res + 10;
 	int tar_res = Utility::ExtractTar(tmpf_loc, szOutputDirectory);
 	if (tar_res > 0)
-		return tar_res + 10;
+		return tar_res + 20;
+
 	return 0;
 }
 

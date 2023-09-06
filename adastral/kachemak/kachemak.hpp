@@ -38,7 +38,7 @@ public:
 	int PrepareSymlink();
 	int DoSymlink();
 	int Update();
-	int Extract(const std::string& szInputFile, const std::string& szOutputDirectory);
+	int Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize);
 	int ButlerVerify(
 		const std::string& szSignature,
 		const std::string& szGameDir,
