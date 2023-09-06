@@ -9,6 +9,7 @@
 #include <system_error>
 #include <array>
 #include <filesystem>
+#include <cstdio>
 
 struct KachemakVersion {
 	std::string szFileName;
@@ -31,6 +32,13 @@ public:
 	Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory, const std::string& szSourceUrl = "https://wiki.tf2classic.com/kachemak/");
 	KachemakVersion GetVersion(const std::string& version);
 	KachemakVersion GetLatestVersion();
+	int FreeSpaceCheck(
+		const uintmax_t size,
+		const FreeSpaceCheckCategory& category);
+	int PrepareSymlink();
+	int DoSymlink();
+	int Update();
+	int Extract(const std::string& szInputFile, const std::string& szOutputDirectory);
 	int ButlerVerify(
 		const std::string& szSignature,
 		const std::string& szGameDir,
@@ -40,11 +48,6 @@ public:
 		const std::filesystem::path& sz_stagingDir,
 		const std::string& sz_patchFileName,
 		const std::string& sz_gameDir);
-	int Update();
-	int PrepareSymlink();
-	int FreeSpaceCheck(
-		const uintmax_t size,
-		const FreeSpaceCheckCategory& category);
 private:
 	nlohmann::json m_parsedVersion;
 	std::filesystem::path m_szTempPath;

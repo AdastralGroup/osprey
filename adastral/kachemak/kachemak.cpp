@@ -59,33 +59,42 @@ KachemakVersion Kachemak::GetLatestVersion()
 
 /*
 description:
-  wrapper for butler cli to verify installation
+  check free space for specific category provided.
 res:
   0: success
-  i: return code from butler (when not 0)
+  1: not enough temp storage
+  2: not enough permanent storage
 */
-int Kachemak::ButlerVerify(
-	const std::string& szSignature,
-	const std::string& szGameDir,
-	const std::string& szRemote)
+int Kachemak::FreeSpaceCheck(
+	const uintmax_t size,
+	const FreeSpaceCheckCategory& category)
 {
-	std::stringstream params;
-
-	// {m_butlerLoation} verify {szSignature} {szGameDir} --heal=archive{szRemote}
-	params << m_szButlerLocation.c_str()
-	<< " verify "
-	<< szSignature.c_str() << " "
-	<< szGameDir.c_str() << " "
-	<< "--heal=archive" << szRemote;
-
-
-	int res = system(params.str().c_str());
-	if (res != 0)
+	switch(category)
 	{
-		std::cerr << "Failed to verify with butler: " << res << std::endl;
-		return res;
+		case FreeSpaceCheckCategory::Temporary:
+			if (std::filesystem::space(m_szTempPath).free < size)
+			{
+				return 1;
+			}
+			break;
+		case FreeSpaceCheckCategory::Permanent:
+			if (std::filesystem::space(m_szInstallPath).free < size)
+			{
+				return 2;
+			}
+			break;
 	}
+	return 0;
+}
 
+// TODO - 
+int Kachemak::PrepareSymlink()
+{
+	return 0;
+}
+// TODO - 
+int Kachemak::DoSymlink()
+{
 	return 0;
 }
 /*
@@ -138,42 +147,62 @@ int Kachemak::Update()
 	return 0;
 }
 
-// TODO - 
-int Kachemak::PrepareSymlink()
+
+/*
+desc:
+	extract .tar.zstd file to directory
+res:
+	0: success
+	1: failed to open input file
+	2: failed to create zstd context
+	3: failed to allocate memory
+	4: failed to decompress
+	11: failed to open tar file
+*/
+int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutputDirectory)
 {
+	std::FILE* tmpf = std::tmpfile();
+	std::string tmpf_loc = std::to_string(fileno(tmpf));
+	int zstd_res = Utility::ExtractZStd(szInputFile, tmpf_loc);
+	if (zstd_res > 0)
+		return zstd_res;
+	int tar_res = Utility::ExtractTar(tmpf_loc, szOutputDirectory);
+	if (tar_res > 0)
+		return tar_res + 10;
 	return 0;
 }
 
 /*
 description:
-  check free space for specific category provided.
+  wrapper for butler cli to verify installation
 res:
   0: success
-  1: not enough temp storage
-  2: not enough permanent storage
+  i: return code from butler (when not 0)
 */
-int Kachemak::FreeSpaceCheck(
-	const uintmax_t size,
-	const FreeSpaceCheckCategory& category)
+int Kachemak::ButlerVerify(
+	const std::string& szSignature,
+	const std::string& szGameDir,
+	const std::string& szRemote)
 {
-	switch(category)
+	std::stringstream params;
+
+	// {m_butlerLoation} verify {szSignature} {szGameDir} --heal=archive{szRemote}
+	params << m_szButlerLocation.c_str()
+	<< " verify "
+	<< szSignature.c_str() << " "
+	<< szGameDir.c_str() << " "
+	<< "--heal=archive" << szRemote;
+
+
+	int res = system(params.str().c_str());
+	if (res != 0)
 	{
-		case FreeSpaceCheckCategory::Temporary:
-			if (std::filesystem::space(m_szTempPath).free < size)
-			{
-				return 1;
-			}
-			break;
-		case FreeSpaceCheckCategory::Permanent:
-			if (std::filesystem::space(m_szInstallPath).free < size)
-			{
-				return 2;
-			}
-			break;
+		std::cerr << "Failed to verify with butler: " << res << std::endl;
+		return res;
 	}
+
 	return 0;
 }
-
 /*
 description:
   patch installation
