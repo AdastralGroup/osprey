@@ -5,10 +5,9 @@
 #include <vector>
 #include <filesystem>
 
-#include <zstd.h>
-#include <archive.h>
-#include <archive_entry.h>
-
+#include <zstd/lib/zstd.h>
+#include <libarchive/libarchive/archive.h>
+#include <libarchive/libarchive/archive_entry.h>
 
 class Utility
 {

@@ -132,12 +132,12 @@ int Utility::ExtractTar(const std::string& szInputFile, const std::filesystem::p
         const char* entryPath = archive_entry_pathname(entry);
 		std::filesystem::path outputPath = szOutputDirectory / entryPath;
 
-        archive_entry_set_pathname(entry, outputPath.c_str());
+        archive_entry_set_pathname(entry, outputPath.string().c_str());
         archive_write_header(ext, entry);
 
         if (archive_entry_size(entry) > 0) {
             char buff[10240];
-            ssize_t len;
+            la_ssize_t len;
             while ((len = archive_read_data(a, buff, sizeof(buff))) > 0) {
                 archive_write_data(ext, buff, len);
             }

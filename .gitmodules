@@ -1,3 +1,9 @@
 [submodule "adastral/json"]
 	path = adastral/json
 	url = https://github.com/nlohmann/json
+[submodule "adastral/zstd"]
+	path = adastral/zstd
+	url = https://github.com/facebook/zstd
+[submodule "adastral/libarchive"]
+	path = adastral/libarchive
+	url = https://github.com/libarchive/libarchive.git
