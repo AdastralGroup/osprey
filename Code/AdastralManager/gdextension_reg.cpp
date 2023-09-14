@@ -20,12 +20,15 @@
 
 
 #include <AdastralManager/GDRegister/register_adastral_types.h>
+#include <AdastralManager/External/ADProjectEvent.h>
+#include <AdastralManager/External/ADRegisterProject.h>
 
 void register_adastral_types(godot::ModuleInitializationLevel p_level) {
 	if (p_level != godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-
+	godot::ClassDB::register_abstract_class<adastral::ADProjectEvent>();
+	godot::ClassDB::register_abstract_class<adastral::ADProjectRegister>();
 	// REGISTER CLASSES HERE LATER
 }
 

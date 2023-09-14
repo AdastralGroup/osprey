@@ -19,6 +19,9 @@
  //====== Needed Headers ===========
 #include <AdastralManager/AdastralDefines.h>
 #include <godot_cpp/variant/callable.hpp>
+#include <godot_cpp/core/object.hpp>
+#include <godot_cpp/classes/wrapped.hpp>
+#include <godot_cpp/core/property_info.hpp>
 //=============================
 
 namespace adastral
@@ -34,20 +37,17 @@ namespace adastral
 		/// @brief Subscribes to events fired by GDScript. 
 		/// On Godot's end, this will connect through a signal to the desired object.
 		/// NOTE: The Function Name MUST be already Registered in The ClassDB To work!
-		void TrySubscribing(godot::String _eventname, void* handle, godot::String _funcname, godot::Object* _connectingobject);
+		void TrySubscribing(godot::String _eventname, void* handle, godot::String _funcname, godot::Object* _connectingobject, godot::Variant::Type type);
 
 		/// @brief Fires events(signals) back to GDscript.
-		void FireEvent();
-	protected:
-		/// @brief Binds all requested events to Godot. should be called when methods are bound.
-		/// EX: Should be called within "GDExample::_bind_methods()"
-		void BindSubscribedEvents();
+		void FireEvent(godot::Signal* _connectobject, godot::String _eventname, godot::String message);
 	private:
 	};
 
-	void ADProjectEvent::TrySubscribing(godot::String _eventname, void* handle, godot::String _funcname, godot::Object* _connectingobject)
+	void ADProjectEvent::TrySubscribing(godot::String _eventname, void* handle, godot::String _funcname, godot::Object* _connectingobject, godot::Variant::Type type)
 	{
-		/// NOTE: Providing the _connectingobject wont work well here, we could template the class and reference it that way? 
+		ADD_SIGNAL(godot::MethodInfo(_eventname, godot::PropertyInfo(type, "Adastral Signal")));
 	}
+
 
 }
