@@ -29,6 +29,7 @@ enum class FreeSpaceCheckCategory
 
 class Kachemak : public Version {
 public:
+
 	Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory, const std::string& szSourceUrl = "https://wiki.tf2classic.com/kachemak/");
 	KachemakVersion GetVersion(const std::string& version);
 	KachemakVersion GetLatestVersion();
@@ -54,4 +55,9 @@ private:
 
 	std::string m_szButlerLocation;
 	std::string m_szAria2cLocation;
+
+	inline static const char* TO_SYMLINK[][2] = {
+		{"bin/server.so", "bin/server_srv.so"},
+	};
+
 };

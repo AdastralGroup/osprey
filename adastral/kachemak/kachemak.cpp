@@ -27,6 +27,7 @@ Kachemak::Kachemak(
 
 	m_szTempPath = std::filesystem::temp_directory_path().string();
 
+	m_szButlerLocation = "data";
 }
 
 KachemakVersion Kachemak::GetVersion(const std::string& version)
@@ -90,12 +91,34 @@ int Kachemak::FreeSpaceCheck(
 // TODO - 
 int Kachemak::PrepareSymlink()
 {
+#ifdef _WIN32
 	return 0;
+#else
+	for (const auto& item : TO_SYMLINK) {
+		const std::filesystem::path symlinkPath = m_szInstallPath / item[1];
+		if (std::filesystem::exists(symlinkPath) && !std::filesystem::is_symlink(symlinkPath)) {
+			std::filesystem::remove(symlinkPath);
+		}
+	}
+
+	return 0;
+#endif
 }
 // TODO - 
 int Kachemak::DoSymlink()
 {
+#ifdef _WIN32
 	return 0;
+#else
+	for (const auto& item : TO_SYMLINK) {
+		const std::filesystem::path symlinkPath = m_szInstallPath / m_szDataDirectory / item[1];
+		if (!std::filesystem::exists(symlinkPath)) {
+			std::filesystem::create_symlink(m_szInstallPath / item[0], symlinkPath);
+		}
+	}
+
+	return 0;
+#endif
 }
 /*
 description:
@@ -103,6 +126,7 @@ description:
 res:
   0: success
   1: symlink fail
+  2: space check fail
 */
 int Kachemak::Update()
 {
@@ -117,7 +141,11 @@ int Kachemak::Update()
 	nlohmann::json patch_json = m_parsedVersion["patches"];
 	std::string patch_url = patch_json[local_version]["url"].get<std::string>();
 	std::string patch_file = patch_json[local_version]["file"].get<std::string>();
-	std::string patch_tempreq = patch_json[local_version]["tempreq"].get<std::string>();
+	uintptr_t patch_tempreq = patch_json[local_version]["tempreq"].get<uintptr_t>();
+
+	if (FreeSpaceCheck(patch_tempreq, FreeSpaceCheckCategory::Permanent) != 0) {
+		return 2;
+	}
 
 	nlohmann::json version_json = m_parsedVersion["versions"];
 	std::string signature_url = version_json[local_version]["signature"].get<std::string>();
@@ -144,6 +172,7 @@ int Kachemak::Update()
 		patch_file,
 		dataDir_path.string());
 
+	DoSymlink();
 	return 0;
 }
 
@@ -205,7 +234,7 @@ int Kachemak::ButlerVerify(
 	<< " verify "
 	<< szSignature.c_str() << " "
 	<< szGameDir.c_str() << " "
-	<< "--heal=archive" << szRemote;
+	<< "--heal=archive," << szRemote;
 
 
 	int res = system(params.str().c_str());
@@ -291,7 +320,7 @@ int Kachemak::ButlerPatch(
 		m_szButlerLocation,
 		"apply",
 		"--staging-dir" + sz_stagingDir.string(),
-		tempPath,
+		tempPath.string(),
 		sz_gameDir
 	};
 	std::cout << "[ButlerPatch] Applying patch" << std::endl;
