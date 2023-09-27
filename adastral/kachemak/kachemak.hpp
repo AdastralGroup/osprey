@@ -49,12 +49,13 @@ public:
 		const std::filesystem::path& sz_stagingDir,
 		const std::string& sz_patchFileName,
 		const std::string& sz_gameDir);
+
 private:
 	nlohmann::json m_parsedVersion;
 	std::filesystem::path m_szTempPath;
 
-	std::string m_szButlerLocation;
-	std::string m_szAria2cLocation;
+	std::filesystem::path m_szButlerLocation;
+	std::filesystem::path m_szAria2cLocation;
 
 	inline static const char* TO_SYMLINK[][2] = {
 		{"bin/server.so", "bin/server_srv.so"},

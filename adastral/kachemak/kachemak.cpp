@@ -1,4 +1,5 @@
 #include <kachemak/kachemak.hpp>
+#include <events/progress.hpp>
 
 Kachemak::Kachemak(
 	const std::filesystem::path& szInstallPath,
@@ -27,7 +28,8 @@ Kachemak::Kachemak(
 
 	m_szTempPath = std::filesystem::temp_directory_path().string();
 
-	m_szButlerLocation = "data";
+	m_szButlerLocation = std::filesystem::current_path() / "bin" / "butler";
+	m_szAria2cLocation = std::filesystem::current_path() / "bin" / "aria2c";
 }
 
 KachemakVersion Kachemak::GetVersion(const std::string& version)
@@ -88,7 +90,6 @@ int Kachemak::FreeSpaceCheck(
 	return 0;
 }
 
-// TODO - 
 int Kachemak::PrepareSymlink()
 {
 #ifdef _WIN32
@@ -104,7 +105,7 @@ int Kachemak::PrepareSymlink()
 	return 0;
 #endif
 }
-// TODO - 
+
 int Kachemak::DoSymlink()
 {
 #ifdef _WIN32
@@ -197,6 +198,8 @@ int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutpu
 		return 1;
 	}
 
+
+
 	std::FILE* tmpf = std::tmpfile();
 	std::string tmpf_loc = std::to_string(fileno(tmpf));
 	int zstd_res = Utility::ExtractZStd(szInputFile, tmpf_loc);
@@ -229,19 +232,33 @@ int Kachemak::ButlerVerify(
 {
 	std::stringstream params;
 
+
 	// {m_butlerLoation} verify {szSignature} {szGameDir} --heal=archive{szRemote}
-	params << m_szButlerLocation.c_str()
+	params << m_szButlerLocation.string()
 	<< " verify "
 	<< szSignature.c_str() << " "
-	<< szGameDir.c_str() << " "
-	<< "--heal=archive," << szRemote;
+	<< "\"" << szGameDir.c_str() << "\"" << " "
+	<< "--heal=archive," << szRemote
+	<< " --json";
 
+	printf("%s\n", params.str().c_str());
+	FILE* pipe = _popen(params.str().c_str(), "rb");
+	if (!pipe) {
+		printf("Failed to create pipe for butler verification\n");
+		return 1;
+	}
 
-	int res = system(params.str().c_str());
-	if (res != 0)
-	{
-		std::cerr << "Failed to verify with butler: " << res << std::endl;
-		return res;
+	const uint16_t bufSize = 4096;
+	char buffer[bufSize];
+	while (fgets(buffer, bufSize, pipe)) {
+		nlohmann::json jsonBuffer = nlohmann::json::parse(buffer, nullptr, false);
+		if (jsonBuffer.is_discarded())
+			continue;
+
+		if (jsonBuffer.contains("type") && jsonBuffer["type"].get<std::string>().compare("progress") == NULL) {
+			ProgressUpdate update(jsonBuffer["bps"].get<float>(), jsonBuffer["progress"].get<float>());
+			m_eventSystem.TriggerEvent(update);
+		}
 	}
 
 	return 0;
@@ -284,7 +301,7 @@ int Kachemak::ButlerPatch(
 	#pragma region Download Patch
 	std::vector<std::string> dl_params = 
 	{
-		m_szAria2cLocation,
+		m_szAria2cLocation.string(),
 		"--max-connection-per-server=16",
 		"-UAdastral-master",
 		"--disable-ipv6=true",
@@ -317,7 +334,7 @@ int Kachemak::ButlerPatch(
 
 	std::vector<std::string> apply_params =
 	{
-		m_szButlerLocation,
+		m_szButlerLocation.string(),
 		"apply",
 		"--staging-dir" + sz_stagingDir.string(),
 		tempPath.string(),

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <filesystem>
+#include <events/eventsystem.hpp>
 
 class Version {
 public:
@@ -15,4 +16,5 @@ protected:
 	std::filesystem::path m_szInstallPath;
 	std::filesystem::path m_szDataDirectory;
 	std::string m_szSourceUrl;
+	EventSystem m_eventSystem;
 };	
