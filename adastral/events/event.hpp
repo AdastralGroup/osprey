@@ -4,8 +4,9 @@
 #include <map>
 
 enum class EventType {
-	PROGRESS_UPDATE = 0,
-	EVENTTYPE_MAX = 1
+	kOnUpdate = 0,
+	kOnError = 1,
+	kMax = 2
 };
 
 class Event {

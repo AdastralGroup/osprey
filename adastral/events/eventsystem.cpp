@@ -2,7 +2,7 @@
 
 EventSystem::EventSystem()
 {
-	for (int i = 0; i < (int)EventType::EVENTTYPE_MAX; i++) {
+	for (int i = 0; i < (int)EventType::kMax; i++) {
 		m_subscribers[(EventType)i] = std::vector<EventLambda>();
 	}
 }

@@ -7,6 +7,8 @@ int Utility::ExecWithParam(const std::vector<std::string>& params)
 	{
 		param_str += i + " ";
 	}
+
+	printf("%s\n", param_str.c_str());
 	return system(param_str.c_str());
 }
 

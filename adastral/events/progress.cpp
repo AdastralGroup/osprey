@@ -1,15 +1,15 @@
 #include <events/progress.hpp>
 
-ProgressUpdate::ProgressUpdate(float bps, float progress) : Event(EventType::PROGRESS_UPDATE)
+ProgressUpdateMessage::ProgressUpdateMessage(float bps, float progress) : Event(EventType::kOnUpdate)
 {
 	m_fBps = bps;
 	m_fProgress = progress;
 }
 
-float ProgressUpdate::GetBps() {
+float ProgressUpdateMessage::GetBps() {
 	return m_fBps;
 }
 
-float ProgressUpdate::GetProgress() {
+float ProgressUpdateMessage::GetProgress() {
 	return m_fProgress;
 }

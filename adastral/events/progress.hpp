@@ -1,9 +1,9 @@
 
 #include <events/event.hpp>
 
-class ProgressUpdate : public Event {
+class ProgressUpdateMessage : public Event {
 public:
-	ProgressUpdate(float bps, float progress);
+	ProgressUpdateMessage(float bps, float progress);
 	float GetBps();
 	float GetProgress();
 private:

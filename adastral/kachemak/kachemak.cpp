@@ -1,5 +1,6 @@
 #include <kachemak/kachemak.hpp>
 #include <events/progress.hpp>
+#include <events/error.hpp>
 
 Kachemak::Kachemak(
 	const std::filesystem::path& szInstallPath,
@@ -11,18 +12,20 @@ Kachemak::Kachemak(
 	m_parsedVersion = R"({
 		"versions":
 		{
-			"200": {"signature": "tf2classic200.sig", "heal" : "tf2classic-2.0.0-heal.zip"},
-			"201" : {},
-			"202" : {},
-			"203" : {"signature": "tf2classic203.sig", "heal" : "tf2classic-2.0.3-heal.zip"},
-			"204" : {"signature": "tf2classic204.sig", "heal" : "tf2classic-2.0.4-heal.zip"},
-			"210" : {"url": "tf2classic-2.1.0.meta4", "file" : "tf2classic-2.1.0.tar.zst", "presz" : 5050680575, "postsz" : 13884901888, "signature" : "tf2classic210.sig", "heal" : "tf2classic-2.1.0-heal.zip"},
-			"211" : {"url": "tf2classic-2.1.1.meta4", "file" : "tf2classic-2.1.1.tar.zst", "presz" : 5050680575, "postsz" : 13884901888, "signature" : "tf2classic211.sig", "heal" : "tf2classic-2.1.1-heal.zip"}
+			"200": {"signature": "tf2classic200.sig", "heal": "tf2classic-2.0.0-heal.zip"},
+			"201": {},
+			"202": {},
+			"203": {"signature": "tf2classic203.sig", "heal": "tf2classic-2.0.3-heal.zip"},
+			"204": {"signature": "tf2classic204.sig", "heal": "tf2classic-2.0.4-heal.zip"},
+			"210": {"url": "tf2classic-2.1.0.meta4", "file": "tf2classic-2.1.0.tar.zst", "presz": 5050680575, "postsz": 13884901888, "signature": "tf2classic210.sig", "heal": "tf2classic-2.1.0-heal.zip"},
+			"211": {"url": "tf2classic-2.1.1.meta4", "file": "tf2classic-2.1.1.tar.zst", "presz": 5050680575, "postsz": 13884901888, "signature": "tf2classic211.sig", "heal": "tf2classic-2.1.1-heal.zip"},
+			"212": {"url": "tf2classic-2.1.2.meta4", "file": "tf2classic-2.1.2.tar.zst", "presz": 5050680575, "postsz": 13884901888, "signature": "tf2classic212.sig", "heal": "tf2classic-2.1.2-heal.zip"}
 		},
 		"patches":
 		{
-		"204": {"url": "tf2classic-patch-204-211.pwr", "file" : "tf2classic-patch-204-211.pwr", "tempreq" : 12050680575},
-			"210" : {"url": "tf2classic-patch-210-211.meta4", "file" : "tf2classic-patch-210-211.pwr", "tempreq" : 7500000000}
+			"204": {"url": "tf2classic-patch-204-212.pwr", "file": "tf2classic-patch-204-212.pwr", "tempreq": 12050680575},
+			"210": {"url": "tf2classic-patch-210-212.pwr", "file": "tf2classic-patch-210-212.pwr", "tempreq": 7500000000},
+			"211": {"url": "tf2classic-patch-211-212.meta4", "file": "tf2classic-patch-211-212.pwr", "tempreq": 12050680575}
 		}
 	})"_json;
 
@@ -30,6 +33,7 @@ Kachemak::Kachemak(
 
 	m_szButlerLocation = std::filesystem::current_path() / "bin" / "butler";
 	m_szAria2cLocation = std::filesystem::current_path() / "bin" / "aria2c";
+
 }
 
 KachemakVersion Kachemak::GetVersion(const std::string& version)
@@ -255,9 +259,16 @@ int Kachemak::ButlerVerify(
 		if (jsonBuffer.is_discarded())
 			continue;
 
-		if (jsonBuffer.contains("type") && jsonBuffer["type"].get<std::string>().compare("progress") == NULL) {
-			ProgressUpdate update(jsonBuffer["bps"].get<float>(), jsonBuffer["progress"].get<float>());
-			m_eventSystem.TriggerEvent(update);
+		if (jsonBuffer.contains("type")) {
+			std::string messageType = jsonBuffer["type"].get<std::string>();
+
+			if (messageType.compare("progress") == NULL) {
+				ProgressUpdateMessage message(jsonBuffer["bps"].get<float>(), jsonBuffer["progress"].get<float>());
+				m_eventSystem.TriggerEvent(message);
+			} else if (messageType.compare("error") == NULL) {
+				ErrorMessage message(jsonBuffer["message"].get<std::string>());
+				m_eventSystem.TriggerEvent(message);
+			}
 		}
 	}
 
@@ -336,10 +347,12 @@ int Kachemak::ButlerPatch(
 	{
 		m_szButlerLocation.string(),
 		"apply",
-		"--staging-dir" + sz_stagingDir.string(),
-		tempPath.string(),
-		sz_gameDir
+		"--staging-dir=\"" + sz_stagingDir.string() + "\"",
+		"\"" + tempPath.string() + "\"",
+		"\"" + sz_gameDir + "\"",
+		"--json"
 	};
+
 	std::cout << "[ButlerPatch] Applying patch" << std::endl;
 	int apply_res = Utility::ExecWithParam(apply_params);
 	if (apply_res != 0)
