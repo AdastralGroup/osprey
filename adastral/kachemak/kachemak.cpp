@@ -34,6 +34,11 @@ Kachemak::Kachemak(
 	m_szButlerLocation = std::filesystem::current_path() / "bin" / "butler";
 	m_szAria2cLocation = std::filesystem::current_path() / "bin" / "aria2c";
 
+
+	m_eventSystem.RegisterListener(EventType::kOnUpdate, [](Event& ev) {
+		printf("Progress: %f\n", ((ProgressUpdateMessage&)ev).GetProgress());
+	});
+	
 }
 
 KachemakVersion Kachemak::GetVersion(const std::string& version)
@@ -236,7 +241,6 @@ int Kachemak::ButlerVerify(
 {
 	std::stringstream params;
 
-
 	// {m_butlerLoation} verify {szSignature} {szGameDir} --heal=archive{szRemote}
 	params << m_szButlerLocation.string()
 	<< " verify "
@@ -245,32 +249,9 @@ int Kachemak::ButlerVerify(
 	<< "--heal=archive," << szRemote
 	<< " --json";
 
-	printf("%s\n", params.str().c_str());
-	FILE* pipe = _popen(params.str().c_str(), "rb");
-	if (!pipe) {
-		printf("Failed to create pipe for butler verification\n");
-		return 1;
-	}
-
-	const uint16_t bufSize = 4096;
-	char buffer[bufSize];
-	while (fgets(buffer, bufSize, pipe)) {
-		nlohmann::json jsonBuffer = nlohmann::json::parse(buffer, nullptr, false);
-		if (jsonBuffer.is_discarded())
-			continue;
-
-		if (jsonBuffer.contains("type")) {
-			std::string messageType = jsonBuffer["type"].get<std::string>();
-
-			if (messageType.compare("progress") == NULL) {
-				ProgressUpdateMessage message(jsonBuffer["bps"].get<float>(), jsonBuffer["progress"].get<float>());
-				m_eventSystem.TriggerEvent(message);
-			} else if (messageType.compare("error") == NULL) {
-				ErrorMessage message(jsonBuffer["message"].get<std::string>());
-				m_eventSystem.TriggerEvent(message);
-			}
-		}
-	}
+	int status = ButlerParseCommand(params.str());
+	if (status != NULL)
+		return status;
 
 	return 0;
 }
@@ -287,6 +268,7 @@ int Kachemak::ButlerPatch(
 	const std::string& sz_patchFileName,
 	const std::string& sz_gameDir)
 {
+
 	bool stagingDir_exists = std::filesystem::exists(sz_stagingDir);
 	bool stagingDir_isDir = std::filesystem::is_directory(sz_stagingDir);
 	if (!stagingDir_exists)
@@ -343,24 +325,21 @@ int Kachemak::ButlerPatch(
 
 	std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
 
-	std::vector<std::string> apply_params =
-	{
-		m_szButlerLocation.string(),
-		"apply",
-		"--staging-dir=\"" + sz_stagingDir.string() + "\"",
-		"\"" + tempPath.string() + "\"",
-		"\"" + sz_gameDir + "\"",
-		"--json"
-	};
+	std::stringstream params;
+
+	params << m_szButlerLocation.string() << " ";
+	params << "apply" << " ";
+	params << "--staging-dir=\"" << sz_stagingDir.string() << "\"" << " ";
+	params << "\"" << tempPath.string() << "\"" << " ";
+	params << "\"" << sz_gameDir << "\"" << " ";
+	params << "--json";
 
 	std::cout << "[ButlerPatch] Applying patch" << std::endl;
-	int apply_res = Utility::ExecWithParam(apply_params);
-	if (apply_res != 0)
-	{
-		std::cerr << "[ButlerPatch] Failed to apply patch: "<< apply_res << std::endl;
+	int butlerStatus = ButlerParseCommand(params.str());
+	if (butlerStatus != NULL) {
+		std::cerr << "[ButlerPatch] Failed to apply patch: " << butlerStatus << std::endl;
 		return 2;
 	}
-
 
 	switch(Utility::DeleteDirectoryContent(sz_stagingDir))
 	{
@@ -371,5 +350,37 @@ int Kachemak::ButlerPatch(
 			std::cerr << "[ButlerPatch] Failed to delete staging directory content (not a directory)";
 			break;
 	}
+	return 0;
+}
+
+int Kachemak::ButlerParseCommand(const std::string& command)
+{
+	FILE* pipe = _popen(command.c_str(), "rb");
+	if (!pipe) {
+		printf("Failed to create pipe for butler verification\n");
+		return 1;
+	}
+
+	const uint16_t bufSize = 4096;
+	char buffer[bufSize];
+	while (fgets(buffer, bufSize, pipe)) {
+		nlohmann::json jsonBuffer = nlohmann::json::parse(buffer, nullptr, false);
+		if (jsonBuffer.is_discarded())
+			continue;
+
+		if (jsonBuffer.contains("type")) {
+			std::string messageType = jsonBuffer["type"].get<std::string>();
+
+			if (messageType.compare("progress") == NULL) {
+				ProgressUpdateMessage message(jsonBuffer["bps"].get<float>(), jsonBuffer["progress"].get<float>());
+				m_eventSystem.TriggerEvent(message);
+			}
+			else if (messageType.compare("error") == NULL) {
+				ErrorMessage message(jsonBuffer["message"].get<std::string>());
+				m_eventSystem.TriggerEvent(message);
+			}
+		}
+	}
+
 	return 0;
 }

@@ -1,4 +1,4 @@
-﻿add_executable (adastral "adastral.cpp" "version/version.cpp" "kachemak/kachemak.cpp" "utility/utility.cpp" "events/eventsystem.cpp" "events/event.cpp" "events/progress.cpp")
+﻿add_executable (adastral "adastral.cpp" "version/version.cpp" "kachemak/kachemak.cpp" "utility/utility.cpp" "events/eventsystem.cpp" "events/event.cpp" "events/progress.cpp" "events/error.cpp")
 
 add_compile_definitions(LIBARCHIVE_STATIC)
 

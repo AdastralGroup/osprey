@@ -51,6 +51,8 @@ public:
 		const std::string& sz_gameDir);
 
 private:
+	int ButlerParseCommand(const std::string& command);
+private:
 	nlohmann::json m_parsedVersion;
 	std::filesystem::path m_szTempPath;
 
