@@ -2,6 +2,11 @@
 #include <events/progress.hpp>
 #include <events/error.hpp>
 
+#if !defined(popen)
+	#define popen _popen
+	#define pclose _pclose
+#endif
+
 Kachemak::Kachemak(
 	const std::filesystem::path& szInstallPath,
 	const std::filesystem::path& szDataDirectory,
@@ -355,7 +360,7 @@ int Kachemak::ButlerPatch(
 
 int Kachemak::ButlerParseCommand(const std::string& command)
 {
-	FILE* pipe = _popen(command.c_str(), "rb");
+	FILE* pipe = popen(command.c_str(), "rb");
 	if (!pipe) {
 		printf("Failed to create pipe for butler verification\n");
 		return 1;
@@ -381,6 +386,8 @@ int Kachemak::ButlerParseCommand(const std::string& command)
 			}
 		}
 	}
+
+	pclose(pipe);
 
 	return 0;
 }
