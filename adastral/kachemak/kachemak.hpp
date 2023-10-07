@@ -10,6 +10,7 @@
 #include <array>
 #include <filesystem>
 #include <cstdio>
+#include <optional>
 
 struct KachemakVersion {
 	std::string szFileName;
@@ -19,6 +20,12 @@ struct KachemakVersion {
 	std::string szHealUrl;
 	std::string szVersion;
 	std::string szSignature;
+};
+
+struct KachemakPatch {
+	std::string szUrl;
+	std::string szFilename;
+	std::size_t lTempRequired;
 };
 
 enum class FreeSpaceCheckCategory
@@ -31,14 +38,16 @@ class Kachemak : public Version {
 public:
 
 	Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory, const std::string& szSourceUrl = "https://wiki.tf2classic.com/kachemak/");
-	KachemakVersion GetVersion(const std::string& version);
-	KachemakVersion GetLatestVersion();
+	std::optional<KachemakVersion> GetVersion(const std::string& version);
+	std::optional<KachemakPatch> GetPatch(const std::string& version);
+	std::optional<KachemakVersion> GetLatestVersion();
 	int FreeSpaceCheck(
 		const uintmax_t size,
 		const FreeSpaceCheckCategory& category);
 	int PrepareSymlink();
 	int DoSymlink();
 	int Update();
+	virtual int Install();
 	int Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize);
 	int ButlerVerify(
 		const std::string& szSignature,
@@ -48,8 +57,11 @@ public:
 		const std::string& sz_url,
 		const std::filesystem::path& sz_stagingDir,
 		const std::string& sz_patchFileName,
-		const std::string& sz_gameDir);
+		const std::string& sz_gameDir,
+		const uintmax_t downloadSize
+	);
 
+	int AriaDownload(const std::string& szUrl, const uintmax_t size);
 private:
 	int ButlerParseCommand(const std::string& command);
 private:

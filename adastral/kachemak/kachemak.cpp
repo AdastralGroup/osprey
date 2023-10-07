@@ -46,13 +46,15 @@ Kachemak::Kachemak(
 	
 }
 
-KachemakVersion Kachemak::GetVersion(const std::string& version)
+std::optional<KachemakVersion> Kachemak::GetVersion(const std::string& version)
 {
-	if (!m_parsedVersion["versions"][version].is_object()) {
-		// handle error;	
+	nlohmann::json& jsonVersion = m_parsedVersion["versions"][version];
+	if (!jsonVersion.is_object()) {
+		printf("Failed to find patch %s\n", version.c_str());
+		return std::nullopt;
 	}
 
-	nlohmann::json jsonVersion = m_parsedVersion["versions"][version];
+
 	KachemakVersion ret = {
 		.szFileName = jsonVersion["file"].get<std::string>(),
 		.szDownloadUrl = jsonVersion["url"].get<std::string>(),
@@ -66,7 +68,24 @@ KachemakVersion Kachemak::GetVersion(const std::string& version)
 	return ret;
 }
 
-KachemakVersion Kachemak::GetLatestVersion()
+std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version)
+{
+	nlohmann::json& jsonPatches = m_parsedVersion["patches"][version];
+	if (!jsonPatches.is_object()) {
+		printf("Failed to find patch %s\n", version.c_str());
+		return std::nullopt;
+	}
+
+	KachemakPatch ret = {
+		.szUrl = jsonPatches["url"].get<std::string>(),
+		.szFilename = jsonPatches["file"].get<std::string>(),
+		.lTempRequired = jsonPatches["tempreq"].get<std::uintmax_t>(),
+	};
+
+	return ret;
+}
+
+std::optional<KachemakVersion> Kachemak::GetLatestVersion()
 {
 	std::string versionId;
 	for (auto& el : m_parsedVersion["versions"].items()) { versionId = el.key(); };
@@ -151,42 +170,62 @@ int Kachemak::Update()
 		return 1;
 	}
 
-	std::string local_version = "204";
+	std::optional<KachemakPatch> patch = GetPatch(m_szInstalledVersion);
+	if (!patch)
+		return 3;
 
-	nlohmann::json patch_json = m_parsedVersion["patches"];
-	std::string patch_url = patch_json[local_version]["url"].get<std::string>();
-	std::string patch_file = patch_json[local_version]["file"].get<std::string>();
-	uintptr_t patch_tempreq = patch_json[local_version]["tempreq"].get<uintptr_t>();
-
-	if (FreeSpaceCheck(patch_tempreq, FreeSpaceCheckCategory::Permanent) != 0) {
+	if (FreeSpaceCheck(patch.value().lTempRequired, FreeSpaceCheckCategory::Permanent) != 0) {
 		return 2;
 	}
 
-	nlohmann::json version_json = m_parsedVersion["versions"];
-	std::string signature_url = version_json[local_version]["signature"].get<std::string>();
-	std::string heal_url = version_json[local_version]["heal"].get<std::string>();
+	std::optional<KachemakVersion> installedVersion = GetVersion(m_szInstalledVersion);
+	if (!installedVersion)
+		return 4;
 
+	
 	// full signature url
 	std::stringstream sigUrlFull_ss;
-	sigUrlFull_ss << m_szSourceUrl << signature_url;
+	sigUrlFull_ss << m_szSourceUrl << installedVersion.value().szSignature;
 	// Data path for current install
 	std::filesystem::path dataDir_path = m_szInstallPath / m_szDataDirectory;
 	std::stringstream healUrl_ss;
-	healUrl_ss << m_szSourceUrl << heal_url;
+	healUrl_ss << m_szSourceUrl << installedVersion.value().szHealUrl;
 	int verifyRes = ButlerVerify(
 		sigUrlFull_ss.str(),
 		dataDir_path.string(),
 		healUrl_ss.str());
 
 	std::stringstream patchUrlFull_ss;
-	patchUrlFull_ss << m_szSourceUrl << patch_url;
+	patchUrlFull_ss << m_szSourceUrl << patch.value().szUrl;
 	std::filesystem::path stagingPath = m_szInstallPath / "butler-staging";
 	int patchRes = ButlerPatch(
 		patchUrlFull_ss.str(),
 		stagingPath.string(),
-		patch_file,
-		dataDir_path.string());
+		patch.value().szFilename,
+		dataDir_path.string(),
+		patch.value().lTempRequired);
 
+	DoSymlink();
+	return 0;
+}
+
+
+int Kachemak::Install()
+{
+	if (PrepareSymlink() != 0)
+	{
+		return 1;
+	}
+	
+	std::optional<KachemakVersion> latestVersion = GetLatestVersion();
+	if (!latestVersion)
+		return 2;
+	std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
+	int downloadStatus = AriaDownload(downloadUri, latestVersion.value().lDownloadSize);
+	if (downloadStatus != 0)
+		return downloadStatus;
+
+	Extract(latestVersion.value().szFileName, m_szInstallPath.string(), latestVersion.value().lExtractSize);
 	DoSymlink();
 	return 0;
 }
@@ -271,7 +310,8 @@ int Kachemak::ButlerPatch(
 	const std::string& sz_url,
 	const std::filesystem::path& sz_stagingDir,
 	const std::string& sz_patchFileName,
-	const std::string& sz_gameDir)
+	const std::string& sz_gameDir,
+	const uintmax_t downloadSize)
 {
 
 	bool stagingDir_exists = std::filesystem::exists(sz_stagingDir);
@@ -296,37 +336,10 @@ int Kachemak::ButlerPatch(
 		}
 	}
 
-	#pragma region Download Patch
-	std::vector<std::string> dl_params = 
-	{
-		m_szAria2cLocation.string(),
-		"--max-connection-per-server=16",
-		"-UAdastral-master",
-		"--disable-ipv6=true",
-		"--allow-piece-length-change=true",
-		"--max-concurrent-downloads=16",
-		"--optimize-concurrent-downloads=true",
-		"--check-certificate=false",
-		"--check-integrity=true",
-		"--auto-file-renaming=false",
-		"--continue=true",
-		"--allow-overwrite=true",
-		"--console-log-level=error",
-		"--summary-interval=0",
-		"--bt-hash-check-seed=false",
-		"--seed-time=0",
-		"-d",
-		m_szTempPath.string(),
-		sz_url
-	};
-	std::cout << "[ButlerPatch] Downloading Patch" << std::endl;
-	int dl_res = Utility::ExecWithParam(dl_params);
-	if (dl_res != 0)
-	{
-		std::cerr << "[ButlerPatch] Failed to download patch: " << dl_res << std::endl;
-		return 1;
-	}
-	#pragma endregion
+
+	int downloadStatus = AriaDownload(sz_url, downloadSize);
+	if (downloadStatus != 0)
+		return downloadStatus;
 
 	std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
 
@@ -355,6 +368,47 @@ int Kachemak::ButlerPatch(
 			std::cerr << "[ButlerPatch] Failed to delete staging directory content (not a directory)";
 			break;
 	}
+	return 0;
+}
+
+int Kachemak::AriaDownload(const std::string& szUrl, const uintmax_t size)
+{
+	int diskSpaceStatus = FreeSpaceCheck(size, FreeSpaceCheckCategory::Temporary);
+	if (diskSpaceStatus != 0)
+		return diskSpaceStatus;
+
+	std::vector<std::string> params =
+	{
+		m_szAria2cLocation.string(),
+		"--max-connection-per-server=16",
+		"-UAdastral-master",
+		"--disable-ipv6=true",
+		"--allow-piece-length-change=true",
+		"--max-concurrent-downloads=16",
+		"--optimize-concurrent-downloads=true",
+		"--check-certificate=false",
+		"--check-integrity=true",
+		"--auto-file-renaming=false",
+		"--continue=true",
+		"--allow-overwrite=true",
+		"--console-log-level=error",
+		"--summary-interval=0",
+		"--bt-hash-check-seed=false",
+		"--seed-time=0",
+		"--human-readable=false",
+		"-d",
+		m_szTempPath.string(),
+		szUrl
+	};
+
+	printf("Downloading %s\n", szUrl.c_str());
+	int status = Utility::ExecWithParam(params);
+	if (status != 0)
+	{
+		printf("Download failed, Status: %d\n", status);
+		return 1;
+	}
+
 	return 0;
 }
 
