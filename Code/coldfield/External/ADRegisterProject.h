@@ -18,7 +18,7 @@
 #pragma once
 
 //====== Needed Headers ===========
-#include <AdastralManager/AdastralDefines.h>
+#include <coldfield/AdastralDefines.h>
 #include <godot_cpp/classes/jni_singleton.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <map>
@@ -26,7 +26,7 @@
 namespace adastral
 {
 	/// @brief Helper class to assist with registering external libraries to godot.
-	class AD_ADASTRALMANAGER_DLL ADProjectRegister
+	class AD_COLDFIELD_DLL ADProjectRegister
 	{
 	public:
 		ADProjectRegister();

@@ -14,19 +14,21 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <AdastralManager/External/ADRegisterProject.h>
 
-adastral::ADProjectRegister::ADProjectRegister()
-{
-	_classsingleton.initialize_class();
-}
+#pragma once
 
-adastral::ADProjectRegister::~ADProjectRegister()
-{
-	_registeredprojects.clear();
-}
+ // Configure the DLL Import/Export Define
 
-void adastral::ADProjectRegister::KillClasses(GDExtensionInitializationLevel& a)
-{
-	
-}
+#  ifdef BUILDSYSTEM_BUILDING_PALACE_LIB
+#    ifdef _WIN32
+#      define AD_PALACE_DLL __declspec(dllexport)
+#    else
+#      define AD_PALACE_DLL [[gnu::visibility("default")]]
+#    endif
+#  else
+#      ifdef _WIN32
+#           define AD_PALACE_DLL __declspec(dllimport)
+#      else
+#         define define AD_PALACE_DLL [[gnu::visibility("default")]]
+#       endif
+#  endif

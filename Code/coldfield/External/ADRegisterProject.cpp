@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2023 Copyright Adastral Group and Contributors
+ *   Copyright (c) 2023 Copyright The Adastral Group and Contributors
 
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -14,24 +14,19 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <coldfield/External/ADRegisterProject.h>
 
-#pragma once
+adastral::ADProjectRegister::ADProjectRegister()
+{
+	_classsingleton.initialize_class();
+}
 
- // Configure the DLL Import/Export Define
+adastral::ADProjectRegister::~ADProjectRegister()
+{
+	_registeredprojects.clear();
+}
 
-#  ifdef BUILDSYSTEM_BUILDING_ADASTRALMANAGER_LIB 
-#    ifdef _WIN32
-#      define AD_ADASTRALMANAGER_DLL __declspec(dllexport)
-#    else
-#      define AD_ADASTRALMANAGER_DLL [[gnu::visibility("default")]]
-#    endif
-#  else
-#      ifdef _WIN32
-#           define AD_ADASTRALMANAGER_DLL __declspec(dllimport)
-#      else
-#         define define AD_ADASTRALMANAGER_DLL [[gnu::visibility("default")]]
-#       endif
-#  endif
-
-#include <godot_cpp/godot.hpp>
-#include <godot_cpp/core/class_db.hpp>
+void adastral::ADProjectRegister::KillClasses(GDExtensionInitializationLevel& a)
+{
+	
+}

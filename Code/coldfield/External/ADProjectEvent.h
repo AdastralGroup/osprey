@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2023 Copyright Adastral Group and Contributors
+ *   Copyright (c) 2023 Copyright The Adastral Group and Contributors
 
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 #pragma once
  //====== Needed Headers ===========
-#include <AdastralManager/AdastralDefines.h>
+#include <coldfield/AdastralDefines.h>
 #include <godot_cpp/variant/callable.hpp>
 #include <godot_cpp/core/object.hpp>
 #include <godot_cpp/classes/wrapped.hpp>
@@ -28,7 +28,7 @@ namespace adastral
 {
 	/// @brief Helper class for subscribing to events fired by GDscript.
 	/// NOTE: events = signals in Godot's eyes.
-	class AD_ADASTRALMANAGER_DLL ADProjectEvent 
+	class AD_COLDFIELD_DLL ADProjectEvent
 	{
 	public:
 		ADProjectEvent();
