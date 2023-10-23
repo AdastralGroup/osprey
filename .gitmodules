@@ -1,0 +1,9 @@
+[submodule "Code/emley/json"]
+	path = Code/emley/json
+	url = https://github.com/nlohmann/json
+[submodule "Code/emley/zstd"]
+	path = Code/emley/zstd
+	url = https://github.com/facebook/zstd.git
+[submodule "Code/emley/libarchive"]
+	path = Code/emley/libarchive
+	url = https://github.com/libarchive/libarchive.git

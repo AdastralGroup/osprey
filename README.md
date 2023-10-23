@@ -6,6 +6,14 @@ Adastral Manager handles the interop layer by connecting Godot with C++, to bett
 
 # Building Adastral Manager
 
+## Requirements
+
+- Git CMD (https://git-scm.com/download)
+
+- CMake (CMD/GUI) (https://cmake.org/download/)
+
+- A IDE (Visual Studio, XCode, etc)
+
 Adastral Manager relies on Godot 4.0 for gdextension. everything is automated through CMake, so configuring the project through CMake-GUI will handle grabbing dependency's, creating the solution, etc.
 
 # License 
