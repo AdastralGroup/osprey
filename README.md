@@ -1,8 +1,8 @@
-# Adastral-manager
+# Winter
 
-## Adastral's Internal L2 Layer
+## Adastral's C++ Component(s)
 
-Adastral Manager handles the interop layer by connecting Godot with C++, to better connect with the GUI, and have a framework that the launcher can work on, Internally known as the L2 Layer.
+This contains all of the C++ modules that Adastral uses, the L2->L3 Shim (Coldfield), The main L2 (Palace) and the L1 (Emley).
 
 # Building Adastral Manager
 
@@ -14,8 +14,8 @@ Adastral Manager handles the interop layer by connecting Godot with C++, to bett
 
 - A IDE (Visual Studio, XCode, etc)
 
-Adastral Manager relies on Godot 4.0 for gdextension. everything is automated through CMake, so configuring the project through CMake-GUI will handle grabbing dependency's, creating the solution, etc.
+Coldfield relies on Godot 4.0 for gdextension. everything is automated through CMake, so configuring the project through CMake-GUI will handle grabbing dependency's, creating the solution, etc.
 
 # License 
 
-Adastral Manager is licensed under the GPL-v3 License. Please look at 'LICENSE' for more details.
+Winter is licensed under the GPL-v3 License. Please look at 'LICENSE' for more details.
