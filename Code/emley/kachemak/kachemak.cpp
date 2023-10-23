@@ -1,11 +1,7 @@
 #include <kachemak/kachemak.hpp>
 #include <events/progress.hpp>
 #include <events/error.hpp>
-
-#if !defined(popen)
-	#define popen _popen
-	#define pclose _pclose
-#endif
+#include "sheffield/sheffield.hpp"
 
 Kachemak::Kachemak(
 	const std::filesystem::path& szInstallPath,
@@ -60,7 +56,6 @@ std::optional<KachemakVersion> Kachemak::GetVersion(const std::string& version)
 		.szDownloadUrl = jsonVersion["url"].get<std::string>(),
 		.lDownloadSize = jsonVersion["presz"].get<std::size_t>(),
 		.lExtractSize = jsonVersion["postsz"].get<std::size_t>(),
-		.szHealUrl = jsonVersion["heal"].get<std::string>(),
 		.szVersion = version,
 		.szSignature = jsonVersion["signature"].get<std::string>(),
 	};
@@ -189,7 +184,7 @@ int Kachemak::Update()
 	// Data path for current install
 	std::filesystem::path dataDir_path = m_szInstallPath / m_szDataDirectory;
 	std::stringstream healUrl_ss;
-	healUrl_ss << m_szSourceUrl << installedVersion.value().szHealUrl;
+	healUrl_ss << m_szSourceUrl << installedVersion.value().szFileName;
 	int verifyRes = ButlerVerify(
 		sigUrlFull_ss.str(),
 		dataDir_path.string(),
@@ -220,8 +215,11 @@ int Kachemak::Install()
 	std::optional<KachemakVersion> latestVersion = GetLatestVersion();
 	if (!latestVersion)
 		return 2;
+    int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
+    if (diskSpaceStatus != 0)
+        return diskSpaceStatus;
 	std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-	int downloadStatus = AriaDownload(downloadUri, latestVersion.value().lDownloadSize);
+	int downloadStatus = sheffield(m_szAria2cLocation).AriaDownload(downloadUri,m_szInstallPath );
 	if (downloadStatus != 0)
 		return downloadStatus;
 
@@ -233,7 +231,7 @@ int Kachemak::Install()
 
 /*
 desc:
-	extract .tar.zstd file to directory
+	extract .zip file to directory
 res:
 	0: success
 	1: not enough free space
@@ -250,24 +248,9 @@ int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutpu
 	{
 		return 1;
 	}
-
-
-
 	std::FILE* tmpf = std::tmpfile();
 	std::string tmpf_loc = std::to_string(fileno(tmpf));
-	int zstd_res = Utility::ExtractZStd(szInputFile, tmpf_loc);
-	if (zstd_res > 0)
-		return zstd_res + 10;
-	int tar_res = Utility::ExtractTar(tmpf_loc, szOutputDirectory);
-	if (tar_res > 0)
-		return tar_res + 20;
-	int remove_res = remove(tmpf_loc.c_str());
-	if (!remove_res)
-	{
-		std::cerr << "[Kachemak::Extract] failed to delete tmp file: " << remove_res << std::endl;
-		return 2;
-	}
-
+    moss::ExtractZip(szInputFile, szOutputDirectory);
 	return 0;
 }
 
@@ -325,7 +308,7 @@ int Kachemak::ButlerPatch(
 	}
 	if (stagingDir_exists && stagingDir_isDir)
 	{
-		switch(Utility::DeleteDirectoryContent(sz_stagingDir))
+		switch(moss::DeleteDirectoryContent(sz_stagingDir))
 		{
 			case 1:
 				std::cerr << "[ButlerPatch] Failed to delete staging directory content (doesn't exist)";
@@ -336,8 +319,10 @@ int Kachemak::ButlerPatch(
 		}
 	}
 
-
-	int downloadStatus = AriaDownload(sz_url, downloadSize);
+    int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
+    if (diskSpaceStatus != 0)
+        return diskSpaceStatus;
+	int downloadStatus = sheffield(m_szAria2cLocation).AriaDownload(sz_url, m_szTempPath);
 	if (downloadStatus != 0)
 		return downloadStatus;
 
@@ -359,7 +344,7 @@ int Kachemak::ButlerPatch(
 		return 2;
 	}
 
-	switch(Utility::DeleteDirectoryContent(sz_stagingDir))
+	switch(moss::DeleteDirectoryContent(sz_stagingDir))
 	{
 		case 1:
 			std::cerr << "[ButlerPatch] Failed to delete staging directory content (doesn't exist)";
@@ -368,47 +353,6 @@ int Kachemak::ButlerPatch(
 			std::cerr << "[ButlerPatch] Failed to delete staging directory content (not a directory)";
 			break;
 	}
-	return 0;
-}
-
-int Kachemak::AriaDownload(const std::string& szUrl, const uintmax_t size)
-{
-	int diskSpaceStatus = FreeSpaceCheck(size, FreeSpaceCheckCategory::Temporary);
-	if (diskSpaceStatus != 0)
-		return diskSpaceStatus;
-
-	std::vector<std::string> params =
-	{
-		m_szAria2cLocation.string(),
-		"--max-connection-per-server=16",
-		"-UAdastral-master",
-		"--disable-ipv6=true",
-		"--allow-piece-length-change=true",
-		"--max-concurrent-downloads=16",
-		"--optimize-concurrent-downloads=true",
-		"--check-certificate=false",
-		"--check-integrity=true",
-		"--auto-file-renaming=false",
-		"--continue=true",
-		"--allow-overwrite=true",
-		"--console-log-level=error",
-		"--summary-interval=0",
-		"--bt-hash-check-seed=false",
-		"--seed-time=0",
-		"--human-readable=false",
-		"-d",
-		m_szTempPath.string(),
-		szUrl
-	};
-
-	printf("Downloading %s\n", szUrl.c_str());
-	int status = Utility::ExecWithParam(params);
-	if (status != 0)
-	{
-		printf("Download failed, Status: %d\n", status);
-		return 1;
-	}
-
 	return 0;
 }
 

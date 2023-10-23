@@ -7,3 +7,6 @@
 [submodule "Code/emley/libarchive"]
 	path = Code/emley/libarchive
 	url = https://github.com/libarchive/libarchive.git
+[submodule "Code/emley/zip"]
+	path = Code/emley/zip
+	url = git@github.com:kuba--/zip.git

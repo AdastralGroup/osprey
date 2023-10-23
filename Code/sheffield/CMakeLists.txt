@@ -1,15 +1,13 @@
-﻿ad_cmake_init()
-project(emley)
-set(JSON_BuildTests OFF)
-ad_create_target(SHARED_LIBRARY ${PROJECT_NAME})
+ad_cmake_init()
+
 include(FetchContent)
-include_directories(json/include)
-add_subdirectory(json)
-target_include_directories(emley PUBLIC ./)
 
 # Get the name of this folder as the project name
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
 
+
+
+ad_create_target(SHARED_LIBRARY ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC moss)
 

@@ -29,7 +29,7 @@ ad_build_filter_init()
 
 if(NOT AD_SUBMODULE_MODE)
 	ad_detect_languages()
-	project("coldfield"
+	project("winter"
 		VERSION 1.0
 		LANGUAGES ${AD_LANGUAGES})
 endif()

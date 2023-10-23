@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utility/utility.hpp>
+#include <moss/moss.hpp>
 #include <version/version.hpp>
 #include <json/single_include/nlohmann/json.hpp>
 #include <iostream>
@@ -17,7 +17,6 @@ struct KachemakVersion {
 	std::string szDownloadUrl;
 	std::size_t lDownloadSize;
 	std::size_t lExtractSize;
-	std::string szHealUrl;
 	std::string szVersion;
 	std::string szSignature;
 };
@@ -61,7 +60,6 @@ public:
 		const uintmax_t downloadSize
 	);
 
-	int AriaDownload(const std::string& szUrl, const uintmax_t size);
 private:
 	int ButlerParseCommand(const std::string& command);
 private:
