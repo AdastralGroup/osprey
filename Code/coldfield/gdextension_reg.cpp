@@ -20,8 +20,8 @@
 
 
 #include <coldfield/GDRegister/register_adastral_types.h>
-#include <coldfield/External/ADProjectEvent.h>
 #include <coldfield/External/ADRegisterProject.h>
+#include <coldfield/External/ADProjectEvent.h>
 
 void register_adastral_types(godot::ModuleInitializationLevel p_level) {
 	if (p_level != godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {

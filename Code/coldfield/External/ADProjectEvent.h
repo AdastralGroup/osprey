@@ -24,6 +24,7 @@
 #include <godot_cpp/core/property_info.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/signal.hpp>
 //=============================
 
 using namespace godot;
@@ -32,19 +33,16 @@ namespace adastral
 	/// @brief Helper class for subscribing to events fired by GDscript.
 	/// NOTE: events = signals in Godot's eyes.
 
-	class AD_COLDFIELD_DLL ADProjectEvent : public Signal {
-		//GDCLASS(ADProjectEvent, Signal)
+	class AD_COLDFIELD_DLL ADProjectEvent : public Node {
+		GDCLASS(ADProjectEvent, Node)
 
 	private:
 		Object* target; // The target object that emits the signal
 		String event_name; // The name of the event
-
+		Signal target_signal;
 	public:
-		ADProjectEvent() {
-			target = nullptr;
-		}
 
-		void connect_to_event(Object* target, const String& event_name) {
+		inline void connect_to_event(Object* target, const String& event_name)  {
 			this->target = target;
 			this->event_name = event_name;
 
@@ -54,7 +52,7 @@ namespace adastral
 			}
 		}
 
-		void disconnect_from_event() {
+		inline void disconnect_from_event()  {
 			if (target && !event_name.is_empty()) {
 				StringName signal_name(event_name);
 				target->disconnect(signal_name, (const Callable&)target);
@@ -64,17 +62,19 @@ namespace adastral
 			event_name = "";
 		}
 
-		void _on_event_triggered() {
+		 void _on_event_triggered()  {
 			// Handle the event here
-			emit("event_triggered");
+			//target_signal.emit("event_triggered");
 		}
+		static void _bind_methods() {
 
+		}
 		static void _register_methods() {
-			ClassDB::bind_method("_on_event_triggered", &ADProjectEvent::_on_event_triggered);
+			//ClassDB::bind_method("_on_event_triggered", &ADProjectEvent::_on_event_triggered);
 
 			// Expose methods to GDScript
-			ClassDB::bind_method("connect_to_event", &ADProjectEvent::connect_to_event);
-			ClassDB::bind_method("disconnect_from_event", &ADProjectEvent::disconnect_from_event);
+			//ClassDB::bind_method("connect_to_event", &ADProjectEvent::connect_to_event, "connect_to_event");
+			//ClassDB::bind_method("disconnect_from_event", (godot::MethodDefinition**)&ADProjectEvent::disconnect_from_event, "connect_to_event");
 
 		}
 	};

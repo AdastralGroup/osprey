@@ -22,16 +22,20 @@
 #include <godot_cpp/classes/jni_singleton.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <map>
+#include <godot_cpp/classes/node.hpp>
 //=============================
 namespace adastral
 {
 	/// @brief Helper class to assist with registering external libraries to godot.
-	class AD_COLDFIELD_DLL ADProjectRegister
+	class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node
 	{
+		GDCLASS(ADProjectRegister, godot::Node)
 	public:
 		ADProjectRegister();
 		virtual ~ADProjectRegister();
+		static void _bind_methods() {
 
+		}
 		/// @brief registers a class within godot.
 		template<class a>
 		void RegisterClass(godot::String _classname, a& regclass);
