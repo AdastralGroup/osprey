@@ -43,13 +43,9 @@ int moss::DeleteDirectoryContent(const std::filesystem::path& dir)
 
 /*
 desc:
-	extract .zstd file
+	extract .zip file
 returns:
 	0: success
-	1: failed to open input file
-	2: failed to create zstd context
-	3: failed to allocate memory
-	4: failed to decompress
 */
 
 
@@ -57,4 +53,36 @@ int moss::ExtractZip(const std::string& szInputFile, const std::string& szOutput
 {
     zip_extract(szInputFile.c_str(),szOutputFile.c_str(),nullptr,nullptr);
 	return 0;
+}
+
+std::filesystem::path moss::FindSteamPath() {
+    return std::filesystem::path("/lol");
+}
+
+bool moss::CheckTF2Installed(const std::filesystem::path& steamDir) {
+    std::ifstream file(steamDir / std::filesystem::path("steamapps/libraryfolders.vdf"));
+    if (!file.is_open()) {
+        return false;
+    }
+    std::string line;
+    while (getline(file, line))
+        if (line.find("440") != std::string::npos) {
+            std::cout << "TF2 found!" << std::endl;
+            return true;
+        }
+    return false;
+}
+
+bool moss::CheckSDKInstalled(const std::filesystem::path& steamDir) {
+    std::ifstream file(steamDir / std::filesystem::path("steamapps/libraryfolders.vdf"));
+    if (!file.is_open()) {
+        return false;
+    }
+    std::string line;
+    while (getline(file, line))
+        if (line.find("243750") != std::string::npos) {
+            std::cout << "TF2 found!" << std::endl;
+            return true;
+        }
+    return false;
 }

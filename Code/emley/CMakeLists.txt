@@ -3,8 +3,6 @@ project(emley)
 set(JSON_BuildTests OFF)
 ad_create_target(SHARED_LIBRARY ${PROJECT_NAME})
 include(FetchContent)
-include_directories(json/include)
-add_subdirectory(json)
 target_include_directories(emley PUBLIC ./)
 
 # Get the name of this folder as the project name

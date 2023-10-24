@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2023 Copyright Adastral Group and Contributors
+ *   Copyright (c) 2023 Copyright The Adastral Group and Contributors
 
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,3 +32,12 @@
 #         define define AD_PALACE_DLL [[gnu::visibility("default")]]
 #       endif
 #  endif
+
+#include <emley/kachemak/kachemak.hpp>
+#include <moss/json/single_include/nlohmann/json.hpp>
+
+class palace{
+public:
+    palace();
+    int sanity_checks();
+};

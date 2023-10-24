@@ -13,7 +13,7 @@ const std::string& Version::GetInstalledVersion()
 
 void Version::FindInstalledVersion()
 {
-	std::ifstream version(m_szInstallPath / m_szDataDirectory / "rev.txt");
+	std::ifstream version(m_szInstallPath / m_szDataDirectory / ".adastral");
 	if (!version.is_open()) {
 		// handle error;
 	}
