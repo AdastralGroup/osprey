@@ -16,17 +16,8 @@
  */
 #include <coldfield/External/ADRegisterProject.h>
 
-adastral::ADProjectRegister::ADProjectRegister()
-{
-	_classsingleton.initialize_class();
-}
+adastral::ADProjectRegister::ADProjectRegister() { _classsingleton.initialize_class(); }
 
-adastral::ADProjectRegister::~ADProjectRegister()
-{
-	_registeredprojects.clear();
-}
+adastral::ADProjectRegister::~ADProjectRegister() { _registeredprojects.clear(); }
 
-void adastral::ADProjectRegister::KillClasses(GDExtensionInitializationLevel& a)
-{
-	
-}
+void adastral::ADProjectRegister::KillClasses(GDExtensionInitializationLevel& a) {}

@@ -17,21 +17,23 @@
 
 #pragma once
 
- // Configure the DLL Import/Export Define
+// Configure the DLL Import/Export Define
 
-#  ifdef BUILDSYSTEM_BUILDING_COLDFIELD_LIB
-#    ifdef _WIN32
-#      define AD_COLDFIELD_DLL __declspec(dllexport)
-#    else
-#      define AD_COLDFIELD_DLL [[gnu::visibility("default")]]
-#    endif
-#  else
-#      ifdef _WIN32
-#           define AD_COLDFIELD_DLL __declspec(dllimport)
-#      else
-#         define define AD_COLDFIELD_DLL [[gnu::visibility("default")]]
-#       endif
-#  endif
+#ifdef BUILDSYSTEM_BUILDING_COLDFIELD_LIB
+#ifdef _WIN32
+#define AD_COLDFIELD_DLL __declspec(dllexport)
+#else
+#define AD_COLDFIELD_DLL [[gnu::visibility("default")]]
+#endif
+#else
+#ifdef _WIN32
+#define AD_COLDFIELD_DLL __declspec(dllimport)
+#else
+#define define AD_COLDFIELD_DLL [[gnu::visibility("default")]]
+#endif
+#endif
 
-#include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/godot.hpp>
+
+void force_this_to_be_linked_in();
