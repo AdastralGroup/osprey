@@ -1,40 +1,26 @@
 #include <events/error.hpp>
 #include <events/progress.hpp>
 #include <kachemak/kachemak.hpp>
-
 #include "sheffield/sheffield.hpp"
 
-Kachemak::Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory,
-                   const std::string& szSourceUrl)
-    : Version(szInstallPath, szDataDirectory, szSourceUrl) {
+Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
+                   const std::string& szSourceUrl, const std::string installed_version)
+    : Version(szSourcemodPath, szFolderName, szSourceUrl) {
   // placeholder
-  m_parsedVersion = R"({
-		"versions":
-		{
-			"200": {"signature": "tf2classic200.sig", "heal": "tf2classic-2.0.0-heal.zip"},
-			"201": {},
-			"202": {},
-			"203": {"signature": "tf2classic203.sig", "heal": "tf2classic-2.0.3-heal.zip"},
-			"204": {"signature": "tf2classic204.sig", "heal": "tf2classic-2.0.4-heal.zip"},
-			"210": {"url": "tf2classic-2.1.0.meta4", "file": "tf2classic-2.1.0.tar.zst", "presz": 5050680575, "postsz": 13884901888, "signature": "tf2classic210.sig", "heal": "tf2classic-2.1.0-heal.zip"},
-			"211": {"url": "tf2classic-2.1.1.meta4", "file": "tf2classic-2.1.1.tar.zst", "presz": 5050680575, "postsz": 13884901888, "signature": "tf2classic211.sig", "heal": "tf2classic-2.1.1-heal.zip"},
-			"212": {"url": "tf2classic-2.1.2.meta4", "file": "tf2classic-2.1.2.tar.zst", "presz": 5050680575, "postsz": 13884901888, "signature": "tf2classic212.sig", "heal": "tf2classic-2.1.2-heal.zip"}
-		},
-		"patches":
-		{
-			"204": {"url": "tf2classic-patch-204-212.pwr", "file": "tf2classic-patch-204-212.pwr", "tempreq": 12050680575},
-			"210": {"url": "tf2classic-patch-210-212.pwr", "file": "tf2classic-patch-210-212.pwr", "tempreq": 7500000000},
-			"211": {"url": "tf2classic-patch-211-212.meta4", "file": "tf2classic-patch-211-212.pwr", "tempreq": 12050680575}
-		}
-	})"_json;
-
   m_szTempPath = std::filesystem::temp_directory_path().string();
-
-  m_szButlerLocation = std::filesystem::current_path() / "bin" / "butler";
-  m_szAria2cLocation = std::filesystem::current_path() / "bin" / "aria2c";
-
-  m_eventSystem.RegisterListener(
-      EventType::kOnUpdate, [](Event& ev) { printf("Progress: %f\n", ((ProgressUpdateMessage&)ev).GetProgress()); });
+  name = szFolderName; // this is bad don't do this
+  //m_szButlerLocation = std::filesystem::current_path() / "bin" / "butler";
+  //m_szAria2cLocation = std::filesystem::current_path() / "bin" / "aria2c";
+  m_szButlerLocation = std::filesystem::path("/usr/bin/butler");
+  m_szAria2cLocation = std::filesystem::path("/bin/aria2c");
+  m_szInstalledVersion = installed_version; // dumb dumb stupid
+  std::string ver_string = moss().get_string_data_from_server(szSourceUrl+"/versions.json");
+  if(!nlohmann::json::accept(ver_string)){
+    throw std::runtime_error("INVALID JSON YOU IDIOT!!!!!!");
+  }
+  m_parsedVersion = nlohmann::json::parse(ver_string);
+  std::cout << m_parsedVersion["patches"] << std::endl;
+  m_eventSystem.RegisterListener(EventType::kOnUpdate, [](Event& ev) { printf("Progress: %f\n", ((ProgressUpdateMessage&)ev).GetProgress()); });
 }
 
 std::optional<KachemakVersion> Kachemak::GetVersion(const std::string& version) {
@@ -97,7 +83,7 @@ int Kachemak::FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory&
       }
       break;
     case FreeSpaceCheckCategory::Permanent:
-      if (std::filesystem::space(m_szInstallPath).free < size) {
+      if (std::filesystem::space(m_szSourcemodPath).free < size) {
         return 2;
       }
       break;
@@ -110,7 +96,7 @@ int Kachemak::PrepareSymlink() {
   return 0;
 #else
   for (const auto& item : TO_SYMLINK) {
-    const std::filesystem::path symlinkPath = m_szInstallPath / item[1];
+    const std::filesystem::path symlinkPath = m_szSourcemodPath / item[1];
     if (std::filesystem::exists(symlinkPath) && !std::filesystem::is_symlink(symlinkPath)) {
       std::filesystem::remove(symlinkPath);
     }
@@ -124,10 +110,11 @@ int Kachemak::DoSymlink() {
 #ifdef _WIN32
   return 0;
 #else
+  return 0; //leave this for now
   for (const auto& item : TO_SYMLINK) {
-    const std::filesystem::path symlinkPath = m_szInstallPath / m_szDataDirectory / item[1];
+    const std::filesystem::path symlinkPath = m_szSourcemodPath / m_szFolderName / item[1];
     if (!std::filesystem::exists(symlinkPath)) {
-      std::filesystem::create_symlink(m_szInstallPath / item[0], symlinkPath);
+      std::filesystem::create_symlink(m_szSourcemodPath / item[0], symlinkPath);
     }
   }
 
@@ -162,14 +149,14 @@ int Kachemak::Update() {
   std::stringstream sigUrlFull_ss;
   sigUrlFull_ss << m_szSourceUrl << installedVersion.value().szSignature;
   // Data path for current install
-  std::filesystem::path dataDir_path = m_szInstallPath / m_szDataDirectory;
+  std::filesystem::path dataDir_path = m_szSourcemodPath / m_szFolderName;
   std::stringstream healUrl_ss;
   healUrl_ss << m_szSourceUrl << installedVersion.value().szFileName;
   int verifyRes = ButlerVerify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
 
   std::stringstream patchUrlFull_ss;
   patchUrlFull_ss << m_szSourceUrl << patch.value().szUrl;
-  std::filesystem::path stagingPath = m_szInstallPath / "butler-staging";
+  std::filesystem::path stagingPath = m_szSourcemodPath / "butler-staging";
   int patchRes = ButlerPatch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
                              dataDir_path.string(), patch.value().lTempRequired);
 
@@ -187,10 +174,10 @@ int Kachemak::Install() {
   int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-  int downloadStatus = sheffield(m_szAria2cLocation).AriaDownload(downloadUri, m_szInstallPath);
+  int downloadStatus = sheffield(m_szAria2cLocation).AriaDownload(downloadUri, m_szSourcemodPath);
   if (downloadStatus != 0) return downloadStatus;
 
-  Extract(latestVersion.value().szFileName, m_szInstallPath.string(), latestVersion.value().lExtractSize);
+  Extract(latestVersion.value().szFileName, m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
   DoSymlink();
   return 0;
 }
@@ -310,7 +297,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
 }
 
 int Kachemak::ButlerParseCommand(const std::string& command) {
-  FILE* pipe = popen(command.c_str(), "rb");
+  FILE* pipe = popen(command.c_str(), "r");
   if (!pipe) {
     printf("Failed to create pipe for butler verification\n");
     return 1;

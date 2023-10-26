@@ -2,7 +2,7 @@
 #include <sheffield/sheffield.hpp>
 #include <vector>
 
-sheffield::sheffield(const std::string vm_szAria2cLocation) { sheffield::m_szAria2cLocation = vm_szAria2cLocation; }
+sheffield::sheffield(const std::string vm_szAria2cLocation) { m_szAria2cLocation = vm_szAria2cLocation; }
 
 int sheffield::AriaDownload(const std::string& szUrl, const std::string& path) {
   std::vector<std::string> params = {m_szAria2cLocation,

@@ -6,9 +6,10 @@
 
 class Version {
  public:
-  Version(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory,
+  Version(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
           const std::string& szSourceUrl = "https://wiki.tf2classic.com/kachemak/");
   const std::string& GetInstalledVersion();
+  std::string name;
   void Verify();
   virtual int Install() = 0;
 
@@ -16,8 +17,8 @@ class Version {
   void FindInstalledVersion();
 
   std::string m_szInstalledVersion;
-  std::filesystem::path m_szInstallPath;
-  std::filesystem::path m_szDataDirectory;
+  std::filesystem::path m_szSourcemodPath;
+  std::filesystem::path m_szFolderName;
   std::string m_szSourceUrl;
   EventSystem m_eventSystem;
 };

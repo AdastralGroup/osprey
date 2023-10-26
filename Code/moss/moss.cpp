@@ -77,3 +77,38 @@ bool moss::CheckSDKInstalled(const std::filesystem::path& steamDir) {
     }
   return false;
 }
+
+void moss::curl_callback(void* buffer, size_t sz, size_t n) { curl_data += (char*)buffer; }
+
+size_t moss::static_curl_callback(void* buffer, size_t sz, size_t n, void* cptr) {
+  static_cast<moss*>(cptr)->curl_callback(buffer, sz, n);
+  return sz * n;
+}
+
+std::string moss::get_string_data_from_server(const std::string& url) {
+  CURL* curlHandle = curl_easy_init();
+  curl_data = "";
+  curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, moss::static_curl_callback);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
+  CURLcode res = curl_easy_perform(curlHandle);
+  if (res != CURLE_OK) {
+    exit(256);
+  }
+  return curl_data;
+}
+
+
+int moss::sanity_checks() {
+  CURL* curlHandle = curl_easy_init();
+  curl_easy_setopt(curlHandle, CURLOPT_URL, PRIMARY_URL);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, moss::static_curl_callback);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
+  CURLcode res = curl_easy_perform(curlHandle);
+  if (res != CURLE_OK) {
+    curl_data = "";
+    return 1;
+  }
+  curl_data = "";
+  return 0;
+}

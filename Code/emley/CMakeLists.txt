@@ -10,6 +10,7 @@ get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
 
 
 target_link_libraries(${PROJECT_NAME} PUBLIC moss)
+target_link_libraries(${PROJECT_NAME} PRIVATE sheffield)
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)

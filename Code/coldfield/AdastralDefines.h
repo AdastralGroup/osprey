@@ -35,5 +35,3 @@
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
-
-void force_this_to_be_linked_in();

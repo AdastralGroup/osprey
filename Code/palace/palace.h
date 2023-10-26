@@ -32,9 +32,8 @@
 #define define AD_PALACE_DLL [[gnu::visibility("default")]]
 #endif
 #endif
-#define PRIMARY_URL "https://adastral.net/"
 
-#include <coldfield/AdastralDefines.h>
+#include <coldfield/External/ADRegisterProject.h>
 #include <curl/curl.h>
 
 #include <emley/kachemak/kachemak.hpp>
@@ -44,15 +43,10 @@ class palace {
  public:
   palace();
 
-  int sanity_checks();
   void get_server_games();
+  int init_games();
+  int update_game(const std::string& gameName);
 
   nlohmann::json southbankJson;
-  std::vector<Kachemak *> serverGames;
-
- private:
-  void get_southbank_from_server(const std::string &);
-  static size_t static_curl_callback(void *buffer, size_t sz, size_t n, void *f);
-  void curl_callback(void *buffer, size_t sz, size_t n);
-  std::string curl_data;
+  std::unordered_map<std::string,Kachemak*> serverGames;
 };

@@ -31,8 +31,8 @@ enum class FreeSpaceCheckCategory { Temporary, Permanent };
 
 class Kachemak : public Version {
  public:
-  Kachemak(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory,
-           const std::string& szSourceUrl);
+  Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
+           const std::string& szSourceUrl, const std::string installed_version);
   std::optional<KachemakVersion> GetVersion(const std::string& version);
   std::optional<KachemakPatch> GetPatch(const std::string& version);
   std::optional<KachemakVersion> GetLatestVersion();

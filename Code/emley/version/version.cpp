@@ -1,23 +1,23 @@
 #include <fstream>
 #include <version/version.hpp>
 
-Version::Version(const std::filesystem::path& szInstallPath, const std::filesystem::path& szDataDirectory,
+Version::Version(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
                  const std::string& szSourceUrl)
-    : m_szInstallPath(szInstallPath), m_szDataDirectory(szDataDirectory), m_szSourceUrl(szSourceUrl) {
+    : m_szSourcemodPath(szSourcemodPath), m_szFolderName(szFolderName), m_szSourceUrl(szSourceUrl) {
   FindInstalledVersion();
 }
 
 const std::string& Version::GetInstalledVersion() { return m_szInstalledVersion; }
 
 void Version::FindInstalledVersion() {
-  std::ifstream version(m_szInstallPath / m_szDataDirectory / ".adastral");
-  if (!version.is_open()) {
-    // handle error;
-  }
-
-  std::stringstream content;
-  content << version.rdbuf();
-  m_szInstalledVersion = content.str();
+  //std::ifstream version(m_szSourcemodPath / m_szFolderName / ".adastral");
+  //if (!version.is_open()) {
+  //  // handle error;
+  //}
+  //
+  //std::stringstream content;
+  //content << version.rdbuf();
+  //m_szInstalledVersion = content.str();
 }
 
 void Version::Verify() {
