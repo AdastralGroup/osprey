@@ -1,4 +1,4 @@
-#include <palace/palace.h>
+#include <palace/palace.hpp>
 
 int main() {
   auto p = new palace; // does sanity checks

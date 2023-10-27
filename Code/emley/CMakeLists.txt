@@ -1,18 +1,13 @@
 ﻿ad_cmake_init()
 project(emley)
-set(JSON_BuildTests OFF)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++20")
+find_package(CURL REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 ad_create_target(STATIC_LIBRARY ${PROJECT_NAME})
 include(FetchContent)
 target_include_directories(emley PUBLIC ./)
 
 # Get the name of this folder as the project name
-get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
-
-
-target_link_libraries(${PROJECT_NAME} PUBLIC moss)
-target_link_libraries(${PROJECT_NAME} PRIVATE sheffield)
-
-if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
-endif ()
-
+target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl nlohmann_json::nlohmann_json moss sheffield)

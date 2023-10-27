@@ -1,4 +1,4 @@
-#include "palace.h"
+#include "palace.hpp"
 
 palace::palace() {
   moss().sanity_checks();

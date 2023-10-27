@@ -1,14 +1,19 @@
 #include <events/error.hpp>
 #include <events/progress.hpp>
 #include <kachemak/kachemak.hpp>
-#include "sheffield/sheffield.hpp"
+#include <sheffield/sheffield.hpp>
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#define popen _popen
+#define pclose _pclose
+#endif
 
 Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
                    const std::string& szSourceUrl, const std::string installed_version)
     : Version(szSourcemodPath, szFolderName, szSourceUrl) {
   // placeholder
   m_szTempPath = std::filesystem::temp_directory_path().string();
-  name = szFolderName; // this is bad don't do this
+  name = szFolderName.string(); // this is bad don't do this
   //m_szButlerLocation = std::filesystem::current_path() / "bin" / "butler";
   //m_szAria2cLocation = std::filesystem::current_path() / "bin" / "aria2c";
   m_szButlerLocation = std::filesystem::path("/usr/bin/butler");
@@ -174,7 +179,7 @@ int Kachemak::Install() {
   int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-  int downloadStatus = sheffield(m_szAria2cLocation).AriaDownload(downloadUri, m_szSourcemodPath);
+  int downloadStatus = sheffield(m_szAria2cLocation.string()).AriaDownload(downloadUri, m_szSourcemodPath.string());
   if (downloadStatus != 0) return downloadStatus;
 
   Extract(latestVersion.value().szFileName, m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
@@ -258,7 +263,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
 
   int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
-  int downloadStatus = sheffield(m_szAria2cLocation).AriaDownload(sz_url, m_szTempPath);
+  int downloadStatus = sheffield(m_szAria2cLocation.string()).AriaDownload(sz_url, m_szTempPath.string());
   if (downloadStatus != 0) return downloadStatus;
 
   std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
