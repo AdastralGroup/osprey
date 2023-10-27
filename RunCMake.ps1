@@ -127,7 +127,17 @@ else {
 Write-Host ""
 Write-Host "Running cmake.exe $CMAKE_ARGS"
 Write-Host ""
-&Data\Tools\Precompiled\cmake\bin\cmake.exe $CMAKE_ARGS
+try
+{
+	$file = Get-Item -Path "cmake.exe"
+	Write-Host "Using cmake in path"
+	&cmake.exe $CMAKE_ARGS
+}
+catch
+{
+	Write-Host "Using precompiled cmake"
+	&Data\Tools\Precompiled\cmake\bin\cmake.exe $CMAKE_ARGS
+}
 
 if (!$?) {
     throw "CMake failed with exit code '$LASTEXITCODE'."
