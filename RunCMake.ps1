@@ -127,13 +127,12 @@ else {
 Write-Host ""
 Write-Host "Running cmake.exe $CMAKE_ARGS"
 Write-Host ""
-try
+if (Get-Command "cmake.exe" -ErrorAction SilentlyContinue)
 {
-	$file = Get-Item -Path "cmake.exe"
 	Write-Host "Using cmake in path"
 	&cmake.exe $CMAKE_ARGS
 }
-catch
+else
 {
 	Write-Host "Using precompiled cmake"
 	&Data\Tools\Precompiled\cmake\bin\cmake.exe $CMAKE_ARGS
