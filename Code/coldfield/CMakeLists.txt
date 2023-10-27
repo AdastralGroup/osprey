@@ -16,8 +16,3 @@ FetchContent_MakeAvailable(GDExtension)
 ad_create_target(STATIC_LIBRARY ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC godot::cpp)
-
-if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /-WX)
-endif ()
-

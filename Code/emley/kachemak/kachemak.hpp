@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
-#include <json/single_include/nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 #include <moss/moss.hpp>
 #include <optional>
 #include <string>

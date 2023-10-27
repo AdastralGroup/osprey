@@ -33,11 +33,10 @@
 #endif
 #endif
 
-#include <coldfield/External/ADRegisterProject.h>
 #include <curl/curl.h>
 
 #include <emley/kachemak/kachemak.hpp>
-#include <moss/json/single_include/nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 
 class palace {
  public:
