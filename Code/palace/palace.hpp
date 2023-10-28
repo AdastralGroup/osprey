@@ -48,4 +48,8 @@ class palace {
 
   nlohmann::json southbankJson;
   std::unordered_map<std::string,Kachemak*> serverGames;
+
+private:
+	//Path to users sourcemods folder
+	std::filesystem::path sourcemodsPath;
 };

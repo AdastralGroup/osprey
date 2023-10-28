@@ -133,7 +133,7 @@ inline bool Is64BitWindows()
 }
 #endif
 
-static std::filesystem::path moss::GetSteamSourcemodPath()
+std::filesystem::path moss::GetSteamSourcemodPath()
 {
 #if _WIN32
 	char valueData[MAX_PATH];
@@ -141,7 +141,15 @@ static std::filesystem::path moss::GetSteamSourcemodPath()
 
 	//Check if this is 64 bit or 32 bit process
 	const char* subKey = Is64BitWindows() ? "SOFTWARE\\WOW6432Node\\Valve\\Steam" : "\\SOFTWARE\\Valve\\Steam";
+
+    //Get steam install dir from registry
 	RegGetValueA(HKEY_LOCAL_MACHINE, subKey, "InstallPath", RRF_RT_ANY, nullptr, &valueData, &valueLen);
+    if (valueData[0] == 0)
+    {
+        //Registry key did not exist/had no value
+        return std::filesystem::path();
+    }
+
 	return std::filesystem::path(valueData) / "steamapps\\sourcemods";
 #else
 	//Return normal steam path or use sym link version

@@ -2,6 +2,11 @@
 
 palace::palace() {
   moss().sanity_checks();
+
+  sourcemodsPath = moss::GetSteamSourcemodPath();
+#if _DEBUG
+    printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
+#endif
 }
 
 void palace::get_server_games() {
@@ -10,12 +15,16 @@ void palace::get_server_games() {
 
 
 int palace::init_games() {
-  std::filesystem::path smPath = "/home/rr/.steam/steam/steamapps/sourcemods";
+  if (!std::filesystem::exists(sourcemodsPath))
+  {
+    return 2;
+  }
+
   for(const auto& it: southbankJson["games"].items()){
     std::string version;
-    if(std::filesystem::exists(smPath / it.key())) {
+    if(std::filesystem::exists(sourcemodsPath / it.key())) {
       std::cout << it.key() << ": Game exists. " <<std::endl;
-      std::ifstream data(smPath / it.key() / ".adastral");
+      std::ifstream data(sourcemodsPath / it.key() / ".adastral");
       if (data.fail()) {
         return 1;  // TODO: handle this properly. we also need to check the json's not invalid but uhhh idk since it's a stream
       }
@@ -25,7 +34,7 @@ int palace::init_games() {
       std::string full_url = southbankJson["dl_url"];
       full_url += it.key();
       full_url += '/'; // this is dumb, make it do this inside kachemak....
-      auto* game = new Kachemak(smPath,it.key(),full_url,version); // getting the json is versioning impl specific so we let it get it
+      auto* game = new Kachemak(sourcemodsPath,it.key(),full_url,version); // getting the json is versioning impl specific so we let it get it
       // i'm aware i'm breaking one of the rules, but it makes more sense
       serverGames[it.key()] = game;
   }
