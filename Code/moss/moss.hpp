@@ -19,7 +19,7 @@ class moss {
   std::string get_string_data_from_server(const std::string& url);
 
   //Get path object for the systems sourcemods folder (win/linux)
-  static std::filesystem::path GetSteamSourcemodPath();
+  std::filesystem::path GetSteamSourcemodPath();
 
  private:
   static size_t static_curl_callback(void *buffer, size_t sz, size_t n, void *cptr);

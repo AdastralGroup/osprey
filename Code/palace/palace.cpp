@@ -3,7 +3,7 @@
 palace::palace() {
   moss().sanity_checks();
 
-  sourcemodsPath = moss::GetSteamSourcemodPath();
+  sourcemodsPath = moss().GetSteamSourcemodPath();
 #if _DEBUG
     printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
 #endif
