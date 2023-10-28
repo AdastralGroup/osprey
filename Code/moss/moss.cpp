@@ -112,3 +112,40 @@ int moss::sanity_checks() {
   curl_data = "";
   return 0;
 }
+
+#if _WIN32
+inline bool Is64BitWindows()
+{
+#if _WIN64
+    return true;
+#else
+    USHORT ProcessMachine;
+    USHORT NativeMachine;
+    BOOL IsWow64 = IsWow64Process2(GetCurrentProcess(), &ProcessMachine, &NativeMachine);
+
+    if(IsWow64)
+    {
+        if(NativeMachine == IMAGE_FILE_MACHINE_AMD64) return true;
+    }
+
+    return false;
+#endif
+}
+#endif
+
+static std::filesystem::path moss::GetSteamSourcemodPath()
+{
+#if _WIN32
+	char valueData[MAX_PATH];
+	DWORD valueLen = MAX_PATH;
+
+	//Check if this is 64 bit or 32 bit process
+	const char* subKey = Is64BitWindows() ? "SOFTWARE\\WOW6432Node\\Valve\\Steam" : "\\SOFTWARE\\Valve\\Steam";
+	RegGetValueA(HKEY_LOCAL_MACHINE, subKey, "InstallPath", RRF_RT_ANY, nullptr, &valueData, &valueLen);
+	return std::filesystem::path(valueData) / "steamapps\\sourcemods";
+#else
+	//Return normal steam path or use sym link version
+	auto normal_steam_linux =  std::filesystem::path("~/.local/share/Steam/steamapps/sourcemods");
+	return std::filesystem::exists(normal_steam_linux) ? normal_steam_linux : std::filesystem::path("~/.steam/steam/steamapps/sourcemods");
+#endif
+}
