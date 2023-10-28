@@ -17,6 +17,10 @@ class moss {
   static bool CheckSDKInstalled(const std::filesystem::path& steamDir);
   int sanity_checks();
   std::string get_string_data_from_server(const std::string& url);
+
+  //Get path object for the systems sourcemods folder (win/linux)
+  std::filesystem::path GetSteamSourcemodPath();
+
  private:
   static size_t static_curl_callback(void *buffer, size_t sz, size_t n, void *cptr);
   void curl_callback(void *buffer, size_t sz, size_t n); // callback for the below. string only. we could r
