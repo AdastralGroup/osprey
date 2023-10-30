@@ -19,50 +19,47 @@
 
 //====== Needed Headers ===========
 #include <coldfield/AdastralDefines.h>
+
 #include <godot_cpp/classes/jni_singleton.hpp>
+#include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <map>
-#include <godot_cpp/classes/node.hpp>
 //=============================
-namespace adastral
-{
-	/// @brief Helper class to assist with registering external libraries to godot.
-	class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node
-	{
-		GDCLASS(ADProjectRegister, godot::Node)
-	public:
-		ADProjectRegister();
-		virtual ~ADProjectRegister();
-		static void _bind_methods() {
+namespace adastral {
+/// @brief Helper class to assist with registering external libraries to godot.
+class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node {
+  GDCLASS(ADProjectRegister, godot::Node)
+ public:
+  ADProjectRegister();
+  virtual ~ADProjectRegister();
+  static void _bind_methods() {}
+  /// @brief registers a class within godot.
+  template <class a>
+  void RegisterClass(godot::String _classname, a& regclass);
 
-		}
-		/// @brief registers a class within godot.
-		template<class a>
-		void RegisterClass(godot::String _classname, a& regclass);
+  /// @brief Binds a godot method. NOTE: This should be used for static methods/classes. it will not be assigned to a
+  /// class (In-terms of godot).
+  template <class s>
+  void BindGodotMethod(s& method, godot::String& _methodname);
 
-		/// @brief Binds a godot method. NOTE: This should be used for static methods/classes. it will not be assigned to a class (In-terms of godot).
-		template<class s>
-		void BindGodotMethod(s& method, godot::String& _methodname);
+  /// @brief Destroys the class db, which in turn, de-init's all registered classes.
+  void KillClasses(GDExtensionInitializationLevel& a);
 
-		/// @brief Destroys the class db, which in turn, de-init's all registered classes.
-		void KillClasses(GDExtensionInitializationLevel& a);
-	protected:
-	private:
-		std::map<godot::String, void*> _registeredprojects;
-		godot::JNISingleton _classsingleton;
-	};
+ protected:
+ private:
+  std::map<godot::String, void*> _registeredprojects;
+  godot::JNISingleton _classsingleton;
+};
 
-	template<class s>
-	void adastral::ADProjectRegister::BindGodotMethod(s& method, godot::String& _methodname)
-	{
-		godot::ClassDB::bind_method_godot(_methodname, method);
-		_registeredprojects.try_emplace(_methodname, method);
-	}
-
-	template<class a>
-	void adastral::ADProjectRegister::RegisterClass(godot::String _classname, a& regclass)
-	{
-		godot::ClassDB::register_class<a>();
-		_registeredprojects.try_emplace(_classname, regclass);
-	}
+template <class s>
+void adastral::ADProjectRegister::BindGodotMethod(s& method, godot::String& _methodname) {
+  godot::ClassDB::bind_method_godot(_methodname, method);
+  _registeredprojects.try_emplace(_methodname, method);
 }
+
+template <class a>
+void adastral::ADProjectRegister::RegisterClass(godot::String _classname, a& regclass) {
+  godot::ClassDB::register_class<a>();
+  _registeredprojects.try_emplace(_classname, regclass);
+}
+}  // namespace adastral

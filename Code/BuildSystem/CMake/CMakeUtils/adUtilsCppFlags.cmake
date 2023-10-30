@@ -304,11 +304,11 @@ endfunction()
 function(ad_set_build_flags TARGET_NAME)
 	ad_pull_compiler_and_architecture_vars()
 
-	set_property(TARGET ${TARGET_NAME} PROPERTY CXX_STANDARD 17)
+	set_property(TARGET ${TARGET_NAME} PROPERTY CXX_STANDARD 20)
 
 	# There is a bug in the cmake version used by visual studio 2019 which is 3.15.19101501-MSVC_2 that does not correctly pass the c++17 parameter to the compiler. So we need to specify it manually.
 	if(ANDROID AND(${CMAKE_VERSION} VERSION_LESS "3.16.0"))
-		target_compile_options(${TARGET_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-std=c++17>)
+		target_compile_options(${TARGET_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-std=c++20>)
 	endif()
 
 	if(AD_CMAKE_COMPILER_MSVC)
