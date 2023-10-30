@@ -2,9 +2,7 @@
 
 int main() {
   auto p = new palace; // does sanity checks
-  p->get_server_games();
   int code = p->init_games();
-
   switch (code)
   {
     case 0:
@@ -18,6 +16,9 @@ int main() {
         return code;
   }
 
-  p->update_game("open_fortress");
+  p->fetch_server_data();
+  for (const auto& i: p->get_games())
+    std::cout<<i<<std::endl;
+  p->update_game(p->get_games()[0]);
   return 0;
 }

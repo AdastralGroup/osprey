@@ -1,6 +1,6 @@
-#include "moss.hpp"
+#include "fremont.hpp"
 
-int moss::ExecWithParam(const std::vector<std::string>& params) {
+int fremont::ExecWithParam(const std::vector<std::string>& params) {
   std::string param_str;
   for (const auto& i : params) {
     param_str += i + " ";
@@ -18,7 +18,7 @@ res:
   1: input path doesn't exist
   2: input path isn't a directory
 */
-int moss::DeleteDirectoryContent(const std::filesystem::path& dir) {
+int fremont::DeleteDirectoryContent(const std::filesystem::path& dir) {
   if (!std::filesystem::exists(dir)) {
     return 1;
   }
@@ -43,14 +43,12 @@ returns:
         0: success
 */
 
-int moss::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
+int fremont::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
   zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
   return 0;
 }
 
-std::filesystem::path moss::FindSteamPath() { return std::filesystem::path("/lol"); }
-
-bool moss::CheckTF2Installed(const std::filesystem::path& steamDir) {
+bool fremont::CheckTF2Installed(const std::filesystem::path& steamDir) {
   std::ifstream file(steamDir / std::filesystem::path("steamapps/libraryfolders.vdf"));
   if (!file.is_open()) {
     return false;
@@ -64,7 +62,7 @@ bool moss::CheckTF2Installed(const std::filesystem::path& steamDir) {
   return false;
 }
 
-bool moss::CheckSDKInstalled(const std::filesystem::path& steamDir) {
+bool fremont::CheckSDKInstalled(const std::filesystem::path& steamDir) {
   std::ifstream file(steamDir / std::filesystem::path("steamapps/libraryfolders.vdf"));
   if (!file.is_open()) {
     return false;
@@ -78,40 +76,44 @@ bool moss::CheckSDKInstalled(const std::filesystem::path& steamDir) {
   return false;
 }
 
-void moss::curl_callback(void* buffer, size_t sz, size_t n) { curl_data += (char*)buffer; }
+void fremont::curl_callback(void* buffer, size_t sz, size_t n) {curl_string_data += (char*)buffer;
+}
 
-size_t moss::static_curl_callback(void* buffer, size_t sz, size_t n, void* cptr) {
-  static_cast<moss*>(cptr)->curl_callback(buffer, sz, n);
+size_t fremont::static_curl_callback(void* buffer, size_t sz, size_t n, void* cptr) {
+  static_cast<fremont*>(cptr)->curl_callback(buffer, sz, n);
   return sz * n;
 }
 
-std::string moss::get_string_data_from_server(const std::string& url) {
+std::string fremont::get_string_data_from_server(const std::string& url) {
   CURL* curlHandle = curl_easy_init();
-  curl_data = "";
+  curl_string_data = "";
   curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, moss::static_curl_callback);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, fremont::static_curl_callback);
   curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
   CURLcode res = curl_easy_perform(curlHandle);
   if (res != CURLE_OK) {
     exit(256);
   }
-  return curl_data;
+  curl_easy_cleanup(curlHandle);
+  return curl_string_data;
 }
 
 
-int moss::sanity_checks() {
+int fremont::sanity_checks() {
   CURL* curlHandle = curl_easy_init();
   curl_easy_setopt(curlHandle, CURLOPT_URL, PRIMARY_URL);
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, moss::static_curl_callback);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, fremont::static_curl_callback);
   curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
   CURLcode res = curl_easy_perform(curlHandle);
   if (res != CURLE_OK) {
-    curl_data = "";
+    curl_string_data = "";
     return 1;
   }
-  curl_data = "";
+  curl_string_data = "";
   return 0;
+  curl_easy_cleanup(curlHandle);
 }
+
 
 #if _WIN32
 inline bool Is64BitWindows()
@@ -133,7 +135,7 @@ inline bool Is64BitWindows()
 }
 #endif
 
-std::filesystem::path moss::GetSteamSourcemodPath()
+std::filesystem::path fremont::GetSteamSourcemodPath()
 {
 #if _WIN32
 	char valueData[MAX_PATH];
@@ -152,8 +154,27 @@ std::filesystem::path moss::GetSteamSourcemodPath()
 
 	return std::filesystem::path(valueData) / "steamapps\\sourcemods";
 #else
-	//Return normal steam path or use sym link version
-	auto normal_steam_linux =  std::filesystem::path("~/.local/share/Steam/steamapps/sourcemods");
-	return std::filesystem::exists(normal_steam_linux) ? normal_steam_linux : std::filesystem::path("~/.steam/steam/steamapps/sourcemods");
+    std::string home = getenv("HOME");
+    return std::filesystem::canonical(std::filesystem::path(home + "/.local/share/Steam/steamapps/sourcemods"));
 #endif
+}
+
+std::string fremont::get_butler(){
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+  std::string url = server_url + "/butler.exe";
+  std::string temp_path = std::filesystem::temp_directory_path() / "butler.exe";
+#else
+  std::string url = std::string(PRIMARY_URL) + "butler";
+  std::string temp_path = std::filesystem::temp_directory_path() / "butler";
+#endif
+  auto fp = fopen(temp_path.c_str(),"wb");
+  CURL *curl = curl_easy_init();
+  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+  curl_easy_perform(curl);
+  curl_easy_cleanup(curl);
+  fclose(fp);
+  std::filesystem::permissions(temp_path,std::filesystem::perms::all);
+  return temp_path;
 }

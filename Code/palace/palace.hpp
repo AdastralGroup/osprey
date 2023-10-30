@@ -42,10 +42,11 @@ class palace {
  public:
   palace();
 
-  void get_server_games();
+  void fetch_server_data();
   int init_games();
   int update_game(const std::string& gameName);
-
+  std::vector<std::string> get_games();
+  std::vector<std::string> get_installed_games();
   nlohmann::json southbankJson;
   std::unordered_map<std::string,Kachemak*> serverGames;
 

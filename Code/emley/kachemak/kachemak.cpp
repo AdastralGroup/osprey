@@ -5,7 +5,10 @@
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define popen _popen
+#define BUTLER "butler.exe"
 #define pclose _pclose
+#else
+#define BUTLER "butler"
 #endif
 
 Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
@@ -16,20 +19,20 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
   name = szFolderName.string(); // this is bad don't do this
   //m_szButlerLocation = std::filesystem::current_path() / "bin" / "butler";
   //m_szAria2cLocation = std::filesystem::current_path() / "bin" / "aria2c";
-  m_szButlerLocation = std::filesystem::path("/usr/bin/butler");
+  m_szButlerLocation = std::filesystem::temp_directory_path() / BUTLER;
   m_szAria2cLocation = std::filesystem::path("/bin/aria2c");
   m_szInstalledVersion = installed_version; // dumb dumb stupid
-  std::string ver_string = moss().get_string_data_from_server(szSourceUrl+"/versions.json");
+  std::string ver_string = fremont().get_string_data_from_server(szSourceUrl + "/versions.json");
   if(!nlohmann::json::accept(ver_string)){
     throw std::runtime_error("INVALID JSON YOU IDIOT!!!!!!");
   }
-  m_parsedVersion = nlohmann::json::parse(ver_string);
+  m_parsedVersion = nlohmann::ordered_json::parse(ver_string);
   std::cout << m_parsedVersion["patches"] << std::endl;
   m_eventSystem.RegisterListener(EventType::kOnUpdate, [](Event& ev) { printf("Progress: %f\n", ((ProgressUpdateMessage&)ev).GetProgress()); });
 }
 
 std::optional<KachemakVersion> Kachemak::GetVersion(const std::string& version) {
-  nlohmann::json& jsonVersion = m_parsedVersion["versions"][version];
+  nlohmann::ordered_json& jsonVersion = m_parsedVersion["versions"][version];
   if (!jsonVersion.is_object()) {
     printf("Failed to find patch %s\n", version.c_str());
     return std::nullopt;
@@ -47,8 +50,8 @@ std::optional<KachemakVersion> Kachemak::GetVersion(const std::string& version) 
   return ret;
 }
 
-std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version) {
-  nlohmann::json& jsonPatches = m_parsedVersion["patches"][version];
+std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version) { //this doesn't work if there's missing fields
+  nlohmann::ordered_json& jsonPatches = m_parsedVersion["patches"][version];
   if (!jsonPatches.is_object()) {
     printf("Failed to find patch %s\n", version.c_str());
     return std::nullopt;
@@ -133,8 +136,12 @@ res:
   0: success
   1: symlink fail
   2: space check fail
+  3: already on latest
 */
 int Kachemak::Update() {
+  if (m_szInstalledVersion == GetLatestVersion()->szVersion){
+    return 3;
+  }
   int symlinkRes = PrepareSymlink();
   if (symlinkRes != 0) {
     return 1;
@@ -206,7 +213,7 @@ int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutpu
   }
   std::FILE* tmpf = std::tmpfile();
   std::string tmpf_loc = std::to_string(fileno(tmpf));
-  moss::ExtractZip(szInputFile, szOutputDirectory);
+  fremont::ExtractZip(szInputFile, szOutputDirectory);
   return 0;
 }
 
@@ -249,7 +256,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
     }
   }
   if (stagingDir_exists && stagingDir_isDir) {
-    switch (moss::DeleteDirectoryContent(sz_stagingDir)) {
+    switch (fremont::DeleteDirectoryContent(sz_stagingDir)) {
       case 1:
         std::cerr << "[ButlerPatch] Failed to delete staging directory content "
                      "(doesn't exist)";
@@ -288,7 +295,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
     return 2;
   }
 
-  switch (moss::DeleteDirectoryContent(sz_stagingDir)) {
+  switch (fremont::DeleteDirectoryContent(sz_stagingDir)) {
     case 1:
       std::cerr << "[ButlerPatch] Failed to delete staging directory content "
                    "(doesn't exist)";

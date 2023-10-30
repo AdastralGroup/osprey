@@ -1,21 +1,23 @@
 #include "palace.hpp"
 
 palace::palace() {
-  moss().sanity_checks();
-
-  sourcemodsPath = moss().GetSteamSourcemodPath();
+  fremont().sanity_checks();
+  sourcemodsPath = fremont().GetSteamSourcemodPath();
+  fremont::get_butler();
+  fetch_server_data();
 #if _DEBUG
     printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
 #endif
 }
 
-void palace::get_server_games() {
-  southbankJson = nlohmann::json::parse(moss().get_string_data_from_server("https://adastral.net/a/southbank.json"));  // do error checking here
+void palace::fetch_server_data() {
+  southbankJson = nlohmann::json::parse(
+      fremont().get_string_data_from_server(std::string(PRIMARY_URL) + "southbank.json"));  // do error checking here
 }
 
 
 int palace::init_games() {
-  if (!std::filesystem::exists(sourcemodsPath))
+  if (!std::filesystem::exists(std::filesystem::canonical(sourcemodsPath)))
   {
     return 2;
   }
@@ -25,11 +27,11 @@ int palace::init_games() {
     if(std::filesystem::exists(sourcemodsPath / it.key())) {
       std::cout << it.key() << ": Game exists. " <<std::endl;
       std::ifstream data(sourcemodsPath / it.key() / ".adastral");
-      if (data.fail()) {
-        return 1;  // TODO: handle this properly. we also need to check the json's not invalid but uhhh idk since it's a stream
+      if (!data.fail()) {
+        nlohmann::json filedata = nlohmann::json::parse(data);
+        version = filedata["version"];
       }
-      nlohmann::json filedata = nlohmann::json::parse(data);
-      version = filedata["version"];
+      std::cout << "Adastral supported game detected, but adastral spec not detected. Continuing.";
     }
       std::string full_url = southbankJson["dl_url"];
       full_url += it.key();
@@ -42,6 +44,17 @@ int palace::init_games() {
 }
 
 int palace::update_game(const std::string& game_name) {
-  serverGames[game_name]->Update();
+  if(serverGames[game_name]->GetInstalledVersion().empty()){
+      serverGames[game_name]->Install();
+  }else{
+    serverGames[game_name]->Update();
+  }
   return 0;
+}
+std::vector<std::string> palace::get_games() {
+  auto vec = std::vector<std::string>();
+  for(const auto& it: serverGames){
+      vec.push_back(it.first);
+  }
+  return vec;
 }

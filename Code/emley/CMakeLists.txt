@@ -10,4 +10,4 @@ include(FetchContent)
 target_include_directories(emley PUBLIC ./)
 
 # Get the name of this folder as the project name
-target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl nlohmann_json::nlohmann_json moss sheffield)
+target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl nlohmann_json::nlohmann_json fremont sheffield)

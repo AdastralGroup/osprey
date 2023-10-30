@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <iostream>
 #include <nlohmann/json.hpp>
-#include <moss/moss.hpp>
+#include <fremont/fremont.hpp>
 #include <optional>
 #include <string>
 #include <system_error>
@@ -50,7 +50,7 @@ class Kachemak : public Version {
   int ButlerParseCommand(const std::string& command);
 
  private:
-  nlohmann::json m_parsedVersion;
+  nlohmann::ordered_json m_parsedVersion;
   std::filesystem::path m_szTempPath;
 
   std::filesystem::path m_szButlerLocation;

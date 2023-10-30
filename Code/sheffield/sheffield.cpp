@@ -1,4 +1,4 @@
-#include <moss/moss.hpp>
+#include <fremont/fremont.hpp>
 #include <sheffield/sheffield.hpp>
 #include <vector>
 
@@ -27,7 +27,7 @@ int sheffield::AriaDownload(const std::string& szUrl, const std::string& path) {
                                      szUrl};
 
   printf("Downloading %s\n", szUrl.c_str());
-  int status = moss::ExecWithParam(params);
+  int status = fremont::ExecWithParam(params);
   if (status != 0) {
     printf("Download failed, Status: %d\n", status);
     return 1;
