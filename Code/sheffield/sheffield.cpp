@@ -33,5 +33,41 @@ int sheffield::AriaDownload(const std::string& szUrl, const std::string& path) {
     return 1;
   }
 
+
   return 0;
+}
+
+int sheffield::LibTorrentDownload(const std::string &magnet, const std::string &path) try{
+    lt::settings_pack p;
+    p.set_int(lt::settings_pack::alert_mask, lt::alert_category::status
+                                             | lt::alert_category::error);
+    lt::session ses(p);
+
+    lt::add_torrent_params atp = lt::parse_magnet_uri(magnet);
+    atp.save_path = path; // save in current dir
+    lt::torrent_handle h = ses.add_torrent(std::move(atp));
+
+    for (;;) {
+        std::vector<lt::alert *> alerts;
+        ses.pop_alerts(&alerts);
+
+        for (lt::alert const *a: alerts) {
+            std::cout << a->message() << std::endl;
+            // if we receive the finished alert or an error, we're done
+            if (lt::alert_cast<lt::torrent_finished_alert>(a)) {
+                goto done;
+            }
+            if (lt::alert_cast<lt::torrent_error_alert>(a)) {
+                goto done;
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+    done:
+    return 0;
+}
+catch (std::exception& e)
+{
+    std::cerr << "Error: " << e.what() << std::endl;
+    return 1;
 }

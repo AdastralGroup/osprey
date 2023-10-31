@@ -3,6 +3,9 @@
 palace::palace() {
   fremont().sanity_checks();
   sourcemodsPath = fremont().GetSteamSourcemodPath();
+  if(sourcemodsPath == ""){
+      std::cout << "NO SOURCEMOD PATH!" << std::endl;
+  }
   fremont::get_butler();
   fetch_server_data();
 #if _DEBUG

@@ -155,7 +155,12 @@ std::filesystem::path fremont::GetSteamSourcemodPath()
 	return std::filesystem::path(valueData) / "steamapps\\sourcemods";
 #else
     std::string home = getenv("HOME");
-    return std::filesystem::canonical(std::filesystem::path(home + "/.local/share/Steam/steamapps/sourcemods"));
+    auto path = std::filesystem::path(home + "/.local/share/Steam/steamapps/sourcemods");
+    if(std::filesystem::exists(path)){
+        return std::filesystem::canonical(path);
+    }else{
+        return std::filesystem::path("");
+    }
 #endif
 }
 
