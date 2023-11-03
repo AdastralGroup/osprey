@@ -16,11 +16,14 @@ class fremont {
   static bool CheckSDKInstalled(const std::filesystem::path& steamDir);
   int sanity_checks();
   std::string get_string_data_from_server(const std::string& url);
+  std::vector<char> get_bin_data_from_server(const std::string& url);
   //Get path object for the systems sourcemods folder (win/linux)
-  std::filesystem::path GetSteamSourcemodPath();
+  static std::filesystem::path GetSteamSourcemodPath();
   static std::string get_butler();
  private:
   static size_t static_curl_callback(void *buffer, size_t sz, size_t n, void *cptr);
-  void curl_callback(void *buffer, size_t sz, size_t n); // callback for the below. string only. we could r
+  void curl_callback(void *buffer, size_t n); // callback for the below. string only. we could r
   std::string curl_string_data; // we do curl calls synchronously, it's usually all string data so that ends up in here.
+  std::vector<char> curl_bin_data; //idk lol
+  bool bin;
 };

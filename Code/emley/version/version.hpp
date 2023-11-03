@@ -7,14 +7,13 @@
 class Version {
  public:
   Version(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
-          const std::string& szSourceUrl = "https://wiki.tf2classic.com/kachemak/");
+          const std::string& szSourceUrl);
   const std::string& GetInstalledVersion();
   std::string name;
-  void Verify();
+  virtual int Verify() = 0;
   virtual int Install() = 0;
 
  protected:
-  void FindInstalledVersion();
 
   std::string m_szInstalledVersion;
   std::filesystem::path m_szSourcemodPath;

@@ -38,6 +38,13 @@
 #include <emley/kachemak/kachemak.hpp>
 #include <nlohmann/json.hpp>
 
+
+struct GameMetadata{
+  std::string name;
+  Kachemak* l1;
+};
+
+
 class palace {
  public:
   palace();
@@ -45,12 +52,11 @@ class palace {
   void fetch_server_data();
   int init_games();
   int update_game(const std::string& gameName);
+  int verify_game(const std::string& gameName);
   std::vector<std::string> get_games();
   std::vector<std::string> get_installed_games();
   nlohmann::json southbankJson;
-  std::unordered_map<std::string,Kachemak*> serverGames;
+  std::unordered_map<std::string,GameMetadata*> serverGames;
+  std::filesystem::path sourcemodsPath;
 
-private:
-	//Path to users sourcemods folder
-	std::filesystem::path sourcemodsPath;
 };

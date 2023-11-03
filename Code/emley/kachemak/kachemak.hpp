@@ -32,29 +32,32 @@ enum class FreeSpaceCheckCategory { Temporary, Permanent };
 class Kachemak : public Version {
  public:
   Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
-           const std::string& szSourceUrl, const std::string installed_version);
+           const std::string& szSourceUrl);
   std::optional<KachemakVersion> GetVersion(const std::string& version);
   std::optional<KachemakPatch> GetPatch(const std::string& version);
-  std::optional<KachemakVersion> GetLatestVersion();
+  const std::string& GetLatestVersion();
+  bool force_verify = false;
   int FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory& category);
   int PrepareSymlink();
   int DoSymlink();
   int Update();
   virtual int Install();
+  int Verify();
   int Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize);
-  int ButlerVerify(const std::string& szSignature, const std::string& szGameDir, const std::string& szRemote);
-  int ButlerPatch(const std::string& sz_url, const std::filesystem::path& sz_stagingDir,
-                  const std::string& sz_patchFileName, const std::string& sz_gameDir, const uintmax_t downloadSize);
 
  private:
   int ButlerParseCommand(const std::string& command);
 
  private:
+  std::optional<KachemakVersion> KMGetLatestVersion();
+  int ButlerVerify(const std::string& szSignature, const std::string& szGameDir, const std::string& szRemote);
+  int ButlerPatch(const std::string& sz_url, const std::filesystem::path& sz_stagingDir,
+                  const std::string& sz_patchFileName, const std::string& sz_gameDir, const uintmax_t downloadSize);
+  void FindInstalledVersion();
   nlohmann::ordered_json m_parsedVersion;
   std::filesystem::path m_szTempPath;
 
   std::filesystem::path m_szButlerLocation;
-  std::filesystem::path m_szAria2cLocation;
 
   inline static const char* TO_SYMLINK[][2] = {
       {"bin/server.so", "bin/server_srv.so"},

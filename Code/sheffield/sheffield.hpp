@@ -7,13 +7,11 @@
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_handle.hpp>
 #include <libtorrent/alert_types.hpp>
-#include <libtorrent/magnet_uri.hpp>
+#include <libtorrent/load_torrent.hpp>
 
 class sheffield {
-  std::string m_szAria2cLocation;
 
  public:
   explicit sheffield(std::string m_szAria2cLocation);
-  int AriaDownload(const std::string& szUrl, const std::string& path);
-  int LibTorrentDownload(const std::string& magnet, const std::string& path);
+  static int LibTorrentDownload(const std::string& torrent_url, const std::string& path);
 };

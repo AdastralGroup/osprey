@@ -12,4 +12,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC ../)
 
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC fremont CURL::libcurl nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PUBLIC fremont CURL::libcurl nlohmann_json::nlohmann_json torrent-rasterbar)

@@ -1,7 +1,6 @@
 #include "palace.hpp"
 
 palace::palace() {
-  fremont().sanity_checks();
   sourcemodsPath = fremont().GetSteamSourcemodPath();
   if(sourcemodsPath == ""){
       std::cout << "NO SOURCEMOD PATH!" << std::endl;
@@ -14,8 +13,8 @@ palace::palace() {
 }
 
 void palace::fetch_server_data() {
-  southbankJson = nlohmann::json::parse(
-      fremont().get_string_data_from_server(std::string(PRIMARY_URL) + "southbank.json"));  // do error checking here
+    std::string json = fremont().get_string_data_from_server(std::string(PRIMARY_URL) + "southbank.json");
+  southbankJson = nlohmann::json::parse(json);  // do error checking here
 }
 
 
@@ -24,33 +23,33 @@ int palace::init_games() {
   {
     return 2;
   }
-
   for(const auto& it: southbankJson["games"].items()){
     std::string version;
-    if(std::filesystem::exists(sourcemodsPath / it.key())) {
-      std::cout << it.key() << ": Game exists. " <<std::endl;
-      std::ifstream data(sourcemodsPath / it.key() / ".adastral");
-      if (!data.fail()) {
-        nlohmann::json filedata = nlohmann::json::parse(data);
-        version = filedata["version"];
-      }
-      std::cout << "Adastral supported game detected, but adastral spec not detected. Continuing.";
+    std::string id = it.key();
+    if(std::filesystem::exists(sourcemodsPath / id)) {
+      std::cout << "[Palace] " << id << ": Game exists. " <<std::endl;
     }
+      serverGames[id] = new GameMetadata;
+      serverGames[id]->name = it.value()["name"];
       std::string full_url = southbankJson["dl_url"];
-      full_url += it.key();
+      full_url += id;
       full_url += '/'; // this is dumb, make it do this inside kachemak....
-      auto* game = new Kachemak(sourcemodsPath,it.key(),full_url,version); // getting the json is versioning impl specific so we let it get it
+      auto* game = new Kachemak(sourcemodsPath,it.key(),full_url); // getting the json is versioning impl specific so we let it get it
       // i'm aware i'm breaking one of the rules, but it makes more sense
-      serverGames[it.key()] = game;
+      serverGames[id]->l1 = game;
   }
   return 0;
 }
 
 int palace::update_game(const std::string& game_name) {
-  if(serverGames[game_name]->GetInstalledVersion().empty()){
-      serverGames[game_name]->Install();
-  }else{
-    serverGames[game_name]->Update();
+  if(serverGames[game_name]->l1->GetInstalledVersion().empty()){
+      serverGames[game_name]->l1->Install();
+  }
+  //else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() || serverGames[game_name]->l1->force_verify){
+  //  serverGames[game_name]->l1->Verify();
+  //}
+  else{
+    serverGames[game_name]->l1->Update();
   }
   return 0;
 }
@@ -60,4 +59,8 @@ std::vector<std::string> palace::get_games() {
       vec.push_back(it.first);
   }
   return vec;
+}
+int palace::verify_game(const std::string& gameName) {
+  serverGames[gameName]->l1->Verify();
+  return 0;
 }
