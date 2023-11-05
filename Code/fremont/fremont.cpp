@@ -56,7 +56,7 @@ bool fremont::CheckTF2Installed(const std::filesystem::path& steamDir) {
   std::string line;
   while (getline(file, line))
     if (line.find("440") != std::string::npos) {
-      std::cout << "TF2 found!" << std::endl;
+      std::cout << "[Fremont] TF2 found!" << std::endl;
       return true;
     }
   return false;
@@ -70,7 +70,7 @@ bool fremont::CheckSDKInstalled(const std::filesystem::path& steamDir) {
   std::string line;
   while (getline(file, line))
     if (line.find("243750") != std::string::npos) {
-      std::cout << "TF2 found!" << std::endl;
+      std::cout << "[Fremont] SDK2013MP found!" << std::endl;
       return true;
     }
   return false;
@@ -101,11 +101,6 @@ std::string fremont::get_string_data_from_server(const std::string& url) {
   }
   curl_easy_cleanup(curlHandle);
   return curl_string_data;
-}
-
-
-int fremont::sanity_checks() { // make this less bad
-  return 0;
 }
 
 

@@ -2,10 +2,15 @@
 
 palace::palace() {
   sourcemodsPath = fremont().GetSteamSourcemodPath();
-  if(sourcemodsPath == ""){
+  if(sourcemodsPath != ""){
+      TF2Installed = fremont::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
+      SDKInstalled = fremont::CheckSDKInstalled(sourcemodsPath.parent_path().parent_path()); //steam/steamapps/sourcemods
+  }else{
       std::cout << "NO SOURCEMOD PATH!" << std::endl;
   }
+  printf("[Palace/Init] Downloading butler. Hold on.\n");
   fremont::get_butler();
+  printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
 #if _DEBUG
     printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());

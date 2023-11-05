@@ -48,7 +48,8 @@ struct GameMetadata{
 class palace {
  public:
   palace();
-
+  bool TF2Installed = false;
+  bool SDKInstalled = false;
   void fetch_server_data();
   int init_games();
   int update_game(const std::string& gameName);

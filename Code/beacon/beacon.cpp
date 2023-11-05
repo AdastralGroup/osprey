@@ -15,7 +15,7 @@ int main() {
   }
 
   int code = p->init_games();
-  printf("[GameInit] ");
+  printf("[Palace/GameInit] ");
   switch (code) {
     case 0:
       printf("Initialization success!\n");
@@ -31,7 +31,10 @@ int main() {
   for (const auto& i : p->serverGames){
     std::cout << "[Beacon] " << "Game Available: " << i.second->name << " ("<< i.first << ")"<< std::endl;
   }
-  printf("[Beacon] Updating tf2classic.\n");
-  p->verify_game("tf2classic"); // you should check the force_verify to see if verification alone is needed.
+  if(p->serverGames["tf2classic"]->l1->force_verify) {
+    printf("[Beacon] Updating tf2classic.\n");
+    p->verify_game("tf2classic");  // you should check the force_verify to see if verification alone is needed.
+  }
+  printf("[Beacon] Everything done.\n");
   return 0;
 }
