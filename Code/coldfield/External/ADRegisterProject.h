@@ -24,6 +24,7 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <map>
+#include <functional>
 //=============================
 using namespace godot;
 namespace adastral {
@@ -50,7 +51,7 @@ class ADProjectRegister : public godot::Node {
   /// @brief Binds a godot method. NOTE: This should be used for static methods/classes. it will not be assigned to a
   /// class (In-terms of godot).
   template <class s>
-  void BindGodotMethod(s& method, godot::String& _methodname);
+  void BindGodotMethod(std::function<void()> method, godot::String& _methodname);
 
   /// @brief Destroys the class db, which in turn, de-init's all registered classes.
   void KillClasses(GDExtensionInitializationLevel& a);
@@ -61,15 +62,16 @@ class ADProjectRegister : public godot::Node {
   godot::JNISingleton _classsingleton;
 };
 
-template <class s>
-void adastral::ADProjectRegister::BindGodotMethod(s& method, godot::String& _methodname) {
-  godot::ClassDB::bind_method_godot(_methodname, method);
-  _registeredprojects.try_emplace(_methodname, method);
+ template <class s>
+void adastral::ADProjectRegister::BindGodotMethod(std::function<void()> method, godot::String& _methodname) {
+  auto ___call = [](GDExtensionObjectPtr p_instance, const GDExtensionConstTypePtr* p_args,
+                    GDExtensionTypePtr p_ret) -> void {};
+  godot::ClassDB::bind_virtual_method(s::get_class_static(), _methodname, ___call);
 }
 
 template <class a>
 void adastral::ADProjectRegister::RegisterClass(godot::String _classname, a regclass) {
   godot::ClassDB::register_class<a>();
-  _registeredprojects.try_emplace(_classname,(a*)regclass);
+  _registeredprojects.try_emplace(_classname, (a*)&regclass);
 }
 }  // namespace adastral
