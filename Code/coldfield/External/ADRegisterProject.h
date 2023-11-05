@@ -28,7 +28,7 @@
 using namespace godot;
 namespace adastral {
 /// @brief Helper class to assist with registering external libraries to godot.
-class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node {
+class ADProjectRegister : public godot::Node {
   GDCLASS(ADProjectRegister, godot::Node)
  public:
   ADProjectRegister();

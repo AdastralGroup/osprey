@@ -1,3 +1,5 @@
 #include "sutton.h"
-sutton::sutton() {
-}
+  sutton::sutton() {
+    auto ad = adastral::ADProjectRegister();
+    ad.RegisterClass<sutton>("adastral",&sutton);
+  }
