@@ -70,6 +70,6 @@ void adastral::ADProjectRegister::BindGodotMethod(s& method, godot::String& _met
 template <class a>
 void adastral::ADProjectRegister::RegisterClass(godot::String _classname, a regclass) {
   godot::ClassDB::register_class<a>();
-  _registeredprojects.try_emplace(_classname, regclass);
+  _registeredprojects.try_emplace(_classname,(a*)regclass);
 }
 }  // namespace adastral
