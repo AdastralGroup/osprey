@@ -45,7 +45,7 @@ class ADProjectRegister : public godot::Node {
   }
   /// @brief registers a class within godot.
   template <class a>
-  void RegisterClass(godot::String _classname, a& regclass);
+  void RegisterClass(godot::String _classname, a regclass);
 
   /// @brief Binds a godot method. NOTE: This should be used for static methods/classes. it will not be assigned to a
   /// class (In-terms of godot).
