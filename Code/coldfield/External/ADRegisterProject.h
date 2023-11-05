@@ -25,6 +25,7 @@
 #include <godot_cpp/templates/vector.hpp>
 #include <map>
 //=============================
+using namespace godot;
 namespace adastral {
 /// @brief Helper class to assist with registering external libraries to godot.
 class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node {
@@ -32,7 +33,16 @@ class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node {
  public:
   ADProjectRegister();
   virtual ~ADProjectRegister();
-  static void _bind_methods() {}
+  static void _bind_methods() {
+    // godot::ClassDB::bind_method_godot("_register_library", (godot::MethodBind*)ADProjectRegister::RegisterClass);
+    // godot::ClassDB::bind_method_godot("_unregister_library", ADProjectRegister::RegisterClass);
+    {
+      auto ___call = [](GDExtensionObjectPtr p_instance, const GDExtensionConstTypePtr* p_args,
+                        GDExtensionTypePtr p_ret) -> void {};
+      godot::ClassDB::bind_virtual_method(ADProjectRegister::get_class_static(), "RegisterClass", ___call);
+      godot::ClassDB::bind_virtual_method(ADProjectRegister::get_class_static(), "BindGodotMethod", ___call);
+    }
+  }
   /// @brief registers a class within godot.
   template <class a>
   void RegisterClass(godot::String _classname, a& regclass);

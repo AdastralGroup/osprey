@@ -34,7 +34,7 @@ namespace adastral {
 /// NOTE: events = signals in Godot's eyes.
 
 class AD_COLDFIELD_DLL ADProjectEvent : public Node {
-  GDCLASS(ADProjectEvent, Node)
+  GDCLASS(ADProjectEvent, Node);
 
  private:
   Object* target;     // The target object that emits the signal
@@ -71,9 +71,8 @@ class AD_COLDFIELD_DLL ADProjectEvent : public Node {
     // ClassDB::bind_method("_on_event_triggered", &ADProjectEvent::_on_event_triggered);
 
     // Expose methods to GDScript
-    // ClassDB::bind_method("connect_to_event", &ADProjectEvent::connect_to_event, "connect_to_event");
-    // ClassDB::bind_method("disconnect_from_event", (godot::MethodDefinition**)&ADProjectEvent::disconnect_from_event,
-    // "connect_to_event");
+    ClassDB::bind_method("connect_to_event", &ADProjectEvent::connect_to_event, "connect_to_event");
+    ClassDB::bind_method("disconnect_from_event",&ADProjectEvent::disconnect_from_event,"connect_to_event");
   }
 };
 }  // namespace adastral
