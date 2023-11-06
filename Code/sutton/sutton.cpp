@@ -1,12 +1,25 @@
 #include "sutton.h"
 
-void sayHello() { std::cout << "Hello, World!" << std::endl; }
-  sutton::sutton() {
-    auto ad = adastral::ADProjectRegister();
-    ad.RegisterClass<sutton>("adastral",*this);
-    std::function<void()> atest;
-    atest = sayHello;
-    ad.BindGodotMethod<sutton>(atest, (godot::String&)"sayHello");
+using namespace godot;
+
+void sutton::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("sanity_checks"),&sutton::sanity_checks);
+}
+
+  sutton::sutton(){
+    UtilityFunctions::print("nice");
   }
 
-  void sutton::_bind_methods() {}
+
+  int sutton::sanity_checks(){
+    UtilityFunctions::print("sutton: works!");
+    return 1;
+  }
+  sutton::~sutton(){
+    UtilityFunctions::print("bye bye");
+  }
+
+
+
+
+

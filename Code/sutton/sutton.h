@@ -1,11 +1,15 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/godot.hpp>
-#include <coldfield/External/ADRegisterProject.h>
+#include <godot_cpp/variant/utility_functions.hpp>
+namespace godot {
 
-class sutton: public godot::Node 
-{ 
-	GDCLASS(sutton, godot::Node);
- public:
-  sutton();
-  static void _bind_methods();
-};
+  class sutton : public Node {
+    GDCLASS(sutton, Node);
+
+   public:
+    sutton();
+    ~sutton();
+    static void _bind_methods();
+    int sanity_checks();
+  };
+}
