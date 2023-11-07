@@ -1,7 +1,7 @@
 #include <events/error.hpp>
 #include <events/progress.hpp>
 #include <kachemak/kachemak.hpp>
-#include <sheffield/sheffield.hpp>
+#include <bilsdale/bilsdale.hpp>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define popen _popen
@@ -26,13 +26,13 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
   FindInstalledVersion();
   m_eventSystem.RegisterListener(EventType::kOnUpdate, [](Event& ev) {
     double prog = ((ProgressUpdateMessage&)ev).GetProgress();
-    printf("[Kachemak/Butler] Progress: %f\n", round(prog*100));});
+    A_printf("[Kachemak/Butler] Progress: %f\n", round(prog*100));});
 }
 
 std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version) {
   nlohmann::ordered_json& jsonVersion = m_parsedVersion["versions"][version];
   if (!jsonVersion.is_object()) {
-    printf("Failed to find patch %s\n", version.c_str());
+    A_printf("[Kachemak/GetKMVersion] Failed to find version %s\n", version.c_str());
     return std::nullopt;
   }
 
@@ -51,7 +51,7 @@ std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version
 std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version) { //this doesn't work if there's missing fields
   nlohmann::ordered_json& jsonPatches = m_parsedVersion["patches"][version];
   if (!jsonPatches.is_object()) {
-    printf("Failed to find patch %s\n", version.c_str());
+    A_printf("[Kachemak/GetPatch] Failed to find patch %s\n", version.c_str());
     return std::nullopt;
   }
 
@@ -206,7 +206,7 @@ int Kachemak::Install() {
   int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-  int downloadStatus = sheffield::LibTorrentDownload(downloadUri, m_szSourcemodPath.string());
+  int downloadStatus = bilsdale::LibTorrentDownload(downloadUri, m_szSourcemodPath.string());
   if (downloadStatus != 0) return downloadStatus;
   Extract(latestVersion.value().szFileName, m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
   DoSymlink();
@@ -269,25 +269,25 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
   bool stagingDir_isDir = std::filesystem::is_directory(sz_stagingDir);
   if (!stagingDir_exists) {
     if (!std::filesystem::create_directory(sz_stagingDir)) {
-      std::cerr << "[ButlerPatch] Failed to create directory: " << sz_stagingDir.string() << std::endl;
+      A_printf("[Kachemak/ButlerPatch] Failed to create directory: %s \n",sz_stagingDir.c_str());
     }
   }
   if (stagingDir_exists && stagingDir_isDir) {
     switch (fremont::DeleteDirectoryContent(sz_stagingDir)) {
       case 1:
-        std::cerr << "[ButlerPatch] Failed to delete staging directory content "
-                     "(doesn't exist)";
+        A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+                     "(doesn't exist)\n");
         break;
       case 2:
-        std::cerr << "[ButlerPatch] Failed to delete staging directory content "
-                     "(not a directory)";
+        A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+                     "(not a directory)\n");
         break;
     }
   }
 
   int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
-  int downloadStatus = sheffield::LibTorrentDownload(sz_url, m_szTempPath.string());
+  int downloadStatus = bilsdale::LibTorrentDownload(sz_url, m_szTempPath.string());
   if (downloadStatus != 0) return downloadStatus;
 
   std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
@@ -305,21 +305,21 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
          << " ";
   params << "--json";
 
-  std::cout << "[ButlerPatch] Applying patch" << std::endl;
+  A_printf("[Kachemak/ButlerPatch] Applying patch.\n");
   int butlerStatus = ButlerParseCommand(params.str());
   if (butlerStatus != NULL) {
-    std::cerr << "[ButlerPatch] Failed to apply patch: " << butlerStatus << std::endl;
+    A_printf("[Kachemak/ButlerPatch] Failed to apply patch: %s\n",butlerStatus);
     return 2;
   }
 
   switch (fremont::DeleteDirectoryContent(sz_stagingDir)) {
     case 1:
-      std::cerr << "[ButlerPatch] Failed to delete staging directory content "
-                   "(doesn't exist)";
+      A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+                   "(doesn't exist)\n");
       break;
     case 2:
-      std::cerr << "[ButlerPatch] Failed to delete staging directory content "
-                   "(not a directory)";
+      A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+                   "(not a directory)\n");
       break;
   }
   return 0;
@@ -328,7 +328,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
 int Kachemak::ButlerParseCommand(const std::string& command) {
   FILE* pipe = popen(command.c_str(), "r");
   if (!pipe) {
-    printf("Failed to create pipe for butler verification\n");
+    A_printf("Failed to create pipe for butler verification\n");
     return 1;
   }
 
@@ -360,9 +360,9 @@ void Kachemak::FindInstalledVersion() {
   if (!data.fail()) {
     nlohmann::json filedata = nlohmann::json::parse(data);
     m_szInstalledVersion = filedata["version"];
-    printf("[Kachemak/InstalledVersion] version: %s\n",m_szInstalledVersion.c_str());
+    A_printf("[Kachemak/InstalledVersion] version: %s\n",m_szInstalledVersion.c_str());
   }else{
-    printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected."
+    A_printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected."
         "Assuming best case and setting force_version.\n",m_szFolderName.c_str());
     m_szInstalledVersion = GetLatestVersion();
     force_verify = true;

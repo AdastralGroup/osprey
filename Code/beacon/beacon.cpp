@@ -13,7 +13,6 @@ int main() {
     }
     p->sourcemodsPath = std::filesystem::path(path);
   }
-
   int code = p->init_games();
   printf("[Palace/GameInit] ");
   switch (code) {
@@ -28,10 +27,11 @@ int main() {
       return code;
   }
   p->fetch_server_data();
-  for (const auto& i : p->serverGames){
-    std::cout << "[Beacon] " << "Game Available: " << i.second->name << " ("<< i.first << ")"<< std::endl;
+  for (const auto& i : p->serverGames) {
+    std::cout << "[Beacon] "
+              << "Game Available: " << i.second->name << " (" << i.first << ")" << std::endl;
   }
-  if(p->serverGames["tf2classic"]->l1->force_verify) {
+  if (p->serverGames["tf2classic"]->l1->force_verify) {
     printf("[Beacon] Updating tf2classic.\n");
     p->verify_game("tf2classic");  // you should check the force_verify to see if verification alone is needed.
   }

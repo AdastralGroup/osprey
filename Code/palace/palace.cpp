@@ -8,9 +8,9 @@ palace::palace() {
   }else{
       std::cout << "NO SOURCEMOD PATH!" << std::endl;
   }
-  printf("[Palace/Init] Downloading butler. Hold on.\n");
+  A_printf("[Palace/Init] Downloading butler. Hold on.\n");
   fremont::get_butler();
-  printf("[Palace/Init] Fetching server data...\n");
+  A_printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
 #if _DEBUG
     printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
@@ -32,7 +32,7 @@ int palace::init_games() {
     std::string version;
     std::string id = it.key();
     if(std::filesystem::exists(sourcemodsPath / id)) {
-      std::cout << "[Palace] " << id << ": Game exists. " <<std::endl;
+      A_printf("[Palace] %s: Game exists.\n",id.c_str());
     }
       serverGames[id] = new GameMetadata;
       serverGames[id]->name = it.value()["name"];

@@ -13,6 +13,9 @@ void sutton::_bind_methods() {
 
   int sutton::sanity_checks(){
     UtilityFunctions::print("sutton: works!");
+    A_printf("aprintf test... %d %d\n",42,8);
+    UtilityFunctions::print("print test");
+    A_printf("aprintf test 2..\n");
     return 1;
   }
   sutton::~sutton(){

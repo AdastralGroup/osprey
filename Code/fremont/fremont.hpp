@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <angus/adastral_defs.h>
 #define PRIMARY_URL "https://adastral.net/a/"
 class fremont {
  public:

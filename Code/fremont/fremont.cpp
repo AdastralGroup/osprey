@@ -6,7 +6,7 @@ int fremont::ExecWithParam(const std::vector<std::string>& params) {
     param_str += i + " ";
   }
 
-  printf("%s\n", param_str.c_str());
+  A_printf("%s\n", param_str.c_str());
   return system(param_str.c_str());
 }
 
@@ -56,7 +56,7 @@ bool fremont::CheckTF2Installed(const std::filesystem::path& steamDir) {
   std::string line;
   while (getline(file, line))
     if (line.find("440") != std::string::npos) {
-      std::cout << "[Fremont] TF2 found!" << std::endl;
+      A_printf("[Fremont] TF2 found!\n");
       return true;
     }
   return false;
@@ -70,7 +70,7 @@ bool fremont::CheckSDKInstalled(const std::filesystem::path& steamDir) {
   std::string line;
   while (getline(file, line))
     if (line.find("243750") != std::string::npos) {
-      std::cout << "[Fremont] SDK2013MP found!" << std::endl;
+      A_printf("[Fremont] SDK2013MP found!\n");
       return true;
     }
   return false;
