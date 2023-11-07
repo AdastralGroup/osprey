@@ -1,5 +1,7 @@
 ad_cmake_init()
 find_package(CURL REQUIRED)
+find_package(LibtorrentRasterbar REQUIRED)
+find_package(boost REQUIRED)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_MakeAvailable(json)
 include(FetchContent)
@@ -10,4 +12,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC ../)
 
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC fremont CURL::libcurl nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PUBLIC fremont CURL::libcurl nlohmann_json::nlohmann_json torrent-rasterbar)

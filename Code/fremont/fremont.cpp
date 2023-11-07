@@ -56,7 +56,7 @@ bool fremont::CheckTF2Installed(const std::filesystem::path& steamDir) {
   std::string line;
   while (getline(file, line))
     if (line.find("440") != std::string::npos) {
-      std::cout << "TF2 found!" << std::endl;
+      std::cout << "[Fremont] TF2 found!" << std::endl;
       return true;
     }
   return false;
@@ -70,18 +70,23 @@ bool fremont::CheckSDKInstalled(const std::filesystem::path& steamDir) {
   std::string line;
   while (getline(file, line))
     if (line.find("243750") != std::string::npos) {
-      std::cout << "TF2 found!" << std::endl;
+      std::cout << "[Fremont] SDK2013MP found!" << std::endl;
       return true;
     }
   return false;
 }
 
-void fremont::curl_callback(void* buffer, size_t sz, size_t n) {curl_string_data += (char*)buffer;
+void fremont::curl_callback(void* buffer, size_t n) {
+  if(!bin)
+    curl_string_data += (char*)buffer;
+  else{
+    curl_bin_data.insert(curl_bin_data.end(),(char*)buffer,(char*)buffer+n);
+  }
 }
 
 size_t fremont::static_curl_callback(void* buffer, size_t sz, size_t n, void* cptr) {
-  static_cast<fremont*>(cptr)->curl_callback(buffer, sz, n);
-  return sz * n;
+  static_cast<fremont*>(cptr)->curl_callback(buffer, n);
+  return sz*n;
 }
 
 std::string fremont::get_string_data_from_server(const std::string& url) {
@@ -96,22 +101,6 @@ std::string fremont::get_string_data_from_server(const std::string& url) {
   }
   curl_easy_cleanup(curlHandle);
   return curl_string_data;
-}
-
-
-int fremont::sanity_checks() {
-  CURL* curlHandle = curl_easy_init();
-  curl_easy_setopt(curlHandle, CURLOPT_URL, PRIMARY_URL);
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, fremont::static_curl_callback);
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
-  CURLcode res = curl_easy_perform(curlHandle);
-  if (res != CURLE_OK) {
-    curl_string_data = "";
-    return 1;
-  }
-  curl_string_data = "";
-  return 0;
-  curl_easy_cleanup(curlHandle);
 }
 
 
@@ -155,7 +144,12 @@ std::filesystem::path fremont::GetSteamSourcemodPath()
 	return std::filesystem::path(valueData) / "steamapps\\sourcemods";
 #else
     std::string home = getenv("HOME");
-    return std::filesystem::canonical(std::filesystem::path(home + "/.local/share/Steam/steamapps/sourcemods"));
+    auto path = std::filesystem::path(home + "/.local/share/Steam/steamapps/sourcemods");
+    if(std::filesystem::exists(path)){
+        return std::filesystem::canonical(path);
+    }else{
+        return std::filesystem::path("");
+    }
 #endif
 }
 
@@ -177,4 +171,18 @@ std::string fremont::get_butler(){
   fclose(fp);
   std::filesystem::permissions(temp_path,std::filesystem::perms::all);
   return temp_path;
+}
+std::vector<char> fremont::get_bin_data_from_server(const std::string& url) {
+  bin = true;
+  CURL* curlHandle = curl_easy_init();
+  curl_bin_data.clear();
+  curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, fremont::static_curl_callback);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
+  CURLcode res = curl_easy_perform(curlHandle);
+  if (res != CURLE_OK) {
+        exit(256);
+  }
+  curl_easy_cleanup(curlHandle);
+  return curl_bin_data;
 }
