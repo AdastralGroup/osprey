@@ -1,9 +1,13 @@
 extends Control
-
-#var big_json='{"adastral":{"dark":"#000000","light":"#f8f3ee","main":"#005c9d","accent":"#b76300","lightfg":"#8d847b","bgpath":"res://assets/bg.png","logo":"res://assets/adastral.svg","wordmark":"res://assets/adastral.svg"},"open_fortress":{"dark":"#231f20","light":"#eee1cf","main":"#59416a","accent":"#d49c6b","lightfg":"#8d847b","bgpath":"res://assets/of-bg.jpg","logo":"res://assets/adastral-of.png","wordmark":"res://assets/of_wordmark_big.png"}}'
-@onready var theme_json
-@onready var pallete: Dictionary
-
+var pallete
+var theme_json = {"adastral":
+	{"id":"adastral","dark":"#000000","light": "#f8f3ee",
+		"main": "#005c9d",
+		"accent": "#b76300",
+		"lightfg": "#8d847b",
+		"bg": "res://assets/bg.png",
+		"star": "res://assets/adastral.svg"}}
+var s : sutton
 signal change_to(game)
 
 
@@ -19,12 +23,12 @@ func set_button_colours(colour,time):
 
 
 func _ready():
-	var json_handler = JSON.new()
-	var file = FileAccess.open("res://assets/themes.json", FileAccess.READ)
-	theme_json = json_handler.parse_string(file.get_as_text())
+	pass
 	#theme = load("res://themes/pf2_theme.tres")
-	apply_theme("adastral")
+	
+func _theme_ready():
 	add_side_icons()
+	apply_theme("adastral")
 	
 	
 func _on_Button4_pressed():
@@ -50,8 +54,8 @@ func apply_theme(theme_name):
 		$TextureRect2.show()
 	else:
 		$TextureRect2.hide()
-	var newbgtexture = load(pallete["bgpath"])
-	var newstar = load(pallete["star"])
+	var newbgtexture = ImageTexture.create_from_image(Image.load_from_file(pallete["bg"]))
+	var newstar = ImageTexture.create_from_image(Image.load_from_file(pallete["star"]))
 	$Panel2/Background.material.set_shader_parameter("weight",0)
 	$Panel2/Background.material.set_shader_parameter("target_texture",newbgtexture)
 	$TopPanel/AdastralLogo.material.set_shader_parameter("weight",0)
@@ -61,7 +65,7 @@ func apply_theme(theme_name):
 		tween.tween_method(func(x): $Wordmark.material.set_shader_parameter("alpha",x),1.0,0.0,0.2)
 	elif $Wordmark.is_visible(): #if it's visible, then there's an old and new texture so we need to tween weight.
 		$Wordmark.material.set_shader_parameter("weight",0)
-		$Wordmark.material.set_shader_parameter("target_texture",load(pallete["wordmark"]))
+		$Wordmark.material.set_shader_parameter("target_texture",ImageTexture.create_from_image(Image.load_from_file(pallete["wordmark"])))
 		tween.tween_method(func(x): $Wordmark.material.set_shader_parameter("weight",x),0.0,1.0,0.2)
 	else: # if it's not visible, there's no texture next and we need to tween alpha.
 		$Wordmark.texture = load(pallete["wordmark"])
@@ -83,7 +87,6 @@ func apply_theme(theme_name):
 	tween.tween_property($Verify.get_theme_stylebox("normal"),"bg_color", Color(pallete["light"]), 0.2)
 	tween.tween_property($ProgressBar.get_theme_stylebox("fill"),"bg_color", Color(pallete["accent"]), 0.2)
 	tween.tween_property($ProgressBar.get_theme_stylebox("background"),"bg_color", Color(pallete["light"]), 0.2)
-	#tween.tween_property($Install.get_theme_color("font_color"),"font_color", Color(pallete["lightfg"]), 0.2)
 	set_button_colours(Color(pallete["light"]),0.2)
 	await get_tree().create_timer(0.2).timeout
 	if pallete.has("wordmark"):
@@ -132,8 +135,9 @@ func add_side_icons():
 			new.custom_minimum_size= Vector2(42,42)
 			new.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			new.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			new.texture_normal = load(x["icon"])
+			new.texture_normal = ImageTexture.create_from_image(Image.load_from_file(x["icon"]))
 			$HBoxContainer.add_child(new)
+			new.show()
 			new.pressed.connect(func(): apply_theme(x["id"]))
 	
 	

@@ -25,9 +25,14 @@ window/stretch/mode="2d"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
 
+[editor]
+
+movie_writer/movie_file="/tmp/ad.avi"
+movie_writer/fps=95
+
 [rendering]
 
-renderer/rendering_method="mobile"
+renderer/rendering_method="gl_compatibility"
 environment/defaults/default_clear_color=Color(0, 0, 0, 1)
 threads/thread_model=2
 quality/filters/use_nearest_mipmap_filter=true

@@ -1,0 +1,7 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://th0tjv2xcuen"]
+
+[ext_resource type="FontFile" uid="uid://cknx8yer7op7k" path="res://fonts/HankenGrotesk.ttf" id="1_fin6h"]
+
+[resource]
+base_font = ExtResource("1_fin6h")
+spacing_glyph = -1

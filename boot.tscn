@@ -1,0 +1,135 @@
+[gd_scene load_steps=7 format=3 uid="uid://cds1iuxdlfc86"]
+
+[ext_resource type="Theme" uid="uid://bqpi1momfja7u" path="res://themes/base.tres" id="1_1k54t"]
+[ext_resource type="Script" path="res://init.gd" id="2_vhxfp"]
+[ext_resource type="Texture2D" uid="uid://diee7uq3voana" path="res://assets/adastral-256.svg" id="3_gsxu1"]
+[ext_resource type="FontVariation" uid="uid://th0tjv2xcuen" path="res://fonts/main_font.tres" id="4_6hwq1"]
+[ext_resource type="FontFile" uid="uid://cknx8yer7op7k" path="res://fonts/HankenGrotesk.ttf" id="5_ej7of"]
+
+[sub_resource type="FontVariation" id="FontVariation_lse8k"]
+base_font = ExtResource("5_ej7of")
+spacing_glyph = -4
+
+[node name="root" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_1k54t")
+script = ExtResource("2_vhxfp")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.137255)
+layout_mode = 0
+offset_left = 124.0
+offset_top = -583.0
+offset_right = 624.0
+offset_bottom = -83.0
+pivot_offset = Vector2(250, 250)
+texture = ExtResource("3_gsxu1")
+expand_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+modulate = Color(1, 0.447059, 0, 0.137255)
+layout_mode = 0
+offset_left = -521.0
+offset_top = 379.0
+offset_right = -21.0
+offset_bottom = 879.0
+pivot_offset = Vector2(250, 250)
+texture = ExtResource("3_gsxu1")
+expand_mode = 1
+
+[node name="TextureRect5" type="TextureRect" parent="."]
+modulate = Color(1, 0.0313726, 0, 0.137255)
+layout_mode = 0
+offset_left = -1466.0
+offset_top = -721.0
+offset_right = -966.0
+offset_bottom = -221.0
+pivot_offset = Vector2(250, 250)
+texture = ExtResource("3_gsxu1")
+expand_mode = 1
+
+[node name="TextureRect6" type="TextureRect" parent="."]
+modulate = Color(1, 0.92549, 0, 0.137255)
+layout_mode = 0
+offset_left = 3232.0
+offset_top = 310.0
+offset_right = 3732.0
+offset_bottom = 810.0
+pivot_offset = Vector2(250, 250)
+texture = ExtResource("3_gsxu1")
+expand_mode = 1
+
+[node name="TextureRect3" type="TextureRect" parent="."]
+modulate = Color(0.196078, 1, 0, 0.137255)
+layout_mode = 0
+offset_left = 771.0
+offset_top = 349.0
+offset_right = 1271.0
+offset_bottom = 849.0
+pivot_offset = Vector2(250, 250)
+texture = ExtResource("3_gsxu1")
+expand_mode = 1
+
+[node name="TextureRect4" type="TextureRect" parent="."]
+modulate = Color(0, 0.0627451, 1, 0.137255)
+layout_mode = 0
+offset_left = 1282.0
+offset_top = -690.0
+offset_right = 1782.0
+offset_bottom = -190.0
+pivot_offset = Vector2(250, 250)
+texture = ExtResource("3_gsxu1")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 16.0
+offset_right = 230.0
+offset_bottom = 124.0
+theme_override_fonts/font = ExtResource("4_6hwq1")
+theme_override_font_sizes/font_size = 25
+text = "Adastral Initialising...
+Please wait patiently!"
+
+[node name="Label2" type="Label" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 560.0
+offset_top = 16.0
+offset_right = 759.0
+offset_bottom = 124.0
+theme_override_fonts/font = ExtResource("4_6hwq1")
+theme_override_font_sizes/font_size = 25
+text = "L3 Checks: OK.
+Up to date.
+Sanity Checks: OK.
+Launching."
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(76, 44)
+metadata/_edit_group_ = true
+
+[node name="TextureRect4" type="TextureRect" parent="Node2D"]
+visible = false
+offset_right = 250.0
+offset_bottom = 250.0
+pivot_offset = Vector2(125, 125)
+texture = ExtResource("3_gsxu1")
+expand_mode = 1
+
+[node name="Label3" type="Label" parent="."]
+layout_mode = 0
+offset_left = 348.0
+offset_top = 99.0
+offset_right = 703.0
+offset_bottom = 243.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = SubResource("FontVariation_lse8k")
+theme_override_font_sizes/font_size = 100
+text = "Adastral"
