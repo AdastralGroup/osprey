@@ -124,7 +124,7 @@ inline bool Is64BitWindows()
 }
 #endif
 
-std::filesystem::path fremont::GetSteamSourcemodPath()
+std::filesystem::path fremont::GetSteamPath()
 {
 #if _WIN32
 	char valueData[MAX_PATH];
@@ -141,10 +141,10 @@ std::filesystem::path fremont::GetSteamSourcemodPath()
         return std::filesystem::path();
     }
 
-	return std::filesystem::path(valueData) / "steamapps\\sourcemods";
+	return std::filesystem::path(valueData);
 #else
     std::string home = getenv("HOME");
-    auto path = std::filesystem::path(home + "/.local/share/Steam/steamapps/sourcemods");
+    auto path = std::filesystem::path(home + "/.local/share/Steam/");
     if(std::filesystem::exists(path)){
         return std::filesystem::canonical(path);
     }else{
@@ -161,17 +161,25 @@ std::string fremont::get_butler(){
   std::string url = std::string(PRIMARY_URL) + "butler";
   std::string temp_path = std::filesystem::temp_directory_path() / "butler";
 #endif
-  auto fp = fopen(temp_path.c_str(),"wb");
-  CURL *curl = curl_easy_init();
-  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
-  curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-  curl_easy_perform(curl);
-  curl_easy_cleanup(curl);
-  fclose(fp);
-  std::filesystem::permissions(temp_path,std::filesystem::perms::all);
-  return temp_path;
+  return download_to_temp(url,temp_path);
 }
+
+std:: string fremont::download_to_temp(std::string url, std::string name){
+    std::string temp_path = std::filesystem::temp_directory_path() / name;
+    auto fp = fopen(temp_path.c_str(),"wb");
+    CURL *curl = curl_easy_init();
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+    curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    fclose(fp);
+    std::filesystem::permissions(temp_path,std::filesystem::perms::all);
+    return temp_path;
+}
+
+
+
 std::vector<char> fremont::get_bin_data_from_server(const std::string& url) {
   bin = true;
   CURL* curlHandle = curl_easy_init();

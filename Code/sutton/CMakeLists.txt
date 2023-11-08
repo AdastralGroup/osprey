@@ -13,4 +13,4 @@ FetchContent_MakeAvailable(GDExtension)
 
 ad_create_target(SHARED_LIBRARY ${PROJECT_NAME})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC angus godot::cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC angus nlohmann_json::nlohmann_json godot::cpp palace)

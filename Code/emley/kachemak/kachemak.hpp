@@ -10,7 +10,7 @@
 #include <optional>
 #include <string>
 #include <system_error>
-#include <version/version.hpp>
+#include <emley/version/version.hpp>
 
 struct KachemakVersion {
   std::string szFileName;
