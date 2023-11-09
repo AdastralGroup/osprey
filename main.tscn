@@ -234,7 +234,6 @@ offset_bottom = 315.0
 theme_override_font_sizes/normal_font_size = 24
 theme_override_font_sizes/bold_font_size = 24
 bbcode_enabled = true
-text = "[right]Latest Version: [b]2.1.3[/b]"
 scroll_active = false
 
 [node name="InstalledVersion" type="RichTextLabel" parent="Main"]
@@ -246,7 +245,6 @@ offset_bottom = 335.0
 theme_override_font_sizes/normal_font_size = 24
 theme_override_font_sizes/bold_font_size = 24
 bbcode_enabled = true
-text = "[right]Installed Version: [b]2.1.2[/b]"
 scroll_active = false
 
 [node name="Path3D" type="Label" parent="Main"]

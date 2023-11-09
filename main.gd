@@ -26,9 +26,6 @@ func _ready():
 	pass
 	#theme = load("res://themes/pf2_theme.tres")
 	
-func _theme_ready():
-	add_side_icons()
-	apply_theme("adastral")
 	
 	
 func _on_Button4_pressed():
@@ -52,8 +49,14 @@ func apply_theme(theme_name):
 	var tween = get_tree().create_tween().set_parallel(true)
 	if pallete["id"] == "adastral":
 		$TextureRect2.show()
+		$LatestVersion.hide()
+		$InstalledVersion.hide()
 	else:
+		$LatestVersion.show()
+		$InstalledVersion.show()
 		$TextureRect2.hide()
+	$LatestVersion.text = "[right]Latest Version: [b]%s[/b]" % s.get_latest_version(theme_name)
+	$InstalledVersion.text = "[right]Installed Version: [b]%s[/b]" % s.get_installed_version(theme_name)
 	var newbgtexture = ImageTexture.create_from_image(Image.load_from_file(pallete["bg"]))
 	var newstar = ImageTexture.create_from_image(Image.load_from_file(pallete["star"]))
 	$Panel2/Background.material.set_shader_parameter("weight",0)
@@ -68,7 +71,7 @@ func apply_theme(theme_name):
 		$Wordmark.material.set_shader_parameter("target_texture",ImageTexture.create_from_image(Image.load_from_file(pallete["wordmark"])))
 		tween.tween_method(func(x): $Wordmark.material.set_shader_parameter("weight",x),0.0,1.0,0.2)
 	else: # if it's not visible, there's no texture next and we need to tween alpha.
-		$Wordmark.texture = load(pallete["wordmark"])
+		$Wordmark.texture = ImageTexture.create_from_image(Image.load_from_file(pallete["wordmark"]))
 		$Wordmark.show()
 		$Wordmark.material.set_shader_parameter("alpha",0)
 		tween.tween_method(func(x): $Wordmark.material.set_shader_parameter("alpha",x),0.0,1.0,0.2)
@@ -90,7 +93,7 @@ func apply_theme(theme_name):
 	set_button_colours(Color(pallete["light"]),0.2)
 	await get_tree().create_timer(0.2).timeout
 	if pallete.has("wordmark"):
-		$Wordmark.texture = load(pallete["wordmark"]) # yes I know we load it twice but I'm not exactly the best at codeflow as you can see
+		$Wordmark.texture = ImageTexture.create_from_image(Image.load_from_file(pallete["wordmark"])) # yes I know we load it twice but I'm not exactly the best at codeflow as you can see
 	else:
 		$Wordmark.material.set_shader_parameter("weight",0)
 		$Wordmark.hide()
@@ -117,6 +120,13 @@ func apply_theme(theme_name):
 	theme = base_theme
 	
 	
+func ready_after_sutton():
+	apply_theme("adastral")
+	var game_theme = s.get_game_assets("open_fortress")
+	theme_json["open_fortress"] = game_theme
+	add_side_icons()
+	
+
 
 func add_new_sep():
 	var new = VSeparator.new()
@@ -142,3 +152,11 @@ func add_side_icons():
 	
 	
 	
+
+
+func _on_install_pressed():
+	pass # Replace with function body.
+
+
+func _on_verify_pressed():
+	pass # Replace with function body.
