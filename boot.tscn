@@ -88,14 +88,13 @@ expand_mode = 1
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = 8.0
-offset_top = 16.0
-offset_right = 230.0
-offset_bottom = 124.0
+offset_left = 232.0
+offset_top = 143.0
+offset_right = 594.0
+offset_bottom = 196.0
 theme_override_fonts/font = ExtResource("4_6hwq1")
-theme_override_font_sizes/font_size = 25
-text = "Adastral Initialising...
-Please wait patiently!"
+theme_override_font_sizes/font_size = 40
+text = "Adastral Initialising..."
 
 [node name="Label2" type="Label" parent="."]
 visible = false
@@ -124,6 +123,7 @@ texture = ExtResource("3_gsxu1")
 expand_mode = 1
 
 [node name="Label3" type="Label" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 348.0
 offset_top = 99.0
@@ -133,3 +133,5 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("FontVariation_lse8k")
 theme_override_font_sizes/font_size = 100
 text = "Adastral"
+visible_characters = 0
+visible_ratio = 0.0

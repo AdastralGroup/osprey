@@ -1,25 +1,20 @@
 extends Control
+#var oops = preload("res://oops.tscn")
 
 var spin_tween: Tween
 var s: sutton
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	launch()
-	
-
+	s = sutton.new()
+	s.connect("palace_started",launch)
+	s.init_palace()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
 
 
-
-func launch():
-	s = sutton.new()
-	if(s.find_sourcemod_path() == ""):
-		queue_free()
-	s.init_games()
-	
+func do_stuff():
 	var main = load("res://main.tscn").instantiate()
 	add_child(main)
 	$Control/Main.s = s
@@ -27,8 +22,19 @@ func launch():
 	$Control.position = Vector2(0,349)
 	do_the_shiny_thing()
 	
+
+
+
+
+func launch():
+	if(s.find_sourcemod_path() == ""):
+		get_tree().change_scene_to_file("res://oops.tscn")
+	s.init_games()
+	call_deferred("do_stuff")
+
 func do_the_shiny_thing():
 	$Label.hide()
+	$Label3.show()
 	spin_tween = create_tween().set_loops().set_parallel()
 	var tween = create_tween().set_parallel()
 	var t = 1.5
