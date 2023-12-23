@@ -7,7 +7,13 @@
 #include <string>
 #include <vector>
 #include <angus/adastral_defs.h>
-#define PRIMARY_URL "https://adastral.net/a/"
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+
+#else
+#include <libnotify/notify.h>
+#endif
+
+#define PRIMARY_URL "https://fusion.adastral.net/"
 class fremont {
  public:
   static int ExecWithParam(const std::vector<std::string>& params);
@@ -22,6 +28,7 @@ class fremont {
   //Get path object for the systems sourcemods folder (win/linux)
   static std::filesystem::path GetSteamPath();
   static std::string get_butler();
+  static int DesktopNotif(const std::string title,std::string desc);
  private:
   static size_t static_curl_callback(void *buffer, size_t sz, size_t n, void *cptr);
   void curl_callback(void *buffer, size_t n); // callback for the below. string only. we could r

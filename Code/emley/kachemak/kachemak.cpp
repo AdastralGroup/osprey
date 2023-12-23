@@ -18,9 +18,9 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
   m_szTempPath = std::filesystem::temp_directory_path().string();
   name = szFolderName.string(); // this is bad don't do this
   m_szButlerLocation = std::filesystem::temp_directory_path() / BUTLER;
-  std::string ver_string = fremont().get_string_data_from_server(szSourceUrl + "/bullseye.json");
+  std::string ver_string = fremont().get_string_data_from_server(szSourceUrl + "bullseye.json");
   if(!nlohmann::json::accept(ver_string)){
-    throw std::runtime_error("INVALID JSON.");
+    throw std::runtime_error("INVALID JSON. \n " + szSourceUrl + "bullseye.json");
   }
   m_parsedVersion = nlohmann::ordered_json::parse(ver_string);
   FindInstalledVersion();
@@ -249,7 +249,7 @@ int Kachemak::ButlerVerify(const std::string& szSignature, const std::string& sz
          << "\"" << szGameDir.c_str() << "\""
          << " "
          << "--heal=archive," << szRemote << " --json";
-
+  A_printf(szSignature.c_str());
   int status = ButlerParseCommand(params.str());
   if (status != NULL) return status;
 
@@ -306,8 +306,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
   params << "--json";
 
   A_printf("[Kachemak/ButlerPatch] Applying patch.\n");
-  int butlerStatus = ButlerParseCommand(params.str());
-  if (butlerStatus != NULL) {
+  if (int butlerStatus = ButlerParseCommand(params.str()); butlerStatus != NULL) {
     A_printf("[Kachemak/ButlerPatch] Failed to apply patch: %s\n",butlerStatus);
     return 2;
   }
@@ -356,20 +355,28 @@ int Kachemak::ButlerParseCommand(const std::string& command) {
   return 0;
 }
 void Kachemak::FindInstalledVersion() {
-  std::ifstream data(m_szSourcemodPath / m_szFolderName / ".adastral");
-  if (!data.fail()) {
-    nlohmann::json filedata = nlohmann::json::parse(data);
-    m_szInstalledVersion = filedata["version"];
-    A_printf("[Kachemak/InstalledVersion] version: %s\n",m_szInstalledVersion.c_str());
+  if (exists(m_szSourcemodPath / m_szFolderName)){
+    std::ifstream data(m_szSourcemodPath / m_szFolderName / ".adastral");
+    if (!data.fail()) {
+      nlohmann::json filedata = nlohmann::json::parse(data);
+      m_szInstalledVersion = filedata["version"];
+      A_printf("[Kachemak/InstalledVersion] version: %s\n",m_szInstalledVersion.c_str());
+    }else{
+      A_printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected."
+          "Assuming best case and setting force_version.\n",m_szFolderName.c_str());
+      m_szInstalledVersion = GetLatestVersion();
+      force_verify = true;
+    }
   }else{
-    A_printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected."
-        "Assuming best case and setting force_version.\n",m_szFolderName.c_str());
-    m_szInstalledVersion = GetLatestVersion();
-    force_verify = true;
+    A_printf("[Kachemak/InstalledVersion] Game not installed. Booo.");
   }
 }
-const std::string& Kachemak::GetLatestVersion() {
-  return GetLatestKMVersion()->szVersion;
+std::string Kachemak::GetLatestVersion() {
+  std::string versionId;
+  for (auto& el : m_parsedVersion["versions"].items()) {
+    versionId = el.key();
+  };
+  return versionId;
 }
 
 void Kachemak::WriteVersion(){

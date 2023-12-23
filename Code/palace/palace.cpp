@@ -16,7 +16,7 @@ void palace::fetch_server_data() {
 }
 
 std::filesystem::path palace::find_sourcemod_path(){
-  std::filesystem::path steamPath = fremont().GetSteamPath();
+  std::filesystem::path steamPath = fremont::GetSteamPath();
   if(steamPath != ""){
     A_printf("[Palace] Steam Path found!\n");
     sourcemodsPath = steamPath / "steamapps" / "sourcemods";
@@ -57,17 +57,14 @@ int palace::init_games() {
   for(const auto& it: southbankJson["games"].items()){
     std::string version;
     std::string id = it.key();
-    if(std::filesystem::exists(sourcemodsPath / id)) {
-      A_printf("[Palace] %s: Game exists.\n",id.c_str());
-    }
-      serverGames[id] = new GameMetadata;
-      serverGames[id]->name = it.value()["name"];
-      std::string full_url = southbankJson["dl_url"];
-      full_url += id;
-      full_url += '/'; // this is dumb, make it do this inside kachemak....
-      auto* game = new Kachemak(sourcemodsPath,it.key(),full_url); // getting the json is versioning impl specific so we let it get it
-      // i'm aware i'm breaking one of the rules, but it makes more sense
-      serverGames[id]->l1 = game;
+    serverGames[id] = new GameMetadata;
+    serverGames[id]->name = it.value()["name"];
+    std::string full_url = southbankJson["dl_url"];
+    full_url += id;
+    full_url += '/'; // this is dumb, make it do this inside kachemak....
+    auto* game = new Kachemak(sourcemodsPath,it.key(),full_url); // getting the json is versioning impl specific so we let it get it
+    // i'm aware i'm breaking one of the rules, but it makes more sense
+    serverGames[id]->l1 = game;
   }
   return 0;
 }

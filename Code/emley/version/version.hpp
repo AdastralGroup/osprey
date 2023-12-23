@@ -12,6 +12,7 @@ class Version {
   std::string name;
   virtual int Verify() = 0;
   virtual int Install() = 0;
+  EventSystem m_eventSystem; // we need to yoink it into palace and then sutton
 
  protected:
 
@@ -19,5 +20,4 @@ class Version {
   std::filesystem::path m_szSourcemodPath;
   std::filesystem::path m_szFolderName;
   std::string m_szSourceUrl;
-  EventSystem m_eventSystem;
 };

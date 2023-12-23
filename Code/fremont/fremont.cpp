@@ -153,7 +153,7 @@ std::filesystem::path fremont::GetSteamPath()
 #endif
 }
 
-std::string fremont::get_butler(){
+std::string fremont::get_butler() {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
   std::string url = server_url + "/butler.exe";
   std::string temp_path = std::filesystem::temp_directory_path() / "butler.exe";
@@ -161,7 +161,17 @@ std::string fremont::get_butler(){
   std::string url = std::string(PRIMARY_URL) + "butler";
   std::string temp_path = std::filesystem::temp_directory_path() / "butler";
 #endif
-  return download_to_temp(url,temp_path);
+  return download_to_temp(url, temp_path);
+}
+int fremont::DesktopNotif(const std::string title, std::string desc) {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#else
+  notify_init("Adastral");
+  NotifyNotification* notification = notify_notification_new(title.c_str(), desc.c_str(), nullptr);
+  notify_notification_set_timeout(notification, 3000);
+  notify_notification_show(notification, nullptr);
+  g_object_unref(G_OBJECT(notification));
+#endif
 }
 
 std:: string fremont::download_to_temp(std::string url, std::string name){
@@ -194,3 +204,5 @@ std::vector<char> fremont::get_bin_data_from_server(const std::string& url) {
   curl_easy_cleanup(curlHandle);
   return curl_bin_data;
 }
+
+
