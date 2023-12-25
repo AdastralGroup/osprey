@@ -27,7 +27,7 @@
 #endif
 #else
 #ifdef _WIN32
-#define AD_COLDFIELD_DLL __declspec(dllimport)
+#define AD_COLDFIELD_DLL __declspec(dllexport)
 #else
 #define define AD_COLDFIELD_DLL [[gnu::visibility("default")]]
 #endif

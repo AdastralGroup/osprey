@@ -18,6 +18,7 @@
 #include <coldfield/AdastralDefines.h>
 #include <coldfield/External/ADProjectEvent.h>
 #include <coldfield/External/ADRegisterProject.h>
+#include <sutton/sutton.h>
 #include <coldfield/GDRegister/register_adastral_types.h>
 
 void register_adastral_types(godot::ModuleInitializationLevel p_level) {
@@ -26,11 +27,14 @@ void register_adastral_types(godot::ModuleInitializationLevel p_level) {
   }
   godot::ClassDB::register_abstract_class<adastral::ADProjectEvent>();
   godot::ClassDB::register_abstract_class<adastral::ADProjectRegister>();
+  godot::ClassDB::register_class<sutton>();
   // REGISTER CLASSES HERE LATER
 }
 
 void unregister_adastral_types(godot::ModuleInitializationLevel p_level) {
-  // DO NOTHING
+  if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+    return;
+  }
 }
 
 extern "C" {

@@ -24,23 +24,34 @@
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/templates/vector.hpp>
 #include <map>
+#include <functional>
 //=============================
+using namespace godot;
 namespace adastral {
 /// @brief Helper class to assist with registering external libraries to godot.
-class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node {
+class ADProjectRegister : public godot::Node {
   GDCLASS(ADProjectRegister, godot::Node)
  public:
   ADProjectRegister();
   virtual ~ADProjectRegister();
-  static void _bind_methods() {}
+  static void _bind_methods() {
+    // godot::ClassDB::bind_method_godot("_register_library", (godot::MethodBind*)ADProjectRegister::RegisterClass);
+    // godot::ClassDB::bind_method_godot("_unregister_library", ADProjectRegister::RegisterClass);
+    {
+      auto ___call = [](GDExtensionObjectPtr p_instance, const GDExtensionConstTypePtr* p_args,
+                        GDExtensionTypePtr p_ret) -> void {};
+      godot::ClassDB::bind_virtual_method(ADProjectRegister::get_class_static(), "RegisterClass", ___call);
+      godot::ClassDB::bind_virtual_method(ADProjectRegister::get_class_static(), "BindGodotMethod", ___call);
+    }
+  }
   /// @brief registers a class within godot.
   template <class a>
-  void RegisterClass(godot::String _classname, a& regclass);
+  void RegisterClass(godot::String _classname, a regclass);
 
   /// @brief Binds a godot method. NOTE: This should be used for static methods/classes. it will not be assigned to a
   /// class (In-terms of godot).
   template <class s>
-  void BindGodotMethod(s& method, godot::String& _methodname);
+  void BindGodotMethod(std::function<void()> method, godot::String& _methodname);
 
   /// @brief Destroys the class db, which in turn, de-init's all registered classes.
   void KillClasses(GDExtensionInitializationLevel& a);
@@ -51,15 +62,16 @@ class AD_COLDFIELD_DLL ADProjectRegister : public godot::Node {
   godot::JNISingleton _classsingleton;
 };
 
-template <class s>
-void adastral::ADProjectRegister::BindGodotMethod(s& method, godot::String& _methodname) {
-  godot::ClassDB::bind_method_godot(_methodname, method);
-  _registeredprojects.try_emplace(_methodname, method);
+ template <class s>
+void adastral::ADProjectRegister::BindGodotMethod(std::function<void()> method, godot::String& _methodname) {
+  auto ___call = [](GDExtensionObjectPtr p_instance, const GDExtensionConstTypePtr* p_args,
+                    GDExtensionTypePtr p_ret) -> void {};
+  godot::ClassDB::bind_virtual_method(s::get_class_static(), _methodname, ___call);
 }
 
 template <class a>
-void adastral::ADProjectRegister::RegisterClass(godot::String _classname, a& regclass) {
+void adastral::ADProjectRegister::RegisterClass(godot::String _classname, a regclass) {
   godot::ClassDB::register_class<a>();
-  _registeredprojects.try_emplace(_classname, regclass);
+  _registeredprojects.try_emplace(_classname, (a*)&regclass);
 }
 }  // namespace adastral
