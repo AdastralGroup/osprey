@@ -10,6 +10,7 @@
 #include <optional>
 #include <string>
 #include <system_error>
+#include <caldbeck/error.hpp>
 #include <emley/version/version.hpp>
 
 struct KachemakVersion {

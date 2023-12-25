@@ -1,4 +1,4 @@
-#include <events/event.hpp>
+#include <caldbeck/event.hpp>
 
 Event::Event(EventType type) { m_type = type; }
 

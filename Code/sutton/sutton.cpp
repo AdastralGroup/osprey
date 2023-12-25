@@ -2,17 +2,16 @@
 
 #include <string>
 
-#include "events/progress.hpp"
-
 using namespace godot;
 
 void sutton::_bind_methods() {
   ADD_SIGNAL(
       MethodInfo("game_verified", PropertyInfo(Variant::STRING, "status"), PropertyInfo(Variant::STRING, "game")));
   ADD_SIGNAL(
-      MethodInfo("game_installed", PropertyInfo(Variant::STRING, "status"), PropertyInfo(Variant::STRING, "game")));
+      MethodInfo("game_updated", PropertyInfo(Variant::STRING, "status"), PropertyInfo(Variant::STRING, "game")));
   ADD_SIGNAL(MethodInfo("progress_update",PropertyInfo(Variant::FLOAT,"progress"),PropertyInfo(Variant::STRING,"game")));
   ADD_SIGNAL(MethodInfo("palace_started"));
+  ClassDB::bind_method(D_METHOD("desktop_notification"), &sutton::desktop_notification);
   ClassDB::bind_method(D_METHOD("init_palace"), &sutton::init_palace);
   ClassDB::bind_method(D_METHOD("sanity_checks"), &sutton::sanity_checks);
   ClassDB::bind_method(D_METHOD("get_game_assets"), &sutton::get_game_assets);
@@ -74,7 +73,18 @@ void sutton::_init_palace() {
 }
 
 // WRAPPERS!
-int sutton::update_game(godot::String gameName) { return p->update_game(gameName.utf8().get_data()); }
+int sutton::update_game(godot::String gameName) {
+  std::thread thread_obj(&sutton::_update_game,this,gameName);
+  thread_obj.detach();
+  return 0;
+}
+
+void sutton::_update_game(String gameName) {
+  int z =  p->update_game(gameName.utf8().get_data());
+  emit_signal("game_updated", String(std::to_string(z).c_str()), gameName);
+}
+
+
 int sutton::verify_game(godot::String gameName) {
   //
   std::thread thread_obj(&sutton::_verify_game,this,gameName);
@@ -82,12 +92,13 @@ int sutton::verify_game(godot::String gameName) {
   return 0;
 }
 
+
 void sutton::_verify_game(String gameName) {
   int z =  p->verify_game(gameName.utf8().get_data());
   emit_signal("game_verified", String(std::to_string(z).c_str()), gameName);
 }
+
 bool sutton::isSDKInstalled() {
-  sleep(5);
   return p->isSDKInstalled();
 };
 bool sutton::isTF2Installed() { return p->isTF2Installed(); };
@@ -136,4 +147,19 @@ void sutton::set_sourcemod_path(godot::String gd_path) {
     p->sourcemodsPath = path;
   }
 };
+
+int sutton::desktop_notification(String title, String desc) {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#else
+  notify_init("Adastral");
+  NotifyNotification* notification = notify_notification_new(title.ascii().get_data(), desc.ascii().get_data(), nullptr);
+  notify_notification_set_timeout(notification, 3000);
+  notify_notification_show(notification, nullptr);
+  g_object_unref(G_OBJECT(notification));
+  return 0;
+#endif
+}
+
+
+
 sutton::~sutton() { UtilityFunctions::print("bye bye"); }

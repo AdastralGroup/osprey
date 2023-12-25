@@ -1,5 +1,6 @@
 #include "fremont.hpp"
 
+
 int fremont::ExecWithParam(const std::vector<std::string>& params) {
   std::string param_str;
   for (const auto& i : params) {
@@ -44,8 +45,9 @@ returns:
 */
 
 int fremont::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
-  zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
-  return 0;
+  A_printf("[Fremont/Extract] Extracting..\n");
+  int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
+  return ret;
 }
 
 bool fremont::CheckTF2Installed(const std::filesystem::path& steamDir) {
@@ -163,24 +165,40 @@ std::string fremont::get_butler() {
 #endif
   return download_to_temp(url, temp_path);
 }
-int fremont::DesktopNotif(const std::string title, std::string desc) {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-#else
-  notify_init("Adastral");
-  NotifyNotification* notification = notify_notification_new(title.c_str(), desc.c_str(), nullptr);
-  notify_notification_set_timeout(notification, 3000);
-  notify_notification_show(notification, nullptr);
-  g_object_unref(G_OBJECT(notification));
-#endif
+int fremont::progress_func(void* ptr, curl_off_t TotalToDownload, curl_off_t NowDownloaded, curl_off_t TotalToUpload,
+                           curl_off_t NowUploaded) {
+  if(NowDownloaded != 0 && TotalToDownload != 0) {
+    long double percentage = (static_cast<long double>(NowDownloaded)/static_cast<long double>(TotalToDownload));
+    if(ptr != nullptr) {
+      ProgressUpdateMessage message(0, percentage);
+      auto* events = (EventSystem*)ptr;
+      events->TriggerEvent(message);
+    }
+    //A_printf("[Fremont] Downloading... %Lg%%, now downloaded %ld, total %ld\n",percentage,NowDownloaded,TotalToDownload);
+  }
+  return 0;
 }
 
-std:: string fremont::download_to_temp(std::string url, std::string name){
-    std::string temp_path = std::filesystem::temp_directory_path() / name;
+std::string fremont::download_to_temp(std::string url, std::string name, bool progress,EventSystem* event, std::filesystem::path* path){
+  std::string temp_path;
+  if(path != nullptr) {
+    temp_path = *path / name;
+  }else {
+    temp_path = std::filesystem::temp_directory_path() / name;
+  }
     auto fp = fopen(temp_path.c_str(),"wb");
     CURL *curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NULL);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+  if(progress) {
+    if(event != nullptr) {
+      A_printf("[Fremont] events should have been enabled... \n");
+      curl_easy_setopt(curl, CURLOPT_XFERINFODATA, event);
+    }
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, progress_func);
+  }
     curl_easy_perform(curl);
     curl_easy_cleanup(curl);
     fclose(fp);

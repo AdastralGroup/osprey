@@ -1,7 +1,4 @@
-#include <events/error.hpp>
-#include <events/progress.hpp>
 #include <kachemak/kachemak.hpp>
-#include <bilsdale/bilsdale.hpp>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define popen _popen
@@ -26,7 +23,8 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
   FindInstalledVersion();
   m_eventSystem.RegisterListener(EventType::kOnUpdate, [](Event& ev) {
     double prog = ((ProgressUpdateMessage&)ev).GetProgress();
-    A_printf("[Kachemak/Butler] Progress: %f\n", round(prog*100));});
+    //A_printf("[Kachemak/Butler] Progress: %f\n", round(prog*100));
+  });
 }
 
 std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version) {
@@ -38,7 +36,8 @@ std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version
 
   KachemakVersion ret = {
       .szFileName = jsonVersion["file"].get<std::string>(),
-      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
+//      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
+      .szDownloadUrl = jsonVersion["file"].get<std::string>(),
 //      .lDownloadSize = jsonVersion["presz"].get<std::size_t>(),
 //      .lExtractSize = jsonVersion["postsz"].get<std::size_t>(),
       .szVersion = version,
@@ -200,15 +199,21 @@ int Kachemak::Install() {
   if (PrepareSymlink() != 0) {
     return 1;
   }
-
   std::optional<KachemakVersion> latestVersion = GetLatestKMVersion();
   if (!latestVersion) return 2;
   int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-  int downloadStatus = bilsdale::LibTorrentDownload(downloadUri, m_szSourcemodPath.string());
-  if (downloadStatus != 0) return downloadStatus;
-  Extract(latestVersion.value().szFileName, m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
+  A_printf("[Kachemak/Install] Downloading via torrent... \n");
+  //int downloadStatus =
+  std::filesystem::path path = fremont::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
+  //if (downloadStatus != 0) {
+  //  A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
+  //  return downloadStatus;
+  //}
+  A_printf("[Kachemak/Install] Download complete: extracting... \n");
+  Extract( path , m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
+  A_printf("[Kachemak/Install] Extraction done.... \n");
   DoSymlink();
   m_szInstalledVersion = GetLatestVersion();
   WriteVersion();
@@ -223,12 +228,17 @@ res:
         1: not enough free space
 */
 int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize) {
+  A_printf("[Kachemak/Extract] Input File %s, Output %s, size %lu \n",szInputFile.c_str(),szOutputDirectory.c_str(),szSize);
   if (FreeSpaceCheck(szSize * 2, FreeSpaceCheckCategory::Permanent) != 0) {
+    A_printf("[Kachemak/Extract] Not enough space. Exiting. \n");
     return 1;
   }
   std::FILE* tmpf = std::tmpfile();
   std::string tmpf_loc = std::to_string(fileno(tmpf));
-  fremont::ExtractZip(szInputFile, szOutputDirectory);
+  int ret = fremont::ExtractZip(szInputFile, szOutputDirectory);
+  if (ret != 0) {
+    A_printf("[Kachemak/Extract] Extraction Failed - %i\n",ret);
+  }
   m_szInstalledVersion = GetLatestVersion();
   WriteVersion();
   return 0;
@@ -287,8 +297,9 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
 
   int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
-  int downloadStatus = bilsdale::LibTorrentDownload(sz_url, m_szTempPath.string());
-  if (downloadStatus != 0) return downloadStatus;
+  //int downloadStatus = bilsdale::LibTorrentDownload(sz_url, m_szTempPath.string());
+  fremont::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
+  //if (downloadStatus != 0) return downloadStatus;
 
   std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
 

@@ -1,5 +1,5 @@
 add_subdirectory(angus)
-add_subdirectory(bilsdale)
+add_subdirectory(caldbeck)
 add_subdirectory(fremont)
 add_subdirectory(emley)
 add_subdirectory(palace)

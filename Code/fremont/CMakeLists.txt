@@ -1,12 +1,6 @@
 project(fremont)
 find_package(CURL REQUIRED)
 ad_create_target(STATIC_LIBRARY ${PROJECT_NAME})
-IF(WIN32)
-ELSE()
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBNOTIFY REQUIRED libnotify)
-target_include_directories(fremont PUBLIC  ${LIBNOTIFY_INCLUDE_DIRS})
-ENDIF()
 target_include_directories(fremont PUBLIC .)
 target_include_directories(fremont PUBLIC ../)
 
@@ -15,8 +9,4 @@ FetchContent_MakeAvailable(json)
 include(FetchContent)
 # Get the name of this folder as the project name
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
-
-IF(WIN32)
-ELSE()
-target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl nlohmann_json::nlohmann_json libnotify)
-ENDIF()
+target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl nlohmann_json::nlohmann_json caldbeck)

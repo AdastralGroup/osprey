@@ -5,6 +5,11 @@
 #include <godot_cpp/classes/json.hpp>
 #include <palace/palace.hpp>
 #include <thread>
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#else
+#include <libnotify/notify.h>
+#endif
+
 namespace godot {
 
   class sutton : public Node {
@@ -29,10 +34,11 @@ namespace godot {
     godot::String get_installed_version(godot::String gameName);
     godot::String get_latest_version(godot::String gameName);
     godot::String is_installed(godot::String gameName);
-
+    int desktop_notification(String title, String desc);
 
    private:
     void _verify_game(String gameName);
+    void _update_game(String gameName);
     void _init_palace();
     palace* p;
   };
