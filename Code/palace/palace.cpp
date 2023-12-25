@@ -6,8 +6,13 @@ palace::palace() {
   A_printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
 #if _DEBUG
-    printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
+  printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
 #endif
+}
+palace::~palace() {
+  for(const auto& it: serverGames) {
+    delete it.second;
+  }
 }
 
 void palace::fetch_server_data() {

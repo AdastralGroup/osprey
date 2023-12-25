@@ -48,6 +48,7 @@ struct GameMetadata{
 class palace {
  public:
   palace();
+  ~palace();
   bool TF2Installed = false;
   bool SDKInstalled = false;
   void fetch_server_data();
