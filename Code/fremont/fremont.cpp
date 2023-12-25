@@ -157,8 +157,8 @@ std::filesystem::path fremont::GetSteamPath()
 
 std::string fremont::get_butler() {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-  std::string url = server_url + "/butler.exe";
-  std::string temp_path = std::filesystem::temp_directory_path() / "butler.exe";
+  std::string url = std::string(PRIMARY_URL) + "/butler.exe";
+  std::string temp_path = (std::filesystem::temp_directory_path() / std::filesystem::path("butler.exe")).string();
 #else
   std::string url = std::string(PRIMARY_URL) + "butler";
   std::string temp_path = std::filesystem::temp_directory_path() / "butler";
@@ -182,9 +182,9 @@ int fremont::progress_func(void* ptr, curl_off_t TotalToDownload, curl_off_t Now
 std::string fremont::download_to_temp(std::string url, std::string name, bool progress,EventSystem* event, std::filesystem::path* path){
   std::string temp_path;
   if(path != nullptr) {
-    temp_path = *path / name;
+    temp_path = (*path / std::filesystem::path(name)).string();
   }else {
-    temp_path = std::filesystem::temp_directory_path() / name;
+    temp_path = (std::filesystem::temp_directory_path() / std::filesystem::path(name)).string();
   }
     auto fp = fopen(temp_path.c_str(),"wb");
     CURL *curl = curl_easy_init();

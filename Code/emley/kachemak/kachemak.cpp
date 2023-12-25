@@ -212,7 +212,7 @@ int Kachemak::Install() {
   //  return downloadStatus;
   //}
   A_printf("[Kachemak/Install] Download complete: extracting... \n");
-  Extract( path , m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
+  Extract( path.string() , m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
   A_printf("[Kachemak/Install] Extraction done.... \n");
   DoSymlink();
   m_szInstalledVersion = GetLatestVersion();
