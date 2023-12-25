@@ -91,17 +91,23 @@ size_t fremont::static_curl_callback(void* buffer, size_t sz, size_t n, void* cp
   return sz*n;
 }
 
+size_t cool_curl_callback(char *contents, size_t size, size_t nmemb, void *userp) {
+  ((std::string*)userp)->append((char*)contents, size * nmemb);
+  return size * nmemb;
+}
+
 std::string fremont::get_string_data_from_server(const std::string& url) {
   CURL* curlHandle = curl_easy_init();
-  curl_string_data = "";
+  std::string curl_string_data_local;
   curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, fremont::static_curl_callback);
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, cool_curl_callback);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &curl_string_data_local);
   CURLcode res = curl_easy_perform(curlHandle);
   if (res != CURLE_OK) {
     exit(256);
   }
   curl_easy_cleanup(curlHandle);
+  curl_string_data = curl_string_data_local;
   return curl_string_data;
 }
 

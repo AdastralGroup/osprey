@@ -2,7 +2,7 @@
 
 void A_printf(const char *const format ,...){
 #ifndef GODOT
-#warning "GODOT DISABLED."
+  //#pragma warning ("GODOT DISABLED.")
   va_list argptr;
   va_start(argptr, format);
   vfprintf(stdout, format, argptr);
