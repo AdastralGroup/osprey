@@ -11,5 +11,6 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 #endif
 
-void A_printf(const char *const format ,...) __attribute__ ((format (printf, 1, 2)));
+
+void A_printf(const char *const format ,...);
 #endif

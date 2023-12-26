@@ -150,6 +150,7 @@ void sutton::set_sourcemod_path(godot::String gd_path) {
 
 int sutton::desktop_notification(String title, String desc) {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+  return 0;
 #else
   notify_init("Adastral");
   NotifyNotification* notification = notify_notification_new(title.ascii().get_data(), desc.ascii().get_data(), nullptr);

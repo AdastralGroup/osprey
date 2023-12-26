@@ -91,17 +91,23 @@ size_t fremont::static_curl_callback(void* buffer, size_t sz, size_t n, void* cp
   return sz*n;
 }
 
+size_t cool_curl_callback(char *contents, size_t size, size_t nmemb, void *userp) {
+  ((std::string*)userp)->append((char*)contents, size * nmemb);
+  return size * nmemb;
+}
+
 std::string fremont::get_string_data_from_server(const std::string& url) {
   CURL* curlHandle = curl_easy_init();
-  curl_string_data = "";
+  std::string curl_string_data_local;
   curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, fremont::static_curl_callback);
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, cool_curl_callback);
+  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &curl_string_data_local);
   CURLcode res = curl_easy_perform(curlHandle);
   if (res != CURLE_OK) {
     exit(256);
   }
   curl_easy_cleanup(curlHandle);
+  curl_string_data = curl_string_data_local;
   return curl_string_data;
 }
 
@@ -157,8 +163,8 @@ std::filesystem::path fremont::GetSteamPath()
 
 std::string fremont::get_butler() {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-  std::string url = server_url + "/butler.exe";
-  std::string temp_path = std::filesystem::temp_directory_path() / "butler.exe";
+  std::string url = std::string(PRIMARY_URL) + "/butler.exe";
+  std::string temp_path = (std::filesystem::temp_directory_path() / std::filesystem::path("butler.exe")).string();
 #else
   std::string url = std::string(PRIMARY_URL) + "butler";
   std::string temp_path = std::filesystem::temp_directory_path() / "butler";
@@ -182,9 +188,9 @@ int fremont::progress_func(void* ptr, curl_off_t TotalToDownload, curl_off_t Now
 std::string fremont::download_to_temp(std::string url, std::string name, bool progress,EventSystem* event, std::filesystem::path* path){
   std::string temp_path;
   if(path != nullptr) {
-    temp_path = *path / name;
+    temp_path = (*path / std::filesystem::path(name)).string();
   }else {
-    temp_path = std::filesystem::temp_directory_path() / name;
+    temp_path = (std::filesystem::temp_directory_path() / std::filesystem::path(name)).string();
   }
     auto fp = fopen(temp_path.c_str(),"wb");
     CURL *curl = curl_easy_init();
