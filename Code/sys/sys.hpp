@@ -8,6 +8,11 @@
 #include <vector>
 
 #include "zip/zip.h"
+#ifdef _WIN32
+#include <Windows.h>
+#include <Winreg.h>
+#endif
+
 #define PRIMARY_URL "https://fusion.adastral.net/"
 class sys {
  public:
