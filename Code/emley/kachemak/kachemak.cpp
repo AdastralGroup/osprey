@@ -185,7 +185,7 @@ int Kachemak::Update() {
 
   std::stringstream patchUrlFull_ss;
   patchUrlFull_ss << m_szSourceUrl << patch.value().szUrl;
-  std::filesystem::path stagingPath = m_szSourcemodPath / "butler-staging";
+  std::filesystem::path stagingPath = m_szSourcemodPath / "butler-staging"; // make this dynamic, so we can download multiple games at once
   int patchRes = ButlerPatch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
                              dataDir_path.string(), patch.value().lTempRequired);
 
@@ -212,7 +212,8 @@ int Kachemak::Install() {
   //  return downloadStatus;
   //}
   A_printf("[Kachemak/Install] Download complete: extracting... \n");
-  Extract( path , m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
+  std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
+  Extract( path , m_szSourcemodPath.string() / m_szFolderName, latestVersion.value().lExtractSize);
   A_printf("[Kachemak/Install] Extraction done.... \n");
   DoSymlink();
   m_szInstalledVersion = GetLatestVersion();
