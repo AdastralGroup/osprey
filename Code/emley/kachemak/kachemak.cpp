@@ -213,7 +213,7 @@ int Kachemak::Install() {
   //}
   A_printf("[Kachemak/Install] Download complete: extracting... \n");
   std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
-  Extract( path.string() , m_szSourcemodPath.string() / m_szFolderName, latestVersion.value().lExtractSize);
+  Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   A_printf("[Kachemak/Install] Extraction done.... \n");
   DoSymlink();
   m_szInstalledVersion = GetLatestVersion();
