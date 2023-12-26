@@ -13,7 +13,7 @@
 
 namespace godot {
 class binding : public Node {
-  GDCLASS(sutton, Node);
+  GDCLASS(binding, Node);
 
  public:
   binding();
