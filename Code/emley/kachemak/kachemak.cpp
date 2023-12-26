@@ -15,7 +15,7 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
   m_szTempPath = std::filesystem::temp_directory_path().string();
   name = szFolderName.string(); // this is bad don't do this
   m_szButlerLocation = std::filesystem::temp_directory_path() / BUTLER;
-  std::string ver_string = fremont().get_string_data_from_server(szSourceUrl + "bullseye.json");
+  std::string ver_string = net().get_string_data_from_server(szSourceUrl + "bullseye.json");
   if(!nlohmann::json::accept(ver_string)){
     throw std::runtime_error("INVALID JSON. \n " + szSourceUrl + "bullseye.json");
   }
@@ -206,7 +206,7 @@ int Kachemak::Install() {
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
   A_printf("[Kachemak/Install] Downloading via torrent... \n");
   //int downloadStatus =
-  std::filesystem::path path = fremont::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
+  std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
   //if (downloadStatus != 0) {
   //  A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
   //  return downloadStatus;
@@ -236,7 +236,7 @@ int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutpu
   }
   std::FILE* tmpf = std::tmpfile();
   std::string tmpf_loc = std::to_string(fileno(tmpf));
-  int ret = fremont::ExtractZip(szInputFile, szOutputDirectory);
+  int ret = sys::ExtractZip(szInputFile, szOutputDirectory);
   if (ret != 0) {
     A_printf("[Kachemak/Extract] Extraction Failed - %i\n",ret);
   }
@@ -284,7 +284,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
     }
   }
   if (stagingDir_exists && stagingDir_isDir) {
-    switch (fremont::DeleteDirectoryContent(sz_stagingDir)) {
+    switch (sys::DeleteDirectoryContent(sz_stagingDir)) {
       case 1:
         A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
                      "(doesn't exist)\n");
@@ -299,7 +299,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
   int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
   //int downloadStatus = bilsdale::LibTorrentDownload(sz_url, m_szTempPath.string());
-  fremont::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
+  net::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
   //if (downloadStatus != 0) return downloadStatus;
 
   std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
@@ -323,7 +323,7 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
     return 2;
   }
 
-  switch (fremont::DeleteDirectoryContent(sz_stagingDir)) {
+  switch (sys::DeleteDirectoryContent(sz_stagingDir)) {
     case 1:
       A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
                    "(doesn't exist)\n");

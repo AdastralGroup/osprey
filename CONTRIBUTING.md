@@ -1,15 +1,16 @@
 winter contains various components specified by codenames - to contribute it's important to put 
-it in the right place.
+it in the right place. Important modules are given special names, secondary modules are given pragmatic names.
 
-| codename  | function                                                                                                                              |
-|-----------|---------------------------------------------------------------------------------------------------------------------------------------|
-| emley     | Versioning. Contains the Kachemak versioning system.                                                                                  |
-| fremont   | Utility functions used in other modules. JSON and zip dependencies go here.                                                           |
-| coldfield | GDExtension binding code, boilerplate and associated helpers.                                                                         |
-| sheffield | "Big" downloading. Emley uses this for downloading the requisite files needed, so this is where for example a torrent interface'd go. |
-| palace    | "main" module, handles southbank parsing, manages high level functions.                                                               |
-| sutton    | Class that connects the GDExtension side and palace.                                                                                  |
-| beacon    | Driver code to test all the non-Godot parts / Somewhat effective TUI                                                                  |
+| codename | function                                                                            |
+|----------|-------------------------------------------------------------------------------------|
+| emley    | Versioning. Contains the Kachemak versioning system.                                |
+| palace   | "main" module, handles southbank parsing, manages high level functions.             |
+| sys      | Contains filesystem related functions, such as SDK detection and zip functionality. |
+| net      | Contains a wrapper around cURL currently, and some helpers.                         |
+| binding  | GDExtension binding code and associated helpers.                                    |
+| torrent  | Torrent interface module.                                                           |
+| headless | Headless mode, to assist with debugging.                                            |
+| shared   | Shared code between functions - contains events system.                             |
 
 
-There's a .clang-tidy file in the root of the repo for consistent formatting.
+There's a .clang-format file in the root of the repo for consistent formatting.

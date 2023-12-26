@@ -1,0 +1,10 @@
+project(sys)
+ad_create_target(STATIC_LIBRARY ${PROJECT_NAME})
+target_include_directories(sys PUBLIC ../${PROJECT_NAME})
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
+include(FetchContent)
+# Get the name of this folder as the project name
+get_filename_component(PROJECT_NAME ../${PROJECT_NAME} NAME_WE)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json shared)
