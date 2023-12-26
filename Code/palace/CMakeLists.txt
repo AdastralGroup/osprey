@@ -9,4 +9,4 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 FetchContent_MakeAvailable(json)
 include(FetchContent)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json CURL::libcurl emley )
+target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json CURL::libcurl emley)

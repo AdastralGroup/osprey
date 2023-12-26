@@ -2,7 +2,7 @@
 
 palace::palace() {
   A_printf("[Palace/Init] Downloading butler. Hold on.\n");
-  fremont::get_butler();
+  net::get_butler();
   A_printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
 #if _DEBUG
@@ -10,64 +10,64 @@ palace::palace() {
 #endif
 }
 palace::~palace() {
-  for(const auto& it: serverGames) {
+  for (const auto& it : serverGames) {
     delete it.second;
   }
 }
 
 void palace::fetch_server_data() {
-    std::string json = fremont().get_string_data_from_server(std::string(PRIMARY_URL) + "southbank.json");
+  std::string json = net().get_string_data_from_server(std::string(PRIMARY_URL) + "southbank.json");
   southbankJson = nlohmann::json::parse(json);  // do error checking here
 }
 
-std::filesystem::path palace::find_sourcemod_path(){
-  std::filesystem::path steamPath = fremont::GetSteamPath();
-  if(steamPath != ""){
+std::filesystem::path palace::find_sourcemod_path() {
+  std::filesystem::path steamPath = sys::GetSteamPath();
+  if (steamPath != "") {
     A_printf("[Palace] Steam Path found!\n");
     sourcemodsPath = steamPath / "steamapps" / "sourcemods";
-    if(std::filesystem::exists(sourcemodsPath)) {
+    if (std::filesystem::exists(sourcemodsPath)) {
       A_printf("[Palace] Sourcemod folder exists\n");
       return sourcemodsPath;
-    }else{
+    } else {
       A_printf("[Palace] Sourcemod folder doesn't exist - creating...\n");
       std::filesystem::create_directories(sourcemodsPath);
     }
-  }else{
+  } else {
     A_printf("[Palace] NO STEAM PATH?!\n");
   }
   return sourcemodsPath;
 }
 
-bool palace::isTF2Installed(){
-  if(sourcemodsPath != "") {
-    TF2Installed = fremont::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
+bool palace::isTF2Installed() {
+  if (sourcemodsPath != "") {
+    TF2Installed = sys::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
     return TF2Installed;
   }
   return false;
 }
 
-bool palace::isSDKInstalled(){
-  if(sourcemodsPath != "") {
-    TF2Installed = fremont::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
+bool palace::isSDKInstalled() {
+  if (sourcemodsPath != "") {
+    TF2Installed = sys::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
     return SDKInstalled;
   }
   return false;
 }
 
 int palace::init_games() {
-  if (!std::filesystem::exists(std::filesystem::canonical(sourcemodsPath)))
-  {
+  if (!std::filesystem::exists(std::filesystem::canonical(sourcemodsPath))) {
     return 2;
   }
-  for(const auto& it: southbankJson["games"].items()){
+  for (const auto& it : southbankJson["games"].items()) {
     std::string version;
     std::string id = it.key();
     serverGames[id] = new GameMetadata;
     serverGames[id]->name = it.value()["name"];
     std::string full_url = southbankJson["dl_url"];
     full_url += id;
-    full_url += '/'; // this is dumb, make it do this inside kachemak....
-    auto* game = new Kachemak(sourcemodsPath,it.key(),full_url); // getting the json is versioning impl specific so we let it get it
+    full_url += '/';  // this is dumb, make it do this inside kachemak....
+    auto* game = new Kachemak(sourcemodsPath, it.key(),
+                              full_url);  // getting the json is versioning impl specific so we let it get it
     // i'm aware i'm breaking one of the rules, but it makes more sense
     serverGames[id]->l1 = game;
   }
@@ -75,21 +75,22 @@ int palace::init_games() {
 }
 
 int palace::update_game(const std::string& game_name) {
-  if(serverGames[game_name]->l1->GetInstalledVersion().empty()){
-      serverGames[game_name]->l1->Install();
+  if (serverGames[game_name]->l1->GetInstalledVersion().empty()) {
+    serverGames[game_name]->l1->Install();
   }
-  //else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() || serverGames[game_name]->l1->force_verify){
-  //  serverGames[game_name]->l1->Verify();
-  //}
-  else{
+  // else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
+  // serverGames[game_name]->l1->force_verify){
+  //   serverGames[game_name]->l1->Verify();
+  // }
+  else {
     serverGames[game_name]->l1->Update();
   }
   return 0;
 }
 std::vector<std::string> palace::get_games() {
   auto vec = std::vector<std::string>();
-  for(const auto& it: serverGames){
-      vec.push_back(it.first);
+  for (const auto& it : serverGames) {
+    vec.push_back(it.first);
   }
   return vec;
 }
