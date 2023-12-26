@@ -6,8 +6,8 @@ find_package(CURL REQUIRED)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_MakeAvailable(json)
 ad_create_target(STATIC_LIBRARY ${PROJECT_NAME})
-include(FetchContent)
 target_include_directories(emley PUBLIC ./)
+include(FetchContent)
 
 # Get the name of this folder as the project name
-target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl nlohmann_json::nlohmann_json fremont sheffield)
+target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl nlohmann_json::nlohmann_json caldbeck fremont angus)

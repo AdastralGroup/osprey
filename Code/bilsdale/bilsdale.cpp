@@ -1,9 +1,8 @@
 #include <fremont/fremont.hpp>
-#include <sheffield/sheffield.hpp>
+#include <bilsdale/bilsdale.hpp>
 #include <vector>
 
-
-int sheffield::LibTorrentDownload(const std::string &torrentfileurl, const std::string &path) try {
+int bilsdale::LibTorrentDownload(const std::string &torrentfileurl, const std::string &path) try {
   std::vector<char> torrentfile = fremont().get_bin_data_from_server(torrentfileurl);
   lt::settings_pack p;
   p.set_int(lt::settings_pack::alert_mask, lt::alert_category::status | lt::alert_category::error);
@@ -32,6 +31,6 @@ int sheffield::LibTorrentDownload(const std::string &torrentfileurl, const std::
 done:
   return 0;
 } catch (std::exception &e) {
-  std::cerr << "Error: " << e.what() << std::endl;
+  A_printf("[bilsdale] Error: %s\n",e.what());
   return 1;
 }

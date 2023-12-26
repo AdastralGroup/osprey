@@ -1,6 +1,6 @@
 #pragma once
 
-#include <events/event.hpp>
+#include <caldbeck/event.hpp>
 
 class ErrorMessage : public Event {
  public:

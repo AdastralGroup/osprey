@@ -48,6 +48,7 @@ struct GameMetadata{
 class palace {
  public:
   palace();
+  ~palace();
   bool TF2Installed = false;
   bool SDKInstalled = false;
   void fetch_server_data();
@@ -56,8 +57,10 @@ class palace {
   int verify_game(const std::string& gameName);
   std::vector<std::string> get_games();
   std::vector<std::string> get_installed_games();
+  bool isSDKInstalled();
+  bool isTF2Installed();
   nlohmann::json southbankJson;
   std::unordered_map<std::string,GameMetadata*> serverGames;
   std::filesystem::path sourcemodsPath;
-
+  std::filesystem::path find_sourcemod_path();
 };

@@ -1,5 +1,5 @@
-
-#include <events/event.hpp>
+#pragma once
+#include <caldbeck/event.hpp>
 
 class ProgressUpdateMessage : public Event {
  public:

@@ -10,6 +10,4 @@ ad_create_target(STATIC_LIBRARY ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ../)
 # Get the name of this folder as the project name
 
-
-
 target_link_libraries(${PROJECT_NAME} PUBLIC fremont CURL::libcurl nlohmann_json::nlohmann_json torrent-rasterbar)

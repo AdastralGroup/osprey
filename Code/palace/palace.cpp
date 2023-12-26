@@ -1,20 +1,18 @@
 #include "palace.hpp"
 
 palace::palace() {
-  sourcemodsPath = fremont().GetSteamSourcemodPath();
-  if(sourcemodsPath != ""){
-      TF2Installed = fremont::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
-      SDKInstalled = fremont::CheckSDKInstalled(sourcemodsPath.parent_path().parent_path()); //steam/steamapps/sourcemods
-  }else{
-      std::cout << "NO SOURCEMOD PATH!" << std::endl;
-  }
-  printf("[Palace/Init] Downloading butler. Hold on.\n");
+  A_printf("[Palace/Init] Downloading butler. Hold on.\n");
   fremont::get_butler();
-  printf("[Palace/Init] Fetching server data...\n");
+  A_printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
 #if _DEBUG
-    printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
+  printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
 #endif
+}
+palace::~palace() {
+  for(const auto& it: serverGames) {
+    delete it.second;
+  }
 }
 
 void palace::fetch_server_data() {
@@ -22,6 +20,39 @@ void palace::fetch_server_data() {
   southbankJson = nlohmann::json::parse(json);  // do error checking here
 }
 
+std::filesystem::path palace::find_sourcemod_path(){
+  std::filesystem::path steamPath = fremont::GetSteamPath();
+  if(steamPath != ""){
+    A_printf("[Palace] Steam Path found!\n");
+    sourcemodsPath = steamPath / "steamapps" / "sourcemods";
+    if(std::filesystem::exists(sourcemodsPath)) {
+      A_printf("[Palace] Sourcemod folder exists\n");
+      return sourcemodsPath;
+    }else{
+      A_printf("[Palace] Sourcemod folder doesn't exist - creating...\n");
+      std::filesystem::create_directories(sourcemodsPath);
+    }
+  }else{
+    A_printf("[Palace] NO STEAM PATH?!\n");
+  }
+  return sourcemodsPath;
+}
+
+bool palace::isTF2Installed(){
+  if(sourcemodsPath != "") {
+    TF2Installed = fremont::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
+    return TF2Installed;
+  }
+  return false;
+}
+
+bool palace::isSDKInstalled(){
+  if(sourcemodsPath != "") {
+    TF2Installed = fremont::CheckTF2Installed(sourcemodsPath.parent_path().parent_path());
+    return SDKInstalled;
+  }
+  return false;
+}
 
 int palace::init_games() {
   if (!std::filesystem::exists(std::filesystem::canonical(sourcemodsPath)))
@@ -31,17 +62,14 @@ int palace::init_games() {
   for(const auto& it: southbankJson["games"].items()){
     std::string version;
     std::string id = it.key();
-    if(std::filesystem::exists(sourcemodsPath / id)) {
-      std::cout << "[Palace] " << id << ": Game exists. " <<std::endl;
-    }
-      serverGames[id] = new GameMetadata;
-      serverGames[id]->name = it.value()["name"];
-      std::string full_url = southbankJson["dl_url"];
-      full_url += id;
-      full_url += '/'; // this is dumb, make it do this inside kachemak....
-      auto* game = new Kachemak(sourcemodsPath,it.key(),full_url); // getting the json is versioning impl specific so we let it get it
-      // i'm aware i'm breaking one of the rules, but it makes more sense
-      serverGames[id]->l1 = game;
+    serverGames[id] = new GameMetadata;
+    serverGames[id]->name = it.value()["name"];
+    std::string full_url = southbankJson["dl_url"];
+    full_url += id;
+    full_url += '/'; // this is dumb, make it do this inside kachemak....
+    auto* game = new Kachemak(sourcemodsPath,it.key(),full_url); // getting the json is versioning impl specific so we let it get it
+    // i'm aware i'm breaking one of the rules, but it makes more sense
+    serverGames[id]->l1 = game;
   }
   return 0;
 }

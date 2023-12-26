@@ -27,7 +27,7 @@ void register_adastral_types(godot::ModuleInitializationLevel p_level) {
   }
   godot::ClassDB::register_abstract_class<adastral::ADProjectEvent>();
   godot::ClassDB::register_abstract_class<adastral::ADProjectRegister>();
-  godot::ClassDB::register_abstract_class<sutton>();
+  godot::ClassDB::register_class<sutton>();
   // REGISTER CLASSES HERE LATER
 }
 

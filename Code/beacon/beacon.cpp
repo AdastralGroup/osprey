@@ -2,6 +2,7 @@
 int main() {
   printf(WELCOME_TEXT);
   auto p = new palace;  // does sanity checks
+  p->find_sourcemod_path();
   if (p->sourcemodsPath.empty()) {
     printf("We couldn't find your sourcemod folder. Please input an alternate sourcemods path.\n");
   try_again:
@@ -13,7 +14,6 @@ int main() {
     }
     p->sourcemodsPath = std::filesystem::path(path);
   }
-
   int code = p->init_games();
   printf("[Palace/GameInit] ");
   switch (code) {
@@ -28,13 +28,14 @@ int main() {
       return code;
   }
   p->fetch_server_data();
-  for (const auto& i : p->serverGames){
-    std::cout << "[Beacon] " << "Game Available: " << i.second->name << " ("<< i.first << ")"<< std::endl;
+
+  for (const auto& i : p->serverGames) {
+    std::cout << "[Beacon] "
+              << "Game Available: " << i.second->name << " (" << i.first << ")" << std::endl;
   }
-  if(p->serverGames["tf2classic"]->l1->force_verify) {
-    printf("[Beacon] Updating tf2classic.\n");
-    p->verify_game("tf2classic");  // you should check the force_verify to see if verification alone is needed.
-  }
+   //printf("[Beacon] Updating open_fortress.\n");
+   //p->update_game("open_fortress");  // you should check the force_verify to see if verification alone is needed.
+  delete(p);
   printf("[Beacon] Everything done.\n");
   return 0;
 }
