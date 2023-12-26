@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://d2fac2xibuh1b"]
+[gd_scene load_steps=23 format=3 uid="uid://d2fac2xibuh1b"]
 
 [ext_resource type="Theme" uid="uid://bqpi1momfja7u" path="res://themes/base.tres" id="1_iqqha"]
 [ext_resource type="FontVariation" uid="uid://th0tjv2xcuen" path="res://fonts/main_font.tres" id="3_qwbhy"]
@@ -40,6 +40,9 @@ shader_parameter/target_texture = ExtResource("11_anxy3")
 [sub_resource type="FontVariation" id="FontVariation_sxnxf"]
 base_font = ExtResource("16_aeh5c")
 spacing_glyph = -4
+
+[sub_resource type="FontVariation" id="FontVariation_fhnum"]
+base_font = ExtResource("16_aeh5c")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ikao0"]
 shader = ExtResource("4_5diq2")
@@ -167,6 +170,7 @@ offset_right = -1.0
 offset_bottom = -8.0
 
 [node name="BigLabel" type="Label" parent="Main/AboutInfo"]
+layout_mode = 0
 offset_left = 358.0
 offset_top = 131.0
 offset_right = 720.0
@@ -175,7 +179,8 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("FontVariation_sxnxf")
 theme_override_font_sizes/font_size = 100
 text = "Adastral"
-visible_ratio = -0.125
+visible_characters = 0
+visible_ratio = 0.0
 
 [node name="Label" type="Label" parent="Main/AboutInfo"]
 layout_mode = 0
@@ -195,7 +200,7 @@ offset_top = 270.0
 offset_right = 751.0
 offset_bottom = 447.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("3_qwbhy")
+theme_override_fonts/font = SubResource("FontVariation_fhnum")
 theme_override_font_sizes/font_size = 15
 text = "Adastral is FREE SOFTWARE available under 
 the GNU GPLV3. See adastral.net/license for details."

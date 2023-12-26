@@ -2,10 +2,10 @@ extends Control
 #var oops = preload("res://oops.tscn")
 
 var spin_tween: Tween
-var s: sutton
+var s: binding
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	s = sutton.new()
+	s = binding.new()
 	s.connect("palace_started",launch)
 	s.init_palace()
 
@@ -41,7 +41,7 @@ func do_the_shiny_thing():
 	var t = 1.5
 	var trans = Tween.TRANS_EXPO
 	var ease = Tween.EASE_OUT
-	spin_tween.tween_property($Label3,"rotation_degrees",400.0,t+0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	spin_tween.tween_property($Label3,"rotation_degrees",360,t).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.tween_property($Label3,"visible_characters",8,t).set_trans(Tween.TRANS_SINE).set_ease(ease)
 	for x in [$TextureRect,$TextureRect2,$TextureRect3,$TextureRect4,$TextureRect5,$TextureRect6]:
 		tween.tween_property(x,"position",$Node2D.position,t).set_trans(trans).set_ease(ease)
@@ -49,7 +49,7 @@ func do_the_shiny_thing():
 		tween.tween_property(x,"pivot_offset",Vector2(100,100),t).set_trans(trans).set_ease(ease)
 		spin_tween.tween_property(x,"rotation_degrees",360.0+180,t).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(x,"modulate",Color.WHITE,t).set_trans(trans).set_ease(Tween.EASE_IN)
-	await get_tree().create_timer(t).timeout
+	await get_tree().create_timer(t+0.2).timeout
 	$TextureRect2.hide()
 	$TextureRect3.hide()
 	$TextureRect4.hide()

@@ -9,7 +9,7 @@ var theme_json = {"adastral":
 		"click_t":"#000000",
 		"bg": "res://assets/bg.png",
 		"star": "res://assets/adastral.svg"}}
-var s : sutton
+var s : binding
 var current_scren : String # use an enum damnit!!!!
 var current_game : String
 signal change_to(game)
