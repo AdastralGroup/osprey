@@ -1,7 +1,7 @@
 extends Control
 var pallete
 var theme_json = {"adastral":
-	{"id":"adastral","dark":"#000000","light": "#f8f3ee",
+	{"id":"adastral","dark":"#00000000","light": "#f8f3ee",
 		"main": "#005c9d",
 		"accent": "#b76300",
 		"lightfg": "#8d847b",
@@ -16,7 +16,11 @@ signal change_to(game)
 signal update_game(game)
 signal verify_game(game)
 
-
+func load_image(path):
+	if "res://" in path:
+		return load(path)
+	else:
+		return ImageTexture.create_from_image(Image.load_from_file(path))
 
 func _ready():
 	pass
@@ -25,9 +29,8 @@ func _ready():
 func _on_Button4_pressed():
 	pass
 
-func _on_AboutButton_pressed():
-	pass
-
+func _on_progress_update(game,progress):
+	call_deferred("t_progress_update",game,progress)
 
 func _on_HomeButton_pressed():
 	apply_theme("adastral")
@@ -35,12 +38,17 @@ func _on_HomeButton_pressed():
 func _on_game_verified(status,game):
 	call_deferred("t_game_verified")
 	
-func _on_progress_update(game,progress):
-	call_deferred("t_progress_update",game,progress)
+func _on_game_updated(status,game):
+	call_deferred("t_game_updated",game)
+	
 
 func _on_install_pressed():
-	pass # Replace with function body.
-
+	s.update_game(current_game)
+	$Install.disabled = true
+	$Install.text = "Installing..."
+	$Verify.disabled = true
+	var tween = get_tree().create_tween()
+	tween.tween_property($ProgressBar,"modulate",Color.WHITE,0.2)
 
 func _on_verify_pressed():
 	s.verify_game(current_game)
@@ -53,10 +61,8 @@ func _on_verify_pressed():
 	
 func set_button_colours(colour,time):
 	var tween = get_tree().create_tween().set_parallel(true)
-	tween.tween_property($TopPanel/AboutButton,"modulate",colour,time)
 	tween.tween_property($TopPanel/AdvancedButton,"modulate",colour,time)
 	tween.tween_property($TopPanel/HomeButton,"modulate",colour,time)
-	tween.tween_property($TopPanel/DownloadTab,"modulate",colour,time)
 	for x in $HBoxContainer.get_children():
 		if x.get_class() == "TextureButton":
 			tween.tween_property(x,"modulate",colour,time)
@@ -65,6 +71,7 @@ func set_button_colours(colour,time):
 func ready_after_sutton():
 	apply_theme("adastral")
 	s.connect("game_verified",_on_game_verified)
+	s.connect("game_updated",_on_game_updated)
 	s.connect("progress_update",_on_progress_update)
 	var game_theme = s.get_game_assets("open_fortress")
 	theme_json["open_fortress"] = game_theme
@@ -87,7 +94,7 @@ func add_side_icons():
 			new.custom_minimum_size= Vector2(42,42)
 			new.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			new.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			new.texture_normal = ImageTexture.create_from_image(Image.load_from_file(x["icon"]))
+			new.texture_normal = load_image(x["icon"])
 			$HBoxContainer.add_child(new)
 			new.show()
 			new.pressed.connect(func(): apply_theme(x["id"]))
@@ -105,6 +112,12 @@ func t_game_verified():
 	var tween = get_tree().create_tween()
 	tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
 
+func t_game_updated(game):
+	$Install.text = "Installed"
+	$Verify.disabled = false
+	$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game)
+	var tween = get_tree().create_tween()
+	tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
 
 
 
@@ -117,6 +130,21 @@ func disabled(color):
 func set_stylebox_colour(stylebox,colour):
 	stylebox.bg_color = colour
 
+
+
+func set_buttons(game_name):
+	if s.get_installed_version(game_name) == "":
+		$InstalledVersion.text = "[left]Not Installed!"
+		$Verify.disabled = true
+		$Install.disabled = false
+	else:
+		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game_name)
+		if s.get_installed_version(game_name) == s.get_latest_version(game_name):
+			$Install.disabled = true
+			$Verify.disabled = false
+		
+
+
 func apply_theme(theme_name):
 	pallete = theme_json[theme_name]
 	var base_theme = load("res://themes/base.tres") ## we shouldn't be doing this
@@ -124,23 +152,33 @@ func apply_theme(theme_name):
 		pallete["secondary"] = pallete["main"]
 	var tween = get_tree().create_tween().set_parallel(true)
 	if pallete["id"] == "adastral":
-		$TextureRect2.show()
+		#$TextureRect2.show()
 		$LatestVersion.hide()
 		$InstalledVersion.hide()
 		$Install.hide()
 		$Verify.hide()
-		
+		$Panel2/Background.hide()
+		$AboutInfo/BigLabel.visible_characters = -1
+		$AboutInfo.show()
+		if get_node_or_null("TextureRect"):
+			$TextureRect.show()
+		$BottomPanel.hide()
 	else:
-		$BottomPanel.show()
+		if get_node_or_null("TextureRect"):
+			$TextureRect.hide()
+		$AboutInfo.hide()
+		$BottomPanel.show() # these all need to be tweens
 		$Install.show()
 		$Verify.show()
 		$LatestVersion.show()
 		$InstalledVersion.show()
 		$TextureRect2.hide()
-	$LatestVersion.text = "[right]Latest Version: [b]%s[/b]" % s.get_latest_version(theme_name)
-	$InstalledVersion.text = "[right]Installed Version: [b]%s[/b]" % s.get_installed_version(theme_name)
-	var newbgtexture = ImageTexture.create_from_image(Image.load_from_file(pallete["bg"]))
-	var newstar = ImageTexture.create_from_image(Image.load_from_file(pallete["star"]))
+		$Panel2/Background.show()
+		#$Panel2.show()
+	$LatestVersion.text = "[left]Latest Version: [b]%s[/b]" % s.get_latest_version(theme_name)
+	set_buttons(theme_name)
+	var newbgtexture = load_image(pallete["bg"])
+	var newstar = load_image(pallete["star"])
 	$Panel2/Background.material.set_shader_parameter("weight",0)
 	$Panel2/Background.material.set_shader_parameter("target_texture",newbgtexture)
 	$TopPanel/AdastralLogo.material.set_shader_parameter("weight",0)
@@ -151,10 +189,10 @@ func apply_theme(theme_name):
 		tween.tween_method(func(x): $Wordmark.material.set_shader_parameter("alpha",x),1.0,0.0,0.2)
 	elif $Wordmark.is_visible(): #if it's visible, then there's an old and new texture so we need to tween weight.
 		$Wordmark.material.set_shader_parameter("weight",0)
-		$Wordmark.material.set_shader_parameter("target_texture",ImageTexture.create_from_image(Image.load_from_file(pallete["wordmark"])))
+		$Wordmark.material.set_shader_parameter("target_texture",load_image(pallete["wordmark"]))
 		tween.tween_method(func(x): $Wordmark.material.set_shader_parameter("weight",x),0.0,1.0,0.2)
 	else: # if it's not visible, there's no texture next and we need to tween alpha.
-		$Wordmark.texture = ImageTexture.create_from_image(Image.load_from_file(pallete["wordmark"]))
+		$Wordmark.texture = load_image(pallete["wordmark"])
 		$Wordmark.show()
 		$Wordmark.material.set_shader_parameter("alpha",0)
 		tween.tween_method(func(x): $Wordmark.material.set_shader_parameter("alpha",x),0.0,1.0,0.2)
@@ -182,7 +220,7 @@ func apply_theme(theme_name):
 	set_button_colours(Color(pallete["light"]),0.2)
 	await get_tree().create_timer(0.2).timeout
 	if pallete.has("wordmark"):
-		$Wordmark.texture = ImageTexture.create_from_image(Image.load_from_file(pallete["wordmark"])) # yes I know we load it twice but I'm not exactly the best at codeflow as you can see
+		$Wordmark.texture = load_image(pallete["wordmark"]) # yes I know we load it twice but I'm not exactly the best at codeflow as you can see
 	else:
 		$Wordmark.material.set_shader_parameter("weight",0)
 		$Wordmark.hide()

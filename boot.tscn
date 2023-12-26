@@ -8,7 +8,7 @@
 
 [sub_resource type="FontVariation" id="FontVariation_lse8k"]
 base_font = ExtResource("5_ej7of")
-spacing_glyph = -4
+spacing_glyph = -3
 
 [node name="root" type="Control"]
 layout_mode = 3
@@ -111,27 +111,27 @@ Sanity Checks: OK.
 Launching."
 
 [node name="Node2D" type="Node2D" parent="."]
-position = Vector2(76, 44)
+position = Vector2(119, 100)
 metadata/_edit_group_ = true
 
 [node name="TextureRect4" type="TextureRect" parent="Node2D"]
 visible = false
-offset_right = 250.0
-offset_bottom = 250.0
-pivot_offset = Vector2(125, 125)
+offset_right = 200.0
+offset_bottom = 200.0
+pivot_offset = Vector2(100, 100)
 texture = ExtResource("3_gsxu1")
 expand_mode = 1
 
 [node name="Label3" type="Label" parent="."]
 visible = false
 layout_mode = 0
-offset_left = 348.0
-offset_top = 99.0
-offset_right = 703.0
-offset_bottom = 243.0
+offset_left = 340.0
+offset_top = 118.0
+offset_right = 606.0
+offset_bottom = 216.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("FontVariation_lse8k")
-theme_override_font_sizes/font_size = 100
+theme_override_font_sizes/font_size = 75
 text = "Adastral"
 visible_characters = 0
 visible_ratio = 0.0
