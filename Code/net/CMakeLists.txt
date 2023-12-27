@@ -1,6 +1,6 @@
 project(net)
 find_package(CURL REQUIRED)
-ad_create_target(STATIC_LIBRARY ${PROJECT_NAME})
+add_library(${PROJECT_NAME} net.cpp)
 target_include_directories(net PUBLIC .)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)

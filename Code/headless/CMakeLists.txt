@@ -1,5 +1,4 @@
-ad_cmake_init()
 project(headless)
-ad_create_target(APPLICATION headless)
+add_executable(headless headless.cpp)
 # Get the name of this folder as the project name
 target_link_libraries(${PROJECT_NAME} PRIVATE shared palace)

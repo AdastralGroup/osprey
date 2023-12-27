@@ -1,10 +1,10 @@
-#include <shared/adastral_defs.h>
+#include <adastral_defs.h>
 
 #include <godot_cpp/classes/json.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
-#include <palace/palace.hpp>
+#include <palace.hpp>
 #include <thread>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #else

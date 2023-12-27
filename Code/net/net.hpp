@@ -1,9 +1,9 @@
 #pragma once
 #include <curl/curl.h>
-#include <shared/adastral_defs.h>
+#include <adastral_defs.h>
 
-#include <shared/events/eventsystem.hpp>
-#include <shared/events/progress.hpp>
+#include <events/eventsystem.hpp>
+#include <events/progress.hpp>
 #include <filesystem>
 #include <fstream>
 #include <iostream>

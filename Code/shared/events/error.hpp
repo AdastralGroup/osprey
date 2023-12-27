@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shared/events/event.hpp>
+#include "event.hpp"
 
 class ErrorMessage : public Event {
  public:

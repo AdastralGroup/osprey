@@ -1,5 +1,5 @@
 #pragma once
-#include <shared/adastral_defs.h>
+#include <adastral_defs.h>
 
 #include <filesystem>
 #include <fstream>
@@ -9,6 +9,7 @@
 
 #include "zip/zip.h"
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <Winreg.h>
 #endif

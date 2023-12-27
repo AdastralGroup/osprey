@@ -1,8 +1,9 @@
 #pragma once
 
-#include <shared/events/eventsystem.hpp>
+
 #include <filesystem>
 #include <string>
+#include <events/eventsystem.hpp>
 
 class Version {
  public:

@@ -1,4 +1,4 @@
-#include <events/eventsystem.hpp>
+#include <eventsystem.hpp>
 
 EventSystem::EventSystem() {
   for (int i = 0; i < (int)EventType::kMax; i++) {

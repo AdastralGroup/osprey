@@ -3,15 +3,15 @@
 #include <array>
 #include <cstdio>
 #include <cstdlib>
-#include <emley/version/version.hpp>
-#include <shared/events/error.hpp>
+#include <version/version.hpp>
+#include <events/error.hpp>
 #include <filesystem>
 #include <iostream>
-#include <net/net.hpp>
+#include <net.hpp>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <string>
-#include <sys/sys.hpp>
+#include <sys.hpp>
 #include <system_error>
 
 struct KachemakVersion {

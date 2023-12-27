@@ -1,7 +1,8 @@
-ad_cmake_init()
 project(shared)
-ad_create_target(STATIC_LIBRARY shared)
+add_library(shared adastral_defs.cpp events/error.cpp events/event.cpp events/eventsystem.cpp events/progress.cpp
+        events/error.hpp events/progress.hpp events/eventsystem.hpp events/event.hpp)
 target_include_directories(shared PUBLIC ./)
+target_include_directories(shared PUBLIC ./events)
 IF (GODOT)
     FetchContent_Declare(
             GDExtension

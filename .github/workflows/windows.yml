@@ -1,0 +1,27 @@
+name: Build Windows
+
+on: push
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        BUILD_TYPE: [ Debug ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hendrikmuhs/ccache-action@v1.2
+      - uses: seanmiddleditch/gha-setup-ninja@master
+      - name: Update Stuff
+        run: |
+          vcpkg install curl
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      - name: Build
+        run: cmake --build ${{github.workspace}}/Workspace
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: windows
+          path: ${{github.workspace}}/Code/binding/lib
+

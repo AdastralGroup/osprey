@@ -1,4 +1,4 @@
-#include <events/error.hpp>
+#include <error.hpp>
 
 ErrorMessage::ErrorMessage(std::string message) : Event(EventType::kOnError) { m_szMessage = message; }
 

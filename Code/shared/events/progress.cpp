@@ -1,4 +1,4 @@
-#include <events/progress.hpp>
+#include <progress.hpp>
 
 ProgressUpdateMessage::ProgressUpdateMessage(float bps, float progress) : Event(EventType::kOnUpdate) {
   m_fBps = bps;

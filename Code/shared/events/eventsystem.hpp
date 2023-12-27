@@ -1,6 +1,6 @@
 #pragma once
 
-#include <shared/events/event.hpp>
+#include <events/event.hpp>
 #include <functional>
 #include <map>
 #include <vector>

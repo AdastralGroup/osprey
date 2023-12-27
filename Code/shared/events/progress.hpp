@@ -1,5 +1,5 @@
 #pragma once
-#include <shared/events/event.hpp>
+#include "event.hpp"
 
 class ProgressUpdateMessage : public Event {
  public:
