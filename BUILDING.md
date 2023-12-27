@@ -1,15 +1,18 @@
-Building ~~should be relatively straightforward~~ is a somewhat arcane process. As of now, there's nothing currently hooking into the GDExtension
-bindings that'd work, so building is just an exercise in filesize and checking nothing's exploded.
+## Note:
+We have CI set up for Winter, so you should be able to download the latest libraries without needing to build.
 
-Note that libcurl is required currently to build as well.
 
+## Building
+Building should be relatively straightforward, libcurl is needed as a dependency - all other deps are handled by cmake.
+
+However, do add the following cmake flags when configuring:
+
+``-DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON``
+
+These enable the Godot bindings extension - set ``-DGODOT=0`` to build the headless module instead.
 
 # ON WINDOWS:
 
-install libcurl from vcpkg (MAKE SURE THEY'RE X64)
+Note that only MSVC seems to work, though you can use MSBuild or Ninja. Also seemingly only Debug build types work.
 
-make a build folder, ninja probably works if you're 100% sure it's using c++20 but use vs otherwise
-
-``cmake .. -DCMAKE_TOOLCHAIN_FILE=something-goes-here -DCMAKE_BUILD_TYPE=Debug``
-
-build. it should... build if everything's gone to plan.
+Fish out the .dll and associated libraries (libcurl and zlib generally) and put them in the Belmont repository in bin/.
