@@ -4,7 +4,7 @@
 [ext_resource type="FontVariation" uid="uid://th0tjv2xcuen" path="res://fonts/main_font.tres" id="3_qwbhy"]
 [ext_resource type="Shader" path="res://tween.gdshader" id="4_5diq2"]
 [ext_resource type="Texture2D" uid="uid://diee7uq3voana" path="res://assets/adastral-256.svg" id="4_5x6qi"]
-[ext_resource type="Texture2D" uid="uid://ccbrk3xcvf5gv" path="res://assets/adastral.svg" id="4_epacs"]
+[ext_resource type="Texture2D" uid="uid://ccbrk3xcvf5gv" path="res://icon.svg" id="4_epacs"]
 [ext_resource type="Script" path="res://main.gd" id="6"]
 [ext_resource type="Shader" path="res://rounded.gdshader" id="9_ife38"]
 [ext_resource type="Texture2D" uid="uid://b21fcl1p2qpc8" path="res://assets/settings.png" id="10"]
@@ -77,7 +77,7 @@ offset_bottom = 49.0
 theme_type_variation = &"TopLabels"
 theme_override_fonts/font = ExtResource("3_qwbhy")
 theme_override_font_sizes/font_size = 25
-text = "Adastral"
+text = "Adastral (alpha 1)"
 
 [node name="AdastralLogo" type="TextureRect" parent="Main/TopPanel"]
 material = SubResource("ShaderMaterial_spum4")
@@ -179,15 +179,14 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("FontVariation_sxnxf")
 theme_override_font_sizes/font_size = 100
 text = "Adastral"
-visible_characters = 0
-visible_ratio = 0.0
+visible_ratio = -0.125
 
 [node name="Label" type="Label" parent="Main/AboutInfo"]
 layout_mode = 0
-offset_left = 334.0
-offset_top = 234.0
-offset_right = 751.0
-offset_bottom = 267.0
+offset_left = 348.0
+offset_top = 235.0
+offset_right = 765.0
+offset_bottom = 268.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_qwbhy")
 theme_override_font_sizes/font_size = 25

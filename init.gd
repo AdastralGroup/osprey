@@ -35,7 +35,7 @@ func launch():
 
 func do_the_shiny_thing():
 	$Label.hide()
-	$Label3.show()
+	#$Label3.show()
 	spin_tween = create_tween().set_loops().set_parallel()
 	var tween = create_tween().set_parallel()
 	var t = 1.5
@@ -57,7 +57,7 @@ func do_the_shiny_thing():
 	$TextureRect6.hide()
 	$Label3.reparent($Control/Main)
 	tween = create_tween().set_parallel()
-	tween.tween_property($Control,"position",Vector2(0,0),0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property($Control,"position",Vector2(0,0),0.5).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	await get_tree().create_timer(0.5).timeout
 	$TextureRect.reparent($Control/Main,false)
 	

@@ -111,11 +111,11 @@ Sanity Checks: OK.
 Launching."
 
 [node name="Node2D" type="Node2D" parent="."]
+visible = false
 position = Vector2(119, 100)
 metadata/_edit_group_ = true
 
 [node name="TextureRect4" type="TextureRect" parent="Node2D"]
-visible = false
 offset_right = 200.0
 offset_bottom = 200.0
 pivot_offset = Vector2(100, 100)
@@ -126,9 +126,9 @@ expand_mode = 1
 visible = false
 layout_mode = 0
 offset_left = 340.0
-offset_top = 118.0
+offset_top = 142.0
 offset_right = 606.0
-offset_bottom = 216.0
+offset_bottom = 240.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = SubResource("FontVariation_lse8k")
 theme_override_font_sizes/font_size = 75
