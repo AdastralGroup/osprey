@@ -2,23 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b1e3ls0tji5ip"
-path="res://.godot/imported/pf2-logo-mono.svg-bab5760ad612c605e17635f4d57b92b4.ctex"
+uid="uid://ck55k7hw0jfn0"
+path="res://.godot/imported/of_wordmark_trimmed.png-d5189884cd0445ff22aba2996871c68e.ctex"
 metadata={
-"has_editor_variant": true,
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/pf2-logo-mono.svg"
-dest_files=["res://.godot/imported/pf2-logo-mono.svg-bab5760ad612c605e17635f4d57b92b4.ctex"]
+source_file="res://assets/of_wordmark_trimmed.png"
+dest_files=["res://.godot/imported/of_wordmark_trimmed.png-d5189884cd0445ff22aba2996871c68e.ctex"]
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
-compress/lossy_quality=0.1
+compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
@@ -33,6 +32,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=0.381
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=true

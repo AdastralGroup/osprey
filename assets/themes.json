@@ -1,0 +1,13 @@
+{
+	
+	"adastral": {
+		"id": "adastral",
+		"dark": "#000000",
+		"light": "#f8f3ee",
+		"main": "#005c9d",
+		"accent": "#b76300",
+		"lightfg": "#8d847b",
+		"bgpath": "res://assets/bg.png",
+		"star": "res://assets/adastral.svg"
+	}
+}
