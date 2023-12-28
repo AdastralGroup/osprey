@@ -1,5 +1,5 @@
 project(shared)
-add_library(shared adastral_defs.cpp events/error.cpp events/event.cpp events/eventsystem.cpp events/progress.cpp
+add_library(shared sha256.cpp adastral_defs.cpp events/error.cpp events/event.cpp events/eventsystem.cpp events/progress.cpp
         events/error.hpp events/progress.hpp events/eventsystem.hpp events/event.hpp)
 target_include_directories(shared PUBLIC ./)
 target_include_directories(shared PUBLIC ./events)

@@ -45,11 +45,12 @@ Dictionary binding::get_game_assets(String game_name) {
       if (val[0] != '#') {
         std::string file_name = str_gamename + std::to_string(num) + ".png";
         std::string path = net::download_to_temp(val, file_name);
+        A_printf(A_SHA256(file_name).c_str());
         A_printf("%s\n", path.c_str());
         dict[(godot::String)x.key().c_str()] = path.c_str();
         num++;
       } else {
-        dict[(godot::String)x.key().c_str()] = (String)val.c_str();
+        dict[(godot::String)x.key().c_str()] = val.c_str();
       }
     }
   }
@@ -59,8 +60,7 @@ Dictionary binding::get_game_assets(String game_name) {
 int binding::sanity_checks() { return 1; }
 
 void binding::init_palace() {  // yucky hack but we can manually start palace from godot now - means we don't hang at
-                               // the
-  // godot splash
+                               // the godot splash
   std::thread thread_obj(&binding::_init_palace, this);
   thread_obj.detach();
 }
