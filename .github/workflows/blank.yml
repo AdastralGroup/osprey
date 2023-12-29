@@ -1,0 +1,86 @@
+name: "godot-ci export"
+on: push
+
+env:
+  GODOT_VERSION: 4.2.1
+
+jobs:
+  export-windows:
+    name: Windows Export
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: chickensoft-games/setup-godot@v1
+        name: Setup Godot
+        with:
+          version: 4.2.1
+      - name: Download Windows artifact
+        id: download-win-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: windows.yml
+          workflow_conclusion: success
+          repo: adastralgroup/winter
+      - name: Download Linux artifact
+        id: download-lin-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: linux.yml
+          workflow_conclusion: success
+          repo: adastralgroup/winter 
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnotify4 libnotify-dev libcurl4-openssl-dev 
+          cp linux/* bin/
+          cp windows/* bin/
+          mkdir -v -p build/windows
+          cp windows/* build/windows
+      - name: Windows Build
+        run: |
+          godot -v --export-debug --headless "Windows Desktop" build/windows/adastral.exe
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: windows
+          path: build/windows/
+          
+  export-linux:
+    name: Linux Export
+    runs-on: ubuntu-latest
+    steps:
+      - uses: chickensoft-games/setup-godot@v1
+        name: Setup Godot
+        with:
+          version: 4.2.1
+      - name: Checkout main repo
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Download artifact
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: linux.yml
+          workflow_conclusion: success
+          repo: adastralgroup/winter
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnotify4 libnotify-dev libcurl4-openssl-dev 
+          cp linux/* bin/
+      - name: Linux Build
+        run: |
+          mkdir -v -p build/linux
+          godot -v --export-debug --headless "Linux/X11" build/linux/adastral.x86_64
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: linux
+          path: build/linux
