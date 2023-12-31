@@ -1,5 +1,9 @@
 name: "godot-ci export"
-on: push
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 env:
   GODOT_VERSION: 4.2.1
@@ -9,6 +13,10 @@ jobs:
     name: Windows Export
     runs-on: ubuntu-latest
     steps:
+      - name: Set current date as env variable
+        run: |
+          _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
+          echo "target_tag=${_ts}" >> $GITHUB_ENV
       - name: Checkout main repo
         uses: actions/checkout@v2
         with:
@@ -49,11 +57,27 @@ jobs:
         with:
           name: windows
           path: build/windows/
+      - name: Create zip file
+        run: |
+          cd build/windows/
+          zip -r ../windows.zip .
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        with:
+          files: build/windows.zip
+          tag_name: ${{ env.target_tag }}
+          draft: false
+          prerelease: true
           
   export-linux:
     name: Linux Export
     runs-on: ubuntu-latest
     steps:
+      - name: Set current date as env variable
+        run: |
+          _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
+          echo "target_tag=${_ts}" >> $GITHUB_ENV
       - uses: chickensoft-games/setup-godot@v1
         name: Setup Godot
         with:
@@ -84,3 +108,15 @@ jobs:
         with:
           name: linux
           path: build/linux
+      - name: Create zip file
+        run: |
+          cd build/linux/
+          zip -r ../linux.zip .
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        with:
+          files: build/linux.zip
+          tag_name: ${{ env.target_tag }}
+          draft: false
+          prerelease: true
