@@ -2,6 +2,7 @@ project(net)
 find_package(CURL REQUIRED)
 add_library(${PROJECT_NAME} net.cpp)
 target_include_directories(net PUBLIC .)
+target_include_directories (net PUBLIC ../shared)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_MakeAvailable(json)

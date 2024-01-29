@@ -203,14 +203,17 @@ int Kachemak::Install() {
   if (!latestVersion) return 2;
   int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
+
+  //Since this is testing stages for now, we'll just inject the link immediately.
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
   A_printf("[Kachemak/Install] Downloading via torrent... \n");
-  //int downloadStatus =
+  std::string test = "https://fusion.adastral.net/games/open_fortress/of19.torrent";
+  int downloadStatus = torrent::LibTorrentDownload(test, m_szTempPath.string());
   std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
-  //if (downloadStatus != 0) {
-  //  A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
-  //  return downloadStatus;
-  //}
+  if (downloadStatus != 0) {
+    A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
+    return downloadStatus;
+  }
   A_printf("[Kachemak/Install] Download complete: extracting... \n");
   std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
   Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
@@ -298,9 +301,13 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
 
   int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
-  //int downloadStatus = bilsdale::LibTorrentDownload(sz_url, m_szTempPath.string());
-  net::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
-  //if (downloadStatus != 0) return downloadStatus;
+
+  //temporarily setting up to download through libtorrent instead
+
+  A_printf("[Kachemak/ButlerPatch] Downloading through ButlerPatch()");
+  int downloadStatus = torrent::LibTorrentDownload(sz_url, m_szTempPath.string());
+  //net::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
+  if (downloadStatus != 0) return downloadStatus;
 
   std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
 

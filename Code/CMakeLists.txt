@@ -1,7 +1,7 @@
-
 add_subdirectory(shared)
 add_subdirectory(sys)
 add_subdirectory(net)
+add_subdirectory(torrent)
 add_subdirectory(emley)
 add_subdirectory(palace)
 IF (GODOT)

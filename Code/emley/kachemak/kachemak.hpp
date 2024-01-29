@@ -13,6 +13,7 @@
 #include <string>
 #include <sys.hpp>
 #include <system_error>
+#include <torrent.hpp>
 
 struct KachemakVersion {
   std::string szFileName;

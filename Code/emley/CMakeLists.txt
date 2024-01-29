@@ -9,6 +9,7 @@ target_include_directories(emley PUBLIC ./)
 target_include_directories(emley PUBLIC ../shared)
 target_include_directories(emley PUBLIC ../net)
 target_include_directories(emley PUBLIC ../sys)
+target_include_directories(emley PUBLIC ../torrent)
 include(FetchContent)
 # Get the name of this folder as the project name
-target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl nlohmann_json::nlohmann_json sys net shared)
+target_link_libraries(${PROJECT_NAME} PRIVATE CURL::libcurl nlohmann_json::nlohmann_json sys net shared torrent)
