@@ -37,7 +37,7 @@ std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version
   KachemakVersion ret = {
       .szFileName = jsonVersion["file"].get<std::string>(),
 //      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
-      .szDownloadUrl = jsonVersion["file"].get<std::string>(),
+      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
 //      .lDownloadSize = jsonVersion["presz"].get<std::size_t>(),
 //      .lExtractSize = jsonVersion["postsz"].get<std::size_t>(),
       .szVersion = version,
@@ -203,20 +203,18 @@ int Kachemak::Install() {
   if (!latestVersion) return 2;
   int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
-
-  //Since this is testing stages for now, we'll just inject the link immediately.
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
   A_printf("[Kachemak/Install] Downloading via torrent... \n");
-  std::string test = "https://fusion.adastral.net/games/open_fortress/of19.torrent";
-  int downloadStatus = torrent::LibTorrentDownload(test, m_szTempPath.string());
-  std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
+  int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string());
+  //std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
   if (downloadStatus != 0) {
     A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
     return downloadStatus;
   }
-  A_printf("[Kachemak/Install] Download complete: extracting... \n");
+  //A_printf("[Kachemak/Install] Download complete: extracting... \n");
   std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
-  Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
+  Extract(latestVersion.value().szFileName, m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
+  //Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   A_printf("[Kachemak/Install] Extraction done.... \n");
   DoSymlink();
   m_szInstalledVersion = GetLatestVersion();

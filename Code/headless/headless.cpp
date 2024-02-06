@@ -15,7 +15,6 @@ int main() {
     p->sourcemodsPath = std::filesystem::path(path);
   }
   int code = p->init_games();
-  printf("[Palace/GameInit] ");
   switch (code) {
     case 0:
       printf("Initialization success!\n");
@@ -27,16 +26,15 @@ int main() {
       printf("Steam sourcemods dir was not found. Is steam installed?\n");
       return code;
   }
-  std::cout << A_SHA256("/tmp/icon.png") << std::endl;
   p->fetch_server_data();
 
   for (const auto& i : p->serverGames) {
-    std::cout << "[Beacon] "
+    std::cout << "[headless] "
               << "Game Available: " << i.second->name << " (" << i.first << ")" << std::endl;
   }
-   //printf("[Beacon] Updating open_fortress.\n");
-   //p->update_game("open_fortress");  // you should check the force_verify to see if verification alone is needed.
+  printf("[headless] Updating open_fortress.\n");
+  p->update_game("open_fortress");  // you should check the force_verify to see if verification alone is needed.
   delete(p);
-  printf("[Beacon] Everything done.\n");
+  printf("[headless] Everything done.\n");
   return 0;
 }
