@@ -22,9 +22,9 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
   m_parsedVersion = nlohmann::ordered_json::parse(ver_string);
   FindInstalledVersion();
   m_eventSystem.RegisterListener(EventType::kOnUpdate, [](Event& ev) {
-    long double prog = ((ProgressUpdateMessage&)ev).GetProgress();
-    long double prog2 = ((ProgressUpdateMessage&)ev).GetProgress();
-    A_printf("[Kachemak/Butler] Progress: %d (unrounded: %f)\n", round(prog2*100),prog);
+    //long double prog = ((ProgressUpdateMessage&)ev).GetProgress();
+    //long double prog2 = ((ProgressUpdateMessage&)ev).GetProgress();
+    //A_printf("[Kachemak/Butler] Progress: %d (unrounded: %f)\n", round(prog2*100),prog);
   });
 }
 
