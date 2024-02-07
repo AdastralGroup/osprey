@@ -3,11 +3,11 @@
 
 class ProgressUpdateMessage : public Event {
  public:
-  ProgressUpdateMessage(float bps, float progress);
-  float GetBps();
-  float GetProgress();
+  ProgressUpdateMessage(long double bps, long double progress);
+  long double GetBps();
+  long double GetProgress();
 
  private:
-  float m_fBps;
-  float m_fProgress;
+  long double m_fBps;
+  long double m_fProgress;
 };

@@ -9,10 +9,15 @@
 #include <libtorrent/torrent_handle.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/load_torrent.hpp>
+#include <events/eventsystem.hpp>
+#include <events/event.hpp>
+#include <events/progress.hpp>
+#include <vector>
+#include <libtorrent/session_handle.hpp>
 #include <net.hpp>
 
 class torrent {
 
  public:
-  static int LibTorrentDownload(const std::string& torrent_url, const std::string& path);
+  static int LibTorrentDownload(const std::string& torrent_url, const std::string& path,EventSystem* event = nullptr);
 };

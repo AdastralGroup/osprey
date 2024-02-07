@@ -1,8 +1,5 @@
 
 #include <torrent.hpp>
-#include <vector>
-#include <libtorrent/session_handle.hpp>
-
 
 namespace {
 
@@ -32,7 +29,7 @@ char const* state(lt::torrent_status::state_t s)
 } // anonymous namespace
 
 //Adding in extra printf functions to log actions when possible.
-int torrent::LibTorrentDownload(const std::string &torrentfileurl, const std::string &path) try {
+int torrent::LibTorrentDownload(const std::string &torrentfileurl, const std::string &path, EventSystem* event) try {
   //First, list what are the current parameters.
   A_printf("[torrent] Current torrent file URL: %s", torrentfileurl.c_str());
   A_printf("[torrent] Current path the file is heading to: %s", path.c_str());
@@ -71,16 +68,18 @@ int torrent::LibTorrentDownload(const std::string &torrentfileurl, const std::st
 
       if (auto st = lt::alert_cast<lt::state_update_alert>(a)) {
         if (st->status.empty()) continue;
-
-        // we only have a single torrent, so we know which one
-        // the status is for
+        // we only have a single torrent, so we know which one the status is for
         lt::torrent_status const& s = st->status[0];
-        std::cout << '\r' << state(s.state) << ' '
-          << (s.download_payload_rate / 1000) << " kB/s "
-          << (s.total_done / 1000) << " kB ("
-          << (s.progress_ppm / 10000) << "%) downloaded ("
-          << s.num_peers << " peers)\x1b[K";
-        std::cout.flush();
+        if(event != nullptr) { // probably stupid to do this check on every event
+          ProgressUpdateMessage message(s.download_payload_rate, s.progress);
+          event->TriggerEvent(message);
+        }
+        //std::cout << '\r' << state(s.state) << ' '
+        //  << (s.download_payload_rate / 1000) << " kB/s "
+        //  << (s.total_done / 1000) << " kB ("
+        //  << (s.progress_ppm / 10000) << "%) downloaded ("
+        //  << s.num_peers << " peers)\x1b[K";
+        //std::cout.flush();
       }
     }
     
