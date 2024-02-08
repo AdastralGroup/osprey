@@ -1,3 +1,9 @@
+add_subdirectory(shared)
+add_subdirectory(sys)
+add_subdirectory(net)
+add_subdirectory(torrent)
+add_subdirectory(emley)
+add_subdirectory(palace)
 IF (GODOT)
     FetchContent_Declare(
             GDExtension
@@ -10,8 +16,3 @@ IF (GODOT)
 ELSE ()
     add_subdirectory(headless)
 ENDIF ()
-add_subdirectory(sys)
-add_subdirectory(net)
-add_subdirectory(emley)
-add_subdirectory(shared)
-add_subdirectory(palace)

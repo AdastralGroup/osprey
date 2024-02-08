@@ -14,8 +14,9 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
   m_parsedVersion = nlohmann::ordered_json::parse(ver_string);
   FindInstalledVersion();
   m_eventSystem.RegisterListener(EventType::kOnUpdate, [](Event& ev) {
-    double prog = ((ProgressUpdateMessage&)ev).GetProgress();
-    //A_printf("[Kachemak/Butler] Progress: %f\n", round(prog*100));
+    //long double prog = ((ProgressUpdateMessage&)ev).GetProgress();
+    //long double prog2 = ((ProgressUpdateMessage&)ev).GetProgress();
+    //A_printf("[Kachemak/Butler] Progress: %d (unrounded: %f)\n", round(prog2*100),prog);
   });
 }
 
@@ -29,7 +30,7 @@ std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version
   KachemakVersion ret = {
       .szFileName = jsonVersion["file"].get<std::string>(),
 //      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
-      .szDownloadUrl = jsonVersion["file"].get<std::string>(),
+      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
 //      .lDownloadSize = jsonVersion["presz"].get<std::size_t>(),
 //      .lExtractSize = jsonVersion["postsz"].get<std::size_t>(),
       .szVersion = version,
@@ -198,16 +199,17 @@ int Kachemak::Install() {
   int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-  A_printf("[Kachemak/Install] Downloading from fusion...\n");
-  //int downloadStatus =
-  std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
-  //if (downloadStatus != 0) {
-  //  A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
-  //  return downloadStatus;
-  //}
-  A_printf("[Kachemak/Install] Download complete: extracting... \n");
+  A_printf("[Kachemak/Install] Downloading via torrent... \n");
+  int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string(),&m_eventSystem);
+  //std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
+  if (downloadStatus != 0) {
+    A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
+    return downloadStatus;
+  }
+  //A_printf("[Kachemak/Install] Download complete: extracting... \n");
   std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
-  Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
+  Extract(latestVersion.value().szFileName, m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
+  //Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   A_printf("[Kachemak/Install] Extraction done.... \n");
   DoSymlink();
   m_szInstalledVersion = GetLatestVersion();
@@ -292,9 +294,13 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
 
   int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
-  //int downloadStatus = bilsdale::LibTorrentDownload(sz_url, m_szTempPath.string());
-  net::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
-  //if (downloadStatus != 0) return downloadStatus;
+
+  //temporarily setting up to download through libtorrent instead
+
+  A_printf("[Kachemak/ButlerPatch] Downloading through ButlerPatch()");
+  int downloadStatus = torrent::LibTorrentDownload(sz_url, m_szTempPath.string());
+  //net::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
+  if (downloadStatus != 0) return downloadStatus;
 
   std::filesystem::path tempPath = m_szTempPath / sz_patchFileName;
 

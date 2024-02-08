@@ -5,7 +5,10 @@
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <palace.hpp>
-#include <thread>
+#include <thread> 
+#include <filesystem>
+#include <events/progress.hpp>
+#include <net.hpp>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #else
 #include <libnotify/notify.h>
@@ -17,7 +20,7 @@ class binding : public Node {
 
  public:
   binding();
-  ~binding();
+  ~binding();	
   void init_palace();
   static void _bind_methods();
   int sanity_checks();
