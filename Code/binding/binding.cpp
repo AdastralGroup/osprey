@@ -41,16 +41,13 @@ Dictionary binding::get_game_assets(String game_name) {
       continue;
     }
     for (auto x : i.value()["belmont"].items()) {
-      std::string val = x.value();
-      if (val[0] != '#') {
-        std::string file_name = str_gamename + std::to_string(num) + ".png";
-        std::string path = net::download_to_temp(val, file_name);
-        A_printf(A_SHA256(file_name).c_str());
-        A_printf("%s\n", path.c_str());
+      auto val = x.value();
+      if (val.type_name() != "string") {
+        std::string path = p->get_asset(val[1]).string();
         dict[(godot::String)x.key().c_str()] = path.c_str();
         num++;
       } else {
-        dict[(godot::String)x.key().c_str()] = val.c_str();
+        dict[(godot::String)x.key().c_str()] = ((std::string)val).c_str();
       }
     }
   }

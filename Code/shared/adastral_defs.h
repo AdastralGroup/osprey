@@ -1,5 +1,4 @@
-#ifndef WINTER_SHARED_HEADER
-#define WINTER_SHARED_HEADER
+#pragma once
 #ifndef GODOT
 #include <cstdio>
 #include <cstdarg>
@@ -13,6 +12,14 @@
 #include <string>
 #include <fstream>
 #include <sha256.h>
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#define popen _popen
+#define BUTLER "butler.exe"
+#define pclose _pclose
+#else
+#define BUTLER "butler"
+#endif
+
 std::string A_SHA256(std::string filename);
 void A_printf(const char *const format ,...);
-#endif

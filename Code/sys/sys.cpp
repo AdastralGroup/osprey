@@ -45,7 +45,7 @@ returns:
 */
 
 int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
-  A_printf("[sys/Extract] Extracting..\n");
+  A_printf("[sys/Extract] Extracting %s to %s..\n",szInputFile.c_str(), szOutputFile.c_str());
   int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
   return ret;
 }

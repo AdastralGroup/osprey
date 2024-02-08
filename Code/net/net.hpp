@@ -14,7 +14,6 @@
 #define PRIMARY_URL "https://fusion.adastral.net/"
 class net {
  public:
-  static std::string get_butler();
   static std::string download_to_temp(std::string url, std::string name, bool progress = false,EventSystem* event = nullptr, std::filesystem::path* path = nullptr);
   std::string get_string_data_from_server(const std::string& url);
   std::vector<char> get_bin_data_from_server(const std::string& url);

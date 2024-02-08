@@ -6,5 +6,9 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 FetchContent_MakeAvailable(json)
 include(FetchContent)
 # Get the name of this folder as the project name
+IF (GODOT)
+    target_include_directories(${PROJECT_NAME} PUBLIC godot::cpp)
+    target_link_libraries(${PROJECT_NAME} PUBLIC godot::cpp)
+ENDIF ()
 get_filename_component(PROJECT_NAME ../${PROJECT_NAME} NAME_WE)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json shared)

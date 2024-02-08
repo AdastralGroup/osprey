@@ -27,7 +27,7 @@ int main() {
       printf("Steam sourcemods dir was not found. Is steam installed?\n");
       return code;
   }
-  std::cout << A_SHA256("/tmp/icon.png") << std::endl;
+
   p->fetch_server_data();
 
   for (const auto& i : p->serverGames) {

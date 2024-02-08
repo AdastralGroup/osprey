@@ -1,15 +1,5 @@
 #include "net.hpp"
 
-std::string net::get_butler() {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-  std::string url = std::string(PRIMARY_URL) + "/butler.exe";
-  std::string temp_path = (std::filesystem::temp_directory_path() / std::filesystem::path("butler.exe")).string();
-#else
-  std::string url = std::string(PRIMARY_URL) + "butler";
-  std::string temp_path = std::filesystem::temp_directory_path() / "butler";
-#endif
-  return download_to_temp(url, temp_path);
-}
 
 void net::curl_callback(void* buffer, size_t n) {
   if(!bin)

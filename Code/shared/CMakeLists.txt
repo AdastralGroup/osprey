@@ -4,12 +4,6 @@ add_library(shared sha256.cpp adastral_defs.cpp events/error.cpp events/event.cp
 target_include_directories(shared PUBLIC ./)
 target_include_directories(shared PUBLIC ./events)
 IF (GODOT)
-    FetchContent_Declare(
-            GDExtension
-            GIT_REPOSITORY https://github.com/godotengine/godot-cpp.git
-            GIT_TAG godot-4.1-stable
-    )
-    target_compile_definitions(shared PUBLIC GODOT)
-    FetchContent_MakeAvailable(GDExtension)
+    target_include_directories(shared PUBLIC godot::cpp)
     target_link_libraries(shared PUBLIC godot::cpp)
 ENDIF ()

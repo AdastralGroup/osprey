@@ -34,7 +34,7 @@ enum class FreeSpaceCheckCategory { Temporary, Permanent };
 class Kachemak : public Version {
  public:
   Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
-           const std::string& szSourceUrl);
+           const std::string& szSourceUrl,const std::filesystem::path& ButlerPath);
   std::string GetLatestVersion();
   bool force_verify = false;
   int FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory& category);
