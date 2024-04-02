@@ -18,6 +18,7 @@ jobs:
       - name: Update Stuff
         run: |
           vcpkg install curl
+          vcpkg install libtorrent
       - name: Configure CMake
         shell: cmd
         run: cmake -B ${{github.workspace}}\Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
