@@ -45,8 +45,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libnotify4 libnotify-dev libcurl4-openssl-dev 
-          cp linux/* bin/
-          cp windows/* bin/
+          cp -r linux/* bin/
+          cp -r windows/* bin/
           mkdir -v -p build/windows
           cp windows/* build/windows
       - name: Windows Build
