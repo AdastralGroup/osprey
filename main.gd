@@ -9,9 +9,10 @@ var theme_json = {"adastral":
 		"click_t":"#000000",
 		"bg": "res://assets/bg.png",
 		"star": "res://assets/adastral.svg"}}
+var games: Dictionary
 var s : binding
-var current_scren : String # use an enum damnit!!!!
-var current_game : String
+var current_screen : String # use an enum damnit!!!!
+var current_game = ""
 signal change_to(game)
 signal update_game(game)
 signal verify_game(game)
@@ -36,7 +37,7 @@ func _on_HomeButton_pressed():
 	apply_theme("adastral")
 
 func _on_game_verified(status,game):
-	call_deferred("t_game_verified")
+	call_deferred("t_game_verified",game)
 	
 func _on_game_updated(status,game):
 	call_deferred("t_game_updated",game)
@@ -48,6 +49,7 @@ func _on_install_pressed():
 	$Install.text = "Installing..."
 	$Verify.disabled = true
 	var tween = get_tree().create_tween()
+	$ProgressBar.show()
 	tween.tween_property($ProgressBar,"modulate",Color.WHITE,0.2)
 
 func _on_verify_pressed():
@@ -56,6 +58,7 @@ func _on_verify_pressed():
 	$Verify.text = "Verifying..."
 	$Verify.disabled = true
 	var tween = get_tree().create_tween()
+	$ProgressBar.show()
 	tween.tween_property($ProgressBar,"modulate",Color.WHITE,0.2)
 	
 	
@@ -67,14 +70,25 @@ func set_button_colours(colour,time):
 		if x.get_class() == "TextureButton":
 			tween.tween_property(x,"modulate",colour,time)
 
-	
+
+func change_game(game):
+	if "progress" in games[game]:
+		if games[game]["progress"] != 0:
+			$ProgressBar.show()
+			$ProgressBar.value = games[game]["progress"]
+		else:
+			$ProgressBar.hide()
+	apply_theme(game)
+
+
 func ready_after_sutton():
 	apply_theme("adastral")
 	s.connect("game_verified",_on_game_verified)
 	s.connect("game_updated",_on_game_updated)
 	s.connect("progress_update",_on_progress_update)
-	var game_theme = s.get_game_assets("open_fortress")
-	theme_json["open_fortress"] = game_theme
+	var z = s.get_server_games()
+	for x in z:
+		theme_json[x] = s.get_game_assets(x)
 	add_side_icons()
 
 func add_new_sep():
@@ -86,6 +100,7 @@ func add_new_sep():
 func add_side_icons():
 	for x in theme_json.values():
 		if x["id"] != "adastral":
+			games[x["id"]] = {}
 			if $HBoxContainer.get_child_count() != 0:
 				add_new_sep()
 			var new = TextureButton.new()
@@ -97,28 +112,29 @@ func add_side_icons():
 			new.texture_normal = load_image(x["icon"])
 			$HBoxContainer.add_child(new)
 			new.show()
-			new.pressed.connect(func(): apply_theme(x["id"]))
+			new.pressed.connect(func(): change_game(x["id"]))
 	
 
 
 func t_progress_update(game,progress):
-	$ProgressBar.value = progress*100
-	
+	games[game]["progress"] = progress*100
 
-func t_game_verified():
-	$Install.disabled = false
-	$Verify.text = "Verify"
-	$Verify.disabled = false
+func t_game_verified(game):
+	set_buttons(game)
 	var tween = get_tree().create_tween()
 	tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
+	games[game]["progress"] = 0
+	await get_tree().create_timer(0.2).timeout
+	$ProgressBar.hide()
 
 func t_game_updated(game):
-	$Install.text = "Installed"
-	$Verify.disabled = false
+	set_buttons(game)
 	$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game)
 	var tween = get_tree().create_tween()
 	tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
-
+	games[game]["progress"] = 0
+	await get_tree().create_timer(0.2).timeout
+	$ProgressBar.hide()
 
 
 
@@ -141,8 +157,11 @@ func set_buttons(game_name):
 		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game_name)
 		if s.get_installed_version(game_name) == s.get_latest_version(game_name):
 			$Install.disabled = true
+			$Install.text = "Installed"
 			$Verify.disabled = false
+			$Verify.text = "Verify"
 		elif int(s.get_installed_version(game_name)) < int(s.get_latest_version(game_name)):
+			$Verify.text = "Verify"
 			$Install.disabled = false
 			$Verify.disabled = false
 			$Install.text = "Update"
@@ -156,7 +175,7 @@ func apply_theme(theme_name):
 		pallete["secondary"] = pallete["main"]
 	var tween = get_tree().create_tween().set_parallel(true)
 	if pallete["id"] == "adastral":
-		#$TextureRect2.show()
+		#$TextureRect2.show() 
 		$LatestVersion.hide()
 		$InstalledVersion.hide()
 		$Install.hide()
@@ -261,3 +280,8 @@ func apply_theme(theme_name):
 	theme = base_theme
 	current_game = theme_name
 	
+func _process(delta):
+	if games != {} and current_game != "" and current_game != "adastral":
+		if "progress" in games[current_game].keys():
+			if games[current_game]["progress"] != 0:
+				$ProgressBar.value = games[current_game]["progress"]
