@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3 uid="uid://dsp33e8s172n5"]
+
+[ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="1_e5qvj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_37v2i"]
+bg_color = Color(0, 0.392157, 0.678431, 1)
+
+[node name="Setup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 770.0
+offset_bottom = 350.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_37v2i")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 172.0
+offset_bottom = 56.0
+theme_override_fonts/font = ExtResource("1_e5qvj")
+text = "Welcome to Adastral.
+let's get you set up!"
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 65.0
+offset_right = 301.0
+offset_bottom = 88.0
+theme_override_fonts/font = ExtResource("1_e5qvj")
+text = "Sourcemod path:"
+
+[node name="Label3" type="Label" parent="."]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 91.0
+offset_right = 302.0
+offset_bottom = 114.0
+theme_override_fonts/font = ExtResource("1_e5qvj")
+text = "TF2:"
+
+[node name="Label4" type="Label" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 116.0
+offset_right = 301.0
+offset_bottom = 139.0
+theme_override_fonts/font = ExtResource("1_e5qvj")
+text = "SDK 2013 Multiplayer:"

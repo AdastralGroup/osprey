@@ -1,5 +1,5 @@
 extends Control
-#var oops = preload("res://oops.tscn")
+var oops = preload("res://oops.tscn")
 
 var spin_tween: Tween
 var s: binding
@@ -20,7 +20,8 @@ func do_stuff():
 	move_child($Control,0)
 	$Control/Main.s = s
 	$Control/Main.ready_after_sutton()
-	$Control.position = Vector2(0,349)
+	#$Control.position = Vector2(0,349)
+	$Control.modulate = Color.TRANSPARENT
 	do_the_shiny_thing()
 	
 
@@ -49,7 +50,10 @@ func do_the_shiny_thing():
 		tween.tween_property(x,"pivot_offset",Vector2(100,100),t).set_trans(trans).set_ease(ease)
 		spin_tween.tween_property(x,"rotation_degrees",360.0+180,t).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(x,"modulate",Color.WHITE,t).set_trans(trans).set_ease(Tween.EASE_IN)
-	await get_tree().create_timer(t+0.2).timeout
+	await get_tree().create_timer(t-0.5).timeout
+	tween = create_tween().set_parallel()
+	tween.tween_property($Control,"modulate",Color.WHITE,0.5).set_trans(Tween.TRANS_LINEAR)
+	await get_tree().create_timer(0.5).timeout
 	$TextureRect2.hide()
 	$TextureRect3.hide()
 	$TextureRect4.hide()
@@ -57,7 +61,8 @@ func do_the_shiny_thing():
 	$TextureRect6.hide()
 	$Label3.reparent($Control/Main)
 	tween = create_tween().set_parallel()
-	tween.tween_property($Control,"position",Vector2(0,0),0.5).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	#tween.tween_property($Control,"position",Vector2(0,0),0.5).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	
 	await get_tree().create_timer(0.5).timeout
 	$TextureRect.reparent($Control/Main,false)
 	

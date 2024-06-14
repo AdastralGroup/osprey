@@ -46,7 +46,7 @@ theme_override_fonts/normal_font = ExtResource("1_rwsp8")
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
 text = "[center]Adastral stopped itself to avoid further issues.
-For support, please go to adastral.net and look for the support category.
+This is to be expected. This is an alpha build.
 To continue, you should restart Adastral.
 "
 scroll_active = false

@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://da7m6swunt04t"]
+[gd_scene load_steps=6 format=3 uid="uid://da7m6swunt04t"]
 
 [ext_resource type="Texture2D" uid="uid://diee7uq3voana" path="res://assets/adastral-256.svg" id="1_878ms"]
+[ext_resource type="Script" path="res://error.gd" id="1_fvxd1"]
 [ext_resource type="FontFile" uid="uid://pskwpwxk0pd4" path="res://fonts/HankenGrotesk-SemiBold.ttf" id="2_cx3cw"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2ld2c"]
@@ -15,6 +16,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_fvxd1")
 
 [node name="Panel" type="ColorRect" parent="."]
 material = SubResource("CanvasItemMaterial_2ld2c")

@@ -92,6 +92,7 @@ offset_left = 232.0
 offset_top = 143.0
 offset_right = 594.0
 offset_bottom = 196.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("4_6hwq1")
 theme_override_font_sizes/font_size = 40
 text = "Adastral Initialising..."
