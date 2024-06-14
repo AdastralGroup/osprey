@@ -4,6 +4,8 @@ add_library(shared sha256.cpp adastral_defs.cpp events/error.cpp events/event.cp
 target_include_directories(shared PUBLIC ./)
 target_include_directories(shared PUBLIC ./events)
 IF (GODOT)
+    target_include_directories(shared PUBLIC ../binding)
+    add_compile_definitions(-DGODOT)
     target_include_directories(shared PUBLIC godot::cpp)
     target_link_libraries(shared PUBLIC godot::cpp)
 ENDIF ()

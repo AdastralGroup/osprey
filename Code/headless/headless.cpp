@@ -2,6 +2,10 @@
 int main() {
   printf(WELCOME_TEXT);
   auto p = new palace;  // does sanity checks
+  A_init_error_system();
+  A_error_system->RegisterListener(EventType::kOnError, [](Event& ev) {
+    printf(static_cast<ErrorMessage&>(ev).get_message().c_str());
+  });
   p->find_sourcemod_path();
   if (p->sourcemodsPath.empty()) {
     printf("We couldn't find your sourcemod folder. Please input an alternate sourcemods path.\n");

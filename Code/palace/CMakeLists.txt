@@ -7,6 +7,7 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 FetchContent_MakeAvailable(json)
 include(FetchContent)
 IF (GODOT)
+    add_compile_definitions(-DGODOT)
     target_include_directories(palace PUBLIC godot::cpp)
     target_link_libraries(palace PUBLIC godot::cpp)
 ENDIF ()

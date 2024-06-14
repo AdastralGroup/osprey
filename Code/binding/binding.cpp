@@ -12,6 +12,7 @@ void binding::_bind_methods() {
   ADD_SIGNAL(
       MethodInfo("progress_update", PropertyInfo(Variant::FLOAT, "progress"), PropertyInfo(Variant::STRING, "game")));
   ADD_SIGNAL(MethodInfo("palace_started"));
+  ADD_SIGNAL(MethodInfo("error", PropertyInfo(Variant::STRING, "error_details")));
   ClassDB::bind_method(D_METHOD("desktop_notification"), &binding::desktop_notification);
   ClassDB::bind_method(D_METHOD("init_palace"), &binding::init_palace);
   ClassDB::bind_method(D_METHOD("sanity_checks"), &binding::sanity_checks);
@@ -63,9 +64,17 @@ void binding::init_palace() {  // yucky hack but we can manually start palace fr
 }
 
 void binding::_init_palace() {
+  A_init_error_system();
+  A_error_system->RegisterListener(EventType::kOnError, [this](Event& ev) {
+      emit_signal("error", String(static_cast<ErrorMessage&>(ev).get_message().c_str()));
+    });
   UtilityFunctions::print("[binding] Firing up palace!");
   p = new palace;
   emit_signal("palace_started");
+}
+
+void binding::_raise_error(std::string error_str, unsigned int err_level) {
+  emit_signal("error");
 }
 
 // WRAPPERS!
@@ -152,5 +161,7 @@ int binding::desktop_notification(String title, String desc) {
   return 0;
 #endif
 }
+
+
 
 binding::~binding() { UtilityFunctions::print("bye bye"); }

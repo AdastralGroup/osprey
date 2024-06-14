@@ -1,6 +1,8 @@
 #include "adastral_defs.h"
 
-
+void A_init_error_system() {
+  A_error_system = new EventSystem;
+}
 void A_printf(const char *const format ,...){
 #ifndef GODOT
   //#pragma warning ("GODOT DISABLED.")
@@ -9,7 +11,7 @@ void A_printf(const char *const format ,...){
   vfprintf(stdout, format, argptr);
   va_end(argptr);
 #else
-//#pragma warning ("GODOT ENABLED.")
+  //#pragma warning ("GODOT ENABLED.")
   va_list argptr;
   va_start(argptr, format);
   char* str = (char*)malloc(512);

@@ -7,6 +7,7 @@ FetchContent_MakeAvailable(json)
 include(FetchContent)
 # Get the name of this folder as the project name
 IF (GODOT)
+    add_compile_definitions(-DGODOT)
     target_include_directories(${PROJECT_NAME} PUBLIC godot::cpp)
     target_link_libraries(${PROJECT_NAME} PUBLIC godot::cpp)
 ENDIF ()

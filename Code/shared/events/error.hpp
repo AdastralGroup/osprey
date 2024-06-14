@@ -5,7 +5,7 @@
 class ErrorMessage : public Event {
  public:
   ErrorMessage(std::string message);
-  const std::string& GetMessage();
+  const std::string& get_message();
 
  private:
   std::string m_szMessage;

@@ -31,33 +31,31 @@ char const* state(lt::torrent_status::state_t s)
 //Adding in extra printf functions to log actions when possible.
 int torrent::LibTorrentDownload(const std::string &torrentfileurl, const std::string &path, EventSystem* event) try {
   //First, list what are the current parameters.
-  //A_printf("[torrent] Current torrent file URL: %s", torrentfileurl.c_str());
-  //A_printf("[torrent] Current path the file is heading to: %s", path.c_str());
+  A_printf("[torrent] Current torrent file URL: %s", torrentfileurl.c_str());
+  A_printf("[torrent] Current path the file is heading to: %s", path.c_str());
 
   //Then check the torrent file. Since it is a vector of char, it should bring in
   //like weird garbled text to show that there's something being fetched from.
   std::vector<char> torrentfile = net().get_bin_data_from_server(torrentfileurl);
   
-  //A_printf("[torrent] the torrent file should be loaded.");
+  A_printf("[torrent] the torrent file should be loaded.");
   
   lt::settings_pack p;
   p.set_int(lt::settings_pack::alert_mask, lt::alert_category::status | lt::alert_category::error);
   lt::session ses(p);
 
-  //A_printf("[torrent] Settings pack should be initialized.");
+  A_printf("[torrent] Settings pack should be initialized.");
 
   lt::add_torrent_params atp = lt::load_torrent_buffer(torrentfile);
   atp.save_path = path;  // save in current dir
-  //A_printf("[torrent] Current atp.save_path: %s", atp.save_path.c_str());
-
+  A_printf("[torrent] Current atp.save_path: %s", atp.save_path.c_str());
   lt::torrent_handle h = ses.add_torrent(std::move(atp));
-
   for (;;) {
     std::vector<lt::alert *> alerts;
     ses.pop_alerts(&alerts);
 
     for (lt::alert const *a : alerts) {
-      //std::cout << a->message() << std::endl;
+      A_printf(a->message().c_str());
       // if we receive the finished alert or an error, we're done
       if (lt::alert_cast<lt::torrent_finished_alert>(a)) {
         goto done;
@@ -90,6 +88,7 @@ int torrent::LibTorrentDownload(const std::string &torrentfileurl, const std::st
 done:
   return 0;
 } catch (std::exception &e) {
-  //A_printf("[torrent] Error: %s\n",e.what());
+  A_error(e.what());
+  A_printf("[torrent] Error: %s\n",e.what());
   return 1;
 }

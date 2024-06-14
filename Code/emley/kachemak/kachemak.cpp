@@ -203,18 +203,21 @@ int Kachemak::Install() {
   int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string(),&m_eventSystem);
   //std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
   if (downloadStatus != 0) {
-    A_printf("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
+    A_error("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
     return downloadStatus;
   }
-  //A_printf("[Kachemak/Install] Download complete: extracting... \n");
+  A_printf("[Kachemak/Install] Download complete: extracting... \n");
   std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
-  Extract(latestVersion.value().szFileName, m_szSourcemodPath.string(), latestVersion.value().lExtractSize);
+  int err_c = Extract(latestVersion.value().szFileName, (m_szSourcemodPath / m_szFolderName).string(), latestVersion.value().lExtractSize);
   //Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
-  A_printf("[Kachemak/Install] Extraction done.... \n");
-  DoSymlink();
-  m_szInstalledVersion = GetLatestVersion();
-  WriteVersion();
-  return 0;
+  if(err_c == 0) {
+    A_printf("[Kachemak/Install] Extraction done! \n");
+    DoSymlink();
+    m_szInstalledVersion = GetLatestVersion();
+    WriteVersion();
+    return 0;
+  }
+  else{return 1;}
 }
 
 /*
@@ -230,11 +233,10 @@ int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutpu
     A_printf("[Kachemak/Extract] Not enough space. Exiting. \n");
     return 1;
   }
-  std::FILE* tmpf = std::tmpfile();
-  std::string tmpf_loc = std::to_string(fileno(tmpf));
-  int ret = sys::ExtractZip(szInputFile, szOutputDirectory);
+  int ret = sys::ExtractZip((m_szTempPath / szInputFile).string(), szOutputDirectory);
   if (ret != 0) {
-    A_printf("[Kachemak/Extract] Extraction Failed - %s\n",zip_strerror(ret));
+    A_error("[Kachemak/Extract] Extraction Failed - %s\n",zip_strerror(ret));
+    return -1;
   }
   m_szInstalledVersion = GetLatestVersion();
   WriteVersion();

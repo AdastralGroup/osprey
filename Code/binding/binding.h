@@ -38,6 +38,7 @@ class binding : public Node {
   godot::String get_latest_version(godot::String gameName);
   godot::String is_installed(godot::String gameName);
   int desktop_notification(String title, String desc);
+  void _raise_error(std::string error_str, unsigned int err_level);
 
  private:
   void _verify_game(String gameName);
