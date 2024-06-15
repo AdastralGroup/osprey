@@ -52,23 +52,22 @@ jobs:
         run: |
           cd belmont
           cp -r ../winter/Code/binding/lib/* bin/
-          ls bin
           mkdir -v -p build/linux
           godot -v --export-debug --headless "Linux/X11" build/linux/adastral.x86_64
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
           name: linux
-          path: build/linux
+          path: belmont/build/linux
       - name: Create zip file
         run: |
-          cd build/linux/
+          cd belmont/build/linux/
           zip -r ../linux.zip .
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
         if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
         with:
-          files: build/linux.zip
+          files: belmont/build/linux.zip
           tag_name: ${{ env.target_tag }}
           draft: false
           prerelease: true
