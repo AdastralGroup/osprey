@@ -1,4 +1,4 @@
-name: "godot e"
+name: "godot export (windows)"
 on:
   push:
   workflow_dispatch:
@@ -17,6 +17,7 @@ jobs:
         BUILD_TYPE: [ Debug ]
     steps:
       - name: Set current date as env variable
+        shell: bash
         run: |
           _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
           echo "target_tag=${_ts}" >> $GITHUB_ENV
@@ -50,6 +51,7 @@ jobs:
           cd winter
           cmake --build ${{github.workspace}}/Workspace
       - name: Setup
+        shell: bash
         run: |
           cd belmont
           cp -r windows/* bin/
@@ -65,6 +67,7 @@ jobs:
           name: windows
           path: belmont/build/windows/
       - name: Create zip file
+        shell: bash
         run: |
           cd belmont/build/windows/
           zip -r ../windows.zip .
