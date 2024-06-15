@@ -1,4 +1,4 @@
-name: "godot-ci export"
+name: "godot export (linux)"
 on:
   push:
   workflow_dispatch:
@@ -12,6 +12,9 @@ jobs:
   export-linux:
     name: Linux Export
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        BUILD_TYPE: [ Debug ]
     steps:
       - name: Set current date as env variable
         run: |
@@ -40,9 +43,9 @@ jobs:
       - name: Configure CMake
         run: |
           cd winter
-          cmake -B ${{github.workspace}}/Workspace -DCMAKE_BUILD_TYPE=Debug -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake -B ${{github.workspace}}/Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
       - name: Build
-        run: cmake --build ${{github.workspace}}/Workspace --config Debug
+        run: cmake --build ${{github.workspace}}/Workspace --config ${{matrix.BUILD_TYPE}}
       - name: Setup
         run: |
           cd belmont

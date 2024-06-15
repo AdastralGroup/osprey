@@ -1,0 +1,78 @@
+name: "godot e"
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  GODOT_VERSION: 4.2.1
+
+jobs:
+  export-windows:
+    name: Windows Export
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        BUILD_TYPE: [ Debug ]
+    steps:
+      - name: Set current date as env variable
+        run: |
+          _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
+          echo "target_tag=${_ts}" >> $GITHUB_ENV
+      - name: Checkout main repo
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: chickensoft-games/setup-godot@v1
+        name: Setup Godot
+        with:
+          version: 4.2.2
+          use-dotnet: false
+          include-templates: true
+      - uses: actions/checkout@v3
+      - uses: hendrikmuhs/ccache-action@v1.2
+      - uses: seanmiddleditch/gha-setup-ninja@master
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+      - name: Update Stuff
+        run: |
+          vcpkg install curl
+          vcpkg install libtorrent
+      - name: Configure CMake
+        shell: cmd
+        run: |
+          cd winter
+          cmake -B ${{github.workspace}}\Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      - name: Build
+        run: |
+          cd winter
+          cmake --build ${{github.workspace}}/Workspace
+      - name: Setup
+        run: |
+          cd belmont
+          cp -r windows/* bin/
+          mkdir -v -p build/windows
+          cp -r windows/* build/windows
+      - name: Windows Build
+        run: |
+          cd belmont
+          godot -v --export-debug --headless "Windows Desktop" build/windows/adastral.exe
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: windows
+          path: belmont/build/windows/
+      - name: Create zip file
+        run: |
+          cd belmont/build/windows/
+          zip -r ../windows.zip .
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        with:
+          files: belmont/build/windows.zip
+          tag_name: ${{ env.target_tag }}
+          draft: false
+          prerelease: true
