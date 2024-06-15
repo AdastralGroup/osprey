@@ -1,0 +1,11 @@
+project(shared)
+add_library(shared sha256.cpp adastral_defs.cpp events/error.cpp events/event.cpp events/eventsystem.cpp events/progress.cpp
+        events/error.hpp events/progress.hpp events/eventsystem.hpp events/event.hpp)
+target_include_directories(shared PUBLIC ./)
+target_include_directories(shared PUBLIC ./events)
+IF (GODOT)
+    target_include_directories(shared PUBLIC ../binding)
+    add_compile_definitions(-DGODOT)
+    target_include_directories(shared PUBLIC godot::cpp)
+    target_link_libraries(shared PUBLIC godot::cpp)
+ENDIF ()
