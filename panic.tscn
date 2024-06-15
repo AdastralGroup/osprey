@@ -1,0 +1,75 @@
+[gd_scene load_steps=6 format=3 uid="uid://ckdinslewgkis"]
+
+[ext_resource type="FontFile" uid="uid://pskwpwxk0pd4" path="res://fonts/HankenGrotesk-SemiBold.ttf" id="1_rwsp8"]
+[ext_resource type="Script" path="res://error.gd" id="1_v8uiu"]
+[ext_resource type="Texture2D" uid="uid://diee7uq3voana" path="res://assets/adastral-256.svg" id="2_ndy76"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2ld2c"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_nkphv"]
+blend_mode = 2
+
+[node name="root" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v8uiu")
+
+[node name="Panel" type="ColorRect" parent="."]
+material = SubResource("CanvasItemMaterial_2ld2c")
+layout_mode = 0
+offset_right = 770.0
+offset_bottom = 350.0
+color = Color(0.713726, 0.207843, 0.219608, 1)
+metadata/_edit_group_ = true
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.0352941)
+material = SubResource("CanvasItemMaterial_nkphv")
+layout_mode = 0
+offset_left = 473.0
+offset_top = -116.0
+offset_right = 1073.0
+offset_bottom = 484.0
+texture = ExtResource("2_ndy76")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 73.0
+offset_right = 708.0
+offset_bottom = 184.0
+theme_override_fonts/normal_font = ExtResource("1_rwsp8")
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "[center]Adastral stopped itself to avoid further issues.
+This is to be expected. This is an alpha build.
+To continue, you should restart Adastral.
+"
+scroll_active = false
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 10.0
+offset_right = 708.0
+offset_bottom = 79.0
+theme_override_fonts/font = ExtResource("1_rwsp8")
+theme_override_font_sizes/font_size = 50
+text = "A serious error has occured."
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 209.0
+offset_right = 708.0
+offset_bottom = 316.0
+theme_override_fonts/font = ExtResource("1_rwsp8")
+theme_override_font_sizes/font_size = 27
+text = "Error: -1 (Error has not been inputted.)
+"
+horizontal_alignment = 1

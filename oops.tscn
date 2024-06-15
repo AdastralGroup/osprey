@@ -1,0 +1,71 @@
+[gd_scene load_steps=6 format=3 uid="uid://da7m6swunt04t"]
+
+[ext_resource type="Texture2D" uid="uid://diee7uq3voana" path="res://assets/adastral-256.svg" id="1_878ms"]
+[ext_resource type="Script" path="res://error.gd" id="1_fvxd1"]
+[ext_resource type="FontFile" uid="uid://pskwpwxk0pd4" path="res://fonts/HankenGrotesk-SemiBold.ttf" id="2_cx3cw"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_2ld2c"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_nkphv"]
+blend_mode = 2
+
+[node name="root" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fvxd1")
+
+[node name="Panel" type="ColorRect" parent="."]
+material = SubResource("CanvasItemMaterial_2ld2c")
+layout_mode = 0
+offset_right = 770.0
+offset_bottom = 350.0
+color = Color(0, 0.27451, 0.490196, 1)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.0431373)
+material = SubResource("CanvasItemMaterial_nkphv")
+layout_mode = 0
+offset_left = -314.0
+offset_top = -116.0
+offset_right = 286.0
+offset_bottom = 484.0
+texture = ExtResource("1_878ms")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 73.0
+offset_right = 708.0
+offset_bottom = 184.0
+theme_override_fonts/normal_font = ExtResource("2_cx3cw")
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "[center]This error is recoverable, but we haven't implemented an error handler for this yet. Not much you can do besides restart but at least you can rest in comfort knowing that this won't happen down the road."
+scroll_active = false
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 10.0
+offset_right = 708.0
+offset_bottom = 79.0
+theme_override_fonts/font = ExtResource("2_cx3cw")
+theme_override_font_sizes/font_size = 50
+text = "Oops."
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 209.0
+offset_right = 708.0
+offset_bottom = 316.0
+theme_override_fonts/font = ExtResource("2_cx3cw")
+theme_override_font_sizes/font_size = 27
+text = "Error: -1 (Error has not been inputted.)
+"
+horizontal_alignment = 1

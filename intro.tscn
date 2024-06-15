@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=3 uid="uid://dsg1dlb2w0t18"]
+
+[ext_resource type="Script" path="res://intro.gd" id="1_6nifu"]
+[ext_resource type="Texture2D" uid="uid://bjvrgo2shmf48" path="res://assets/about.png" id="2_0q2iu"]
+[ext_resource type="Texture2D" uid="uid://b21fcl1p2qpc8" path="res://assets/settings.png" id="3_rql6x"]
+[ext_resource type="Texture2D" uid="uid://bfc0wry8ijfgy" path="res://assets/tf2c-logo-mono.svg" id="4_wb1rx"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6nifu")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 3959.0
+offset_bottom = 351.0
+color = Color(0, 0.27451, 0.490196, 1)
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 742.0
+offset_bottom = 94.0
+text = "Welcome to adastral!!!! wow this is very placeholder click the I for next"
+
+[node name="Label" type="Label" parent="Label"]
+layout_mode = 0
+offset_left = 786.0
+offset_top = 4.0
+offset_right = 1528.0
+offset_bottom = 98.0
+text = "do you have sdk and tf2 installed?????"
+
+[node name="TextureButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 181.0
+offset_right = 303.0
+offset_bottom = 229.0
+texture_normal = ExtResource("2_0q2iu")
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 1000.0
+offset_top = 63.0
+offset_right = 1098.0
+offset_bottom = 157.0
+texture = ExtResource("3_rql6x")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 844.0
+offset_top = 75.0
+offset_right = 908.0
+offset_bottom = 139.0
+texture = ExtResource("4_wb1rx")
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 861.0
+offset_top = 157.0
+offset_right = 901.0
+offset_bottom = 180.0
+text = "yarp"
+
+[node name="Label2" type="Label" parent="Label2"]
+layout_mode = 0
+offset_left = 158.0
+offset_right = 198.0
+offset_bottom = 23.0
+text = "narp"
+
+[connection signal="pressed" from="TextureButton" to="." method="_on_texture_button_pressed"]
