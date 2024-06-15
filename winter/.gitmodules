@@ -1,3 +1,0 @@
-[submodule "Code/moss/json"]
-	path = Code/moss/json
-	url = https://github.com/nlohmann/json

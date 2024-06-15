@@ -1,0 +1,74 @@
+name: "godot-ci export"
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  GODOT_VERSION: 4.2.1
+
+jobs:          
+  export-linux:
+    name: Linux Export
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set current date as env variable
+        run: |
+          _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
+          echo "target_tag=${_ts}" >> $GITHUB_ENV
+      - uses: chickensoft-games/setup-godot@v1
+        name: Setup Godot
+        with:
+          version: 4.2.2
+          use-dotnet: false
+          include-templates: true
+      - name: Checkout main repo
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Update stuff for bindings
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libnotify-dev libtorrent-rasterbar-dev pkgconf
+          wget http://ftp.debian.org/debian/pool/main/libt/libtorrent-rasterbar/libtorrent-rasterbar2.0_2.0.8-1+b1_amd64.deb
+          sudo dpkg -i libtorrent-rasterbar2.0_2.0.8-1+b1_amd64.deb
+          wget http://ftp.debian.org/debian/pool/main/libt/libtorrent-rasterbar/libtorrent-rasterbar-dev_2.0.8-1+b1_amd64.deb
+          sudo dpkg -i libtorrent-rasterbar-dev_2.0.8-1+b1_amd64.deb
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+      - name: Configure CMake
+        run: |
+          cd winter
+          cmake -B ${{github.workspace}}/Workspace -DCMAKE_BUILD_TYPE=Debug -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      - name: Build
+        run: cmake --build ${{github.workspace}}/Workspace --config Debug
+      - name: Setup
+        run: |
+          cd belmont
+            sudo apt-get update
+            sudo apt-get install -y libnotify4 libnotify-dev libcurl4-openssl-dev 
+      - name: Linux Build
+        run: |
+          cd belmont
+          cp -r ../winter/Code/binding/lib/* bin/
+          ls bin
+          mkdir -v -p build/linux
+          godot -v --export-debug --headless "Linux/X11" build/linux/adastral.x86_64
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: linux
+          path: build/linux
+      - name: Create zip file
+        run: |
+          cd build/linux/
+          zip -r ../linux.zip .
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+        with:
+          files: build/linux.zip
+          tag_name: ${{ env.target_tag }}
+          draft: false
+          prerelease: true
