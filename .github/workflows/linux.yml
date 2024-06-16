@@ -43,11 +43,6 @@ jobs:
           cmake -B ${{github.workspace}}/Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
       - name: Build Bindings
         run: cmake --build ${{github.workspace}}/Workspace --config ${{matrix.BUILD_TYPE}}
-      - name: Setup Godot Export
-        run: |
-          cd belmont
-            sudo apt-get update
-            sudo apt-get install -y libnotify4 libnotify-dev libcurl4-openssl-dev 
       - name: Export Godot Project
         run: |
           cd belmont
