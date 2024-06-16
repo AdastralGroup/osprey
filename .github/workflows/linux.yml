@@ -5,9 +5,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-env:
-  GODOT_VERSION: 4.2.1
-
 jobs:          
   export-linux:
     name: Linux Export
@@ -30,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           lfs: true
-      - name: Update stuff for bindings
+      - name: Update Packages for Bindings
         run: |
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libnotify-dev libtorrent-rasterbar-dev pkgconf
@@ -44,14 +41,14 @@ jobs:
         run: |
           cd winter
           cmake -B ${{github.workspace}}/Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-      - name: Build
+      - name: Build Bindings
         run: cmake --build ${{github.workspace}}/Workspace --config ${{matrix.BUILD_TYPE}}
-      - name: Setup
+      - name: Setup Godot Export
         run: |
           cd belmont
             sudo apt-get update
             sudo apt-get install -y libnotify4 libnotify-dev libcurl4-openssl-dev 
-      - name: Linux Build
+      - name: Export Godot Project
         run: |
           cd belmont
           cp -r ../winter/Code/binding/lib/* bin/
@@ -62,7 +59,7 @@ jobs:
         with:
           name: linux
           path: belmont/build/linux
-      - name: Create zip file
+      - name: Create Zip File
         run: |
           cd belmont/build/linux/
           zip -r ../linux.zip .

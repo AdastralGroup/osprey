@@ -5,9 +5,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-env:
-  GODOT_VERSION: 4.2.1
-
 jobs:
   export-windows:
     name: Windows Export
@@ -37,7 +34,7 @@ jobs:
       - uses: TheMrMilchmann/setup-msvc-dev@v3
         with:
           arch: x64
-      - name: Update Stuff
+      - name: Update Packages for Bindings
         run: |
           vcpkg install curl
           vcpkg install libtorrent
@@ -46,18 +43,18 @@ jobs:
         run: |
           cd winter
           cmake -B ${{github.workspace}}\Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-      - name: Build
+      - name: Build Bindings
         run: |
           cd winter
           cmake --build ${{github.workspace}}/Workspace
-      - name: Setup
+      - name: Setup Godot Export
         shell: bash
         run: |
           cd belmont
           cp -r ../winter/Code/binding/lib/* bin/
           mkdir -v -p build/windows
           cp -r ../winter/Code/binding/lib/* build/windows
-      - name: Windows Build
+      - name: Export Godot Project
         run: |
           cd belmont
           godot -v --export-debug --headless "Windows Desktop" build/windows/adastral.exe
