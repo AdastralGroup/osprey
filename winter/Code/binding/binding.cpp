@@ -43,8 +43,8 @@ Dictionary binding::get_game_assets(String game_name) {
     }
     for (auto x : i.value()["belmont"].items()) {
       auto val = x.value();
-      if (val.type_name() != "string") {
-        std::string path = p->get_asset(val[1]).string();
+      if (strcmp(val.type_name(), "string") != 0) {
+        std::string path = p->get_asset(val[1]).string(); // replace with something more robust in future in case of malformed json
         dict[(godot::String)x.key().c_str()] = path.c_str();
         num++;
       } else {
