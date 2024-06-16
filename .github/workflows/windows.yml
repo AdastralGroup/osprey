@@ -54,9 +54,9 @@ jobs:
         shell: bash
         run: |
           cd belmont
-          cp -r windows/* bin/
+          cp -r ../winter/Code/binding/lib/* bin/
           mkdir -v -p build/windows
-          cp -r windows/* build/windows
+          cp -r ../winter/Code/binding/lib/* build/windows
       - name: Windows Build
         run: |
           cd belmont
