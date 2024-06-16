@@ -70,7 +70,7 @@ jobs:
         shell: bash
         run: |
           cd belmont/build/windows/
-          zip -r ../windows.zip .
+          7z a -r ../windows.zip *
       - name: Upload binaries to release
         uses: softprops/action-gh-release@v1
         if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
