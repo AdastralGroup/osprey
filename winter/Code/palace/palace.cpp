@@ -4,10 +4,7 @@ palace::palace() {
   A_printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
   download_assets();
-
-#if _DEBUG
-  printf("Soucemods dir: %s\n", sourcemodsPath.string().c_str());
-#endif
+  
 }
 palace::~palace() {
   for (const auto& it : serverGames) {
