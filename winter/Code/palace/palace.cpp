@@ -198,7 +198,8 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
     return 1;
   }
 #else
-  popen(command_line);
+  setenv("SteamEnv", "1", 1);
+  if (popen(command_line, "r") == NULL) return 1;
 #endif
 
   return 0;
