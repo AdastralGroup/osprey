@@ -93,10 +93,6 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.933333, 0.882353, 0.811765, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldpv0"]
 bg_color = Color(0.34902, 0.254902, 0.415686, 1)
@@ -137,7 +133,7 @@ LineEdit/styles/normal = SubResource("27")
 PositiveRTL/base_type = &"RichTextLabel"
 PositiveRTL/colors/default_color = Color(0.34902, 0.254902, 0.415686, 1)
 PositiveRTL/fonts/bold_font = ExtResource("1_0qd58")
-ProgressBar/colors/font_color = Color(0.945098, 0.945098, 0.945098, 1)
+ProgressBar/colors/font_color = Color(0, 0, 0, 1)
 ProgressBar/styles/background = SubResource("StyleBoxFlat_n6rfq")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_mr3yy")
 RichTextLabel/colors/default_color = Color(0.933333, 0.882353, 0.811765, 1)
