@@ -179,7 +179,7 @@ std::filesystem::path palace::get_app_path(const std::string& app_id) {
 // returns non-zero if failed
 int palace::launch_game(const std::string& game_name, const std::string& arguments) {
   std::filesystem::path sdk_app_path = get_app_path(SOURCE_SDK_2013_APP_ID);
-
+  if (!std::filesystem::exists(sdk_app_path)) return 1;
 #ifdef WIN32
   std::string sdk_app_binary = (sdk_app_path / "hl2.exe").string();
 #else
