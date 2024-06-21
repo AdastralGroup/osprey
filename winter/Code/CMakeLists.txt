@@ -1,9 +1,14 @@
+FetchContent_Declare(keyvalues GIT_REPOSITORY https://github.com/ozxybox/SpeedyKeyV.git GIT_TAG master)
+FetchContent_MakeAvailable(keyvalues)
+include_directories(${keyvalues_SOURCE_DIR})
+
 add_subdirectory(shared)
 add_subdirectory(sys)
 add_subdirectory(net)
 add_subdirectory(torrent)
 add_subdirectory(emley)
 add_subdirectory(palace)
+
 IF (GODOT)
     FetchContent_Declare(
             GDExtension

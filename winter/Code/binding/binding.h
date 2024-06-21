@@ -1,14 +1,15 @@
 #include <adastral_defs.h>
 #include <sha256.h>
+
+#include <events/progress.hpp>
+#include <filesystem>
 #include <godot_cpp/classes/json.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
-#include <palace.hpp>
-#include <thread> 
-#include <filesystem>
-#include <events/progress.hpp>
 #include <net.hpp>
+#include <palace.hpp>
+#include <thread>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #else
 #include <libnotify/notify.h>
@@ -20,7 +21,7 @@ class binding : public Node {
 
  public:
   binding();
-  ~binding();	
+  ~binding();
   void init_palace();
   static void _bind_methods();
   int sanity_checks();
@@ -32,8 +33,8 @@ class binding : public Node {
   godot::String find_sourcemod_path();
   godot::String get_sourcemod_path();
   void set_sourcemod_path(godot::String path);
-  bool isSDKInstalled();
-  bool isTF2Installed();
+  bool is_app_installed(godot::String app_id);
+  int launch_game(String app_id, String arguments);
   godot::String get_installed_version(godot::String gameName);
   godot::String get_latest_version(godot::String gameName);
   godot::String is_installed(godot::String gameName);
