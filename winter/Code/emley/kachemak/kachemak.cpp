@@ -89,6 +89,21 @@ int Kachemak::FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory&
   return 0;
 }
 
+/*
+description:
+    check free space in a specific path.
+res:
+    0: success
+    1: not enough storage
+*/
+
+int Kachemak::FreeSpaceCheck_InPath(const uintmax_t size, const std::filesystem::path customPath) { 
+    if (std::filesystem::space(customPath).free < size) {
+        return 1;
+    }
+    return 0;
+}
+
 int Kachemak::PrepareSymlink() {
 #ifdef _WIN32
   return 0;
@@ -109,6 +124,23 @@ int Kachemak::DoSymlink() {
   return 0;
 #else
   return 0; //leave this for now
+  for (const auto& item : TO_SYMLINK) {
+    const std::filesystem::path symlinkPath = m_szSourcemodPath / m_szFolderName / item[1];
+    if (!std::filesystem::exists(symlinkPath)) {
+      std::filesystem::create_symlink(m_szSourcemodPath / item[0], symlinkPath);
+    }
+  }
+
+  return 0;
+#endif
+}
+
+int Kachemak::DoSymlink_InPath(std::filesystem::path customPath) {
+#ifdef _WIN32
+    //TODO: Implement code so the customPath can be symlinked to the sourcemod path.
+  return 0;
+#else
+  return 0;  // leave this for now
   for (const auto& item : TO_SYMLINK) {
     const std::filesystem::path symlinkPath = m_szSourcemodPath / m_szFolderName / item[1];
     if (!std::filesystem::exists(symlinkPath)) {
@@ -220,6 +252,66 @@ int Kachemak::Install() {
   else{return 1;}
 }
 
+//Overloading function to functionally be the same except it takes any path taken from the customPath input.
+int Kachemak::Install(std::filesystem::path customPath) {
+  if (PrepareSymlink() != 0) {
+    return 1;
+  }
+  std::optional<KachemakVersion> latestVersion = GetLatestKMVersion();
+  if (!latestVersion) return 2;
+  int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
+  if (diskSpaceStatus != 0) return diskSpaceStatus;
+  std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
+  A_printf("[Kachemak/InstallInPath] Downloading via torrent... \n");
+  int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string(), &m_eventSystem);
+  // std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName,
+  // true,&m_eventSystem);
+  if (downloadStatus != 0) {
+    A_error("[Kachemak/InstallInPath] Download failed - ret val %d \n", downloadStatus);
+    return downloadStatus;
+  }
+  A_printf("[Kachemak/InstallInPath] Download complete: extracting... \n");
+  std::filesystem::create_directory(customPath.string() / m_szFolderName);
+  int err_c = Extract_InPath(latestVersion.value().szFileName, (customPath / m_szFolderName).string(),
+                      latestVersion.value().lExtractSize);
+  // Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
+  if (err_c == 0) {
+    A_printf("[Kachemak/InstallInPath] Extraction done! \n");
+    DoSymlink();
+    m_szInstalledVersion = GetLatestVersion();
+    WriteVersion();
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+/*
+desc:
+        extract .zip file to directory
+res:
+        0: success
+        1: not enough free space
+*/
+int Kachemak::Extract_InPath(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize) {
+  A_printf("[Kachemak/ExtractInPath] Input File %s, Output %s, size %lu \n",szInputFile.c_str(),szOutputDirectory.c_str(),szSize);
+
+  //Variable to get the path
+  std::filesystem::path sanitizedPath = std::filesystem::u8path(szOutputDirectory);
+  if (FreeSpaceCheck_InPath(szSize * 2, sanitizedPath) != 0) {
+    A_printf("[Kachemak/ExtractInPath] Not enough space. Exiting. \n");
+    return 1;
+  }
+  int ret = sys::ExtractZip((m_szTempPath / szInputFile).string(), szOutputDirectory);
+  if (ret != 0) {
+    A_error("[Kachemak/ExtractInPath] Extraction Failed - %s\n",zip_strerror(ret));
+    return -1;
+  }
+  m_szInstalledVersion = GetLatestVersion();
+  WriteVersion();
+  return 0;
+}
+
 /*
 desc:
         extract .zip file to directory
@@ -228,14 +320,15 @@ res:
         1: not enough free space
 */
 int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize) {
-  A_printf("[Kachemak/Extract] Input File %s, Output %s, size %lu \n",szInputFile.c_str(),szOutputDirectory.c_str(),szSize);
+  A_printf("[Kachemak/Extract] Input File %s, Output %s, size %lu \n", szInputFile.c_str(), szOutputDirectory.c_str(),
+           szSize);
   if (FreeSpaceCheck(szSize * 2, FreeSpaceCheckCategory::Permanent) != 0) {
     A_printf("[Kachemak/Extract] Not enough space. Exiting. \n");
     return 1;
   }
   int ret = sys::ExtractZip((m_szTempPath / szInputFile).string(), szOutputDirectory);
   if (ret != 0) {
-    A_error("[Kachemak/Extract] Extraction Failed - %s\n",zip_strerror(ret));
+    A_error("[Kachemak/Extract] Extraction Failed - %s\n", zip_strerror(ret));
     return -1;
   }
   m_szInstalledVersion = GetLatestVersion();
