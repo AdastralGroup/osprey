@@ -133,13 +133,13 @@ godot::String binding::get_installed_version(godot::String gameName) {
   if (p->serverGames.count(gameName.utf8().get_data()) == 0) {
     return "";
   }
-  return p->serverGames[gameName.utf8().get_data()]->l1->GetInstalledVersion().c_str();
+  return p->serverGames[gameName.utf8().get_data()]->l1->GetInstalledVersionTag().c_str();
 };
 godot::String binding::get_latest_version(godot::String gameName) {
   if (p->serverGames.count(gameName.utf8().get_data()) == 0) {
     return "";
   }
-  return p->serverGames[gameName.utf8().get_data()]->l1->GetLatestVersion().c_str();
+  return p->serverGames[gameName.utf8().get_data()]->l1->GetLatestVersionTag().c_str();
 }
 void binding::set_sourcemod_path(godot::String gd_path) {
   std::filesystem::path path = std::filesystem::path(gd_path.utf8().get_data());
