@@ -1,10 +1,17 @@
 #include "palace.hpp"
+#include <cstdlib>
+#include <map>
+#include "KeyValue.h"
+#include "adastral_defs.h"
 
 palace::palace() {
   A_printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
   download_assets();
   library_folders = sys::ParseVDFFile(sys::GetSteamPath() / "steamapps" / "libraryfolders.vdf");
+#if __unix__
+  config_file = sys::ParseVDFFile(sys::GetSteamPath() / "config" / "config.vdf");
+#endif
 }
 
 palace::~palace() {
@@ -176,6 +183,11 @@ std::filesystem::path palace::get_app_path(const std::string& app_id) {
 
 #define SOURCE_SDK_2013_APP_ID "243750"
 
+// no idea if there is somewhere an map like that in my steam directory and i don't wanna read every app manifest / call steam api over this silly thing 
+const std::map<std::string, std::string> proton_map_to_depot = {
+  {"proton_experimental", "1493710"}
+};
+
 // returns non-zero if failed
 int palace::launch_game(const std::string& game_name, const std::string& arguments) {
   std::filesystem::path sdk_app_path = get_app_path(SOURCE_SDK_2013_APP_ID);
@@ -183,10 +195,26 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
 #ifdef WIN32
   std::string sdk_app_binary = (sdk_app_path / "hl2.exe").string();
 #else
-  std::string sdk_app_binary = (sdk_app_path / "hl2.sh").string();
+  KeyValue& source_sdk_compat_tool = config_file->Children()->Children()->Children()->Children()->Get("CompatToolMapping").Get(SOURCE_SDK_2013_APP_ID); 
+  /* "InstallConfigStore"->"Software"->"Valve"->"Steam"->CompatToolMapping */
+  std::string sdk_app_binary;
+  if (source_sdk_compat_tool.IsValid()) {
+    const char* proton_app_name = source_sdk_compat_tool.Get("name").Value().string;
+    if (!proton_map_to_depot.contains(proton_app_name)) {
+      A_error("%s proton version couldn't be found\n", proton_app_name);
+      return 1;
+    }
+
+    setenv("STEAM_COMPAT_DATA_PATH", (sys::GetSteamPath() / "steamapps" / "compatdata").string().c_str(), 1);
+    setenv("STEAM_COMPAT_CLIENT_INSTALL_PATH", sys::GetSteamPath().string().c_str(), 1);
+    std::filesystem::path proton_app_path = get_app_path(proton_map_to_depot.at(proton_app_name)); 
+    sdk_app_binary.append("\"" + proton_app_path.string() + "/\"proton run " + (sdk_app_path / "hl2.exe").string());
+  } else {
+    sdk_app_binary.append((sdk_app_path / "hl2.sh").string());
+  }
 #endif
   char* command_line = new char[1024];  // yeah i don't think anyone needs more
-  snprintf(command_line, 1024, "\"%s\" -game \"%s\" -secure -steam %s", sdk_app_binary.c_str(),
+  snprintf(command_line, 1024, "%s -game \"%s\" -secure -steam %s", sdk_app_binary.c_str(),
            (sourcemodsPath / game_name).string().c_str(), arguments.c_str());
 #ifdef WIN32
   STARTUPINFO dummy_si = {0};

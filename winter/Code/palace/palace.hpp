@@ -33,4 +33,5 @@ public:
     std::filesystem::path sourcemodsPath;
     std::filesystem::path find_sourcemod_path();
     KeyValueRoot* library_folders;
+    KeyValueRoot* config_file;
 };
