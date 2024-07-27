@@ -66,6 +66,9 @@ func _on_error(error_detail):
 	print(error_detail)
 	
 func _on_install_pressed():
+	if s.get_installed_version(current_game) == s.get_latest_version(current_game):
+		print(s.launch_game(current_game,""))
+		return
 	games[current_game]["status"] = "installing"
 	s.update_game(current_game)
 	$Install.disabled = true
@@ -157,13 +160,13 @@ func t_game_verified(game):
 func t_game_updated(game):
 	change_game(game)
 	$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game)
+	games[game]["status"] = ""
 	games[game]["progress"] = 0
 	if current_game == game:
 		var tween = get_tree().create_tween()
 		tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
 		await get_tree().create_timer(0.2).timeout
 		$ProgressBar.hide()
-
 
 
 func disabled(color):
@@ -177,9 +180,9 @@ func set_stylebox_colour(stylebox,colour):
 
 
 func set_buttons(game_name):
-	if s.get_installed_version(game_name) == "":
+	if s.get_installed_version(game_name) == "": # not installed
 		if game_name in games.keys():
-			if "status" in games[game_name].keys():
+			if "status" in games[game_name].keys(): # currently installing
 				if games[game_name]["status"] == "installing":
 					$Install.text = "Installing.."
 			else:
@@ -189,23 +192,22 @@ func set_buttons(game_name):
 		$Install.disabled = false
 		
 	else:
-		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game_name)
-		if s.get_installed_version(game_name) == s.get_latest_version(game_name):
-			$Install.disabled = true
-			$Install.text = "Installed"
-			$Verify.disabled = false
-			$Verify.text = "Verify"
-		elif int(s.get_installed_version(game_name)) < int(s.get_latest_version(game_name)):
-			$Verify.text = "Verify"
-			$Install.disabled = false
-			$Verify.disabled = false
-			$Install.text = "Update"
 		if game_name in games.keys(): # this is insanely cooked
 			if "status" in games[game_name].keys():
 				if games[game_name]["status"] == "installing":
 					$Install.text = "Installing.."
-			else:
-				$Install.text = "Install"
+				else:
+					$Install.text = "Install"
+		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game_name)
+		if s.get_installed_version(game_name) == s.get_latest_version(game_name): ## on latest
+			$Install.text = "Launch"
+			$Verify.disabled = false
+			$Verify.text = "Verify"
+		elif int(s.get_installed_version(game_name)) < int(s.get_latest_version(game_name)): ## not on latest but installed
+			$Verify.text = "Verify"
+			$Install.disabled = false
+			$Verify.disabled = false
+			$Install.text = "Update"
 		
 
 
