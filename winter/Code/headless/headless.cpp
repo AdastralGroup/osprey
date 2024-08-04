@@ -36,7 +36,7 @@ int main() {
               << "Game Available: " << i.second->name << " (" << i.first << ")" << std::endl;
   }
   printf("[headless] Updating open_fortress.\n");
-  p->update_game("open_fortress");  // you should check the force_verify to see if verification alone is needed.
+  p->launch_game("open_fortress", "");  // you should check the force_verify to see if verification alone is needed.
   delete(p);
   printf("[headless] Everything done.\n");
   return 0;

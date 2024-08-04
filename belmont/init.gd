@@ -50,6 +50,7 @@ func do_the_shiny_thing():
 		tween.tween_property(x,"pivot_offset",Vector2(100,100),t).set_trans(trans).set_ease(ease)
 		spin_tween.tween_property(x,"rotation_degrees",360.0+180,t).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(x,"modulate",Color.WHITE,t).set_trans(trans).set_ease(Tween.EASE_IN)
+	$TextureRect.reparent($Control/Main,false)
 	await get_tree().create_timer(t-0.5).timeout
 	tween = create_tween().set_parallel()
 	tween.tween_property($Control,"modulate",Color.WHITE,0.5).set_trans(Tween.TRANS_LINEAR)
@@ -60,11 +61,10 @@ func do_the_shiny_thing():
 	$TextureRect5.hide()
 	$TextureRect6.hide()
 	$Label3.reparent($Control/Main)
-	tween = create_tween().set_parallel()
+	#tween = create_tween().set_parallel()
 	#tween.tween_property($Control,"position",Vector2(0,0),0.5).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	
 	await get_tree().create_timer(0.5).timeout
-	$TextureRect.reparent($Control/Main,false)
 	
 
 
