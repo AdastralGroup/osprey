@@ -204,17 +204,16 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
       A_error("%s proton version couldn't be found\n", proton_app_name);
       return 1;
     }
-
     setenv("STEAM_COMPAT_DATA_PATH", (sys::GetSteamPath() / "steamapps" / "compatdata").string().c_str(), 1);
     setenv("STEAM_COMPAT_CLIENT_INSTALL_PATH", sys::GetSteamPath().string().c_str(), 1);
     std::filesystem::path proton_app_path = get_app_path(proton_map_to_depot.at(proton_app_name)); 
-    sdk_app_binary.append("\"" + proton_app_path.string() + "/\"proton run " + (sdk_app_path / "hl2.exe").string());
+    sdk_app_binary.append("python3 \"" + proton_app_path.string() + "/\"proton waitforexitandrun \"" + (sdk_app_path / "hl2.exe\"").string());
   } else {
     sdk_app_binary.append((sdk_app_path / "hl2.sh").string());
   }
 #endif
   char* command_line = new char[1024];  // yeah i don't think anyone needs more
-  snprintf(command_line, 1024, "%s -game \"%s\" -secure -steam %s", sdk_app_binary.c_str(),
+  snprintf(command_line, 1024, "%s -game sourcetest -steam -game \"%s\" -steam -secure %s", sdk_app_binary.c_str(),
            (sourcemodsPath / game_name).string().c_str(), arguments.c_str());
 #ifdef WIN32
   STARTUPINFO dummy_si = {0};
