@@ -16,7 +16,7 @@
 #include <Winreg.h>
 #endif
 
-#define PRIMARY_URL "https://fusion.adastral.net/"
+
 class sys {
  public:
   static int ExecWithParam(const std::vector<std::string>& params);

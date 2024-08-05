@@ -7,6 +7,7 @@
 palace::palace() {
   A_printf("[Palace/Init] Fetching server data...\n");
   fetch_server_data();
+  A_printf("[Palace/Init] Downloading assets... \n");
   download_assets();
   library_folders = sys::ParseVDFFile(sys::GetSteamPath() / "steamapps" / "libraryfolders.vdf");
 #if __unix__
@@ -22,7 +23,7 @@ palace::~palace() {
 }
 
 void palace::fetch_server_data() {
-  std::string json = net().get_string_data_from_server(std::string(PRIMARY_URL) + "southbank2.json");
+  std::string json = net().get_string_data_from_server(SB_URL);
   southbankJson = nlohmann::json::parse(json);  // do error checking here
 }
 
@@ -40,10 +41,10 @@ void palace::download_assets() {
   for (auto& item : initmap) {
     std::string local_file_path = (appdata_path / item.first).string();
     std::string local_hash = A_SHA256(local_file_path);
-    std::string server_hash = net().get_string_data_from_server(std::string(PRIMARY_URL) + item.second);
+    std::string server_hash = net().get_string_data_from_server(std::string(ROOT_URL) + item.second);
     cachemap[item.first] = local_file_path;  // very naughty
     if (strncmp(local_hash.c_str(), server_hash.c_str(), 64) == NULL) continue;
-    net().download_to_temp(std::string(PRIMARY_URL) + item.first, local_file_path);
+    net().download_to_temp(std::string(ROOT_URL) + item.first, local_file_path);
     A_printf("%s | %s", item.first.c_str(), local_file_path.c_str());
 #if _DEBUG
     printf("Downloading asset from cache lookup: %s\n", item.second.c_str());
@@ -52,6 +53,7 @@ void palace::download_assets() {
 #ifndef GODOT
 #else
   for (const auto& game : southbankJson["games"].items()) {
+    if(game.key().find("$") != std::string::npos){continue;}
     std::filesystem::path game_asset_dir = appdata_path / game.key();
     if (!std::filesystem::exists(game_asset_dir)) {
       std::filesystem::create_directory(game_asset_dir);
@@ -99,12 +101,14 @@ std::filesystem::path palace::find_sourcemod_path() {
 }
 
 int palace::init_games() {
+  A_printf("[Palace/InitGames] Initialising games...");
   if (!std::filesystem::exists(std::filesystem::canonical(sourcemodsPath))) {
     return 2;
   }
   for (const auto& it : southbankJson["games"].items()) {
     std::string version;
     std::string id = it.key();
+    if(id.find("$") != std::string::npos){continue;}
     serverGames[id] = new GameMetadata;
     serverGames[id]->name = it.value()["name"];
     std::string full_url = southbankJson["dl_url"];

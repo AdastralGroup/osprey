@@ -30,25 +30,26 @@ std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version
   KachemakVersion ret = {
       .szFileName = jsonVersion["file"].get<std::string>(),
 //      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
-      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
+      .szDownloadUrl = jsonVersion["file_p2p"].get<std::string>(),
 //      .lDownloadSize = jsonVersion["presz"].get<std::size_t>(),
 //      .lExtractSize = jsonVersion["postsz"].get<std::size_t>(),
       .szVersion = version,
-      .szSignature = jsonVersion["signature"].get<std::string>(),
+      .szSignature = jsonVersion["sig"].get<std::string>(),
   };
 
   return ret;
 }
 
 std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version) { //this doesn't work if there's missing fields
-  nlohmann::ordered_json& jsonPatches = m_parsedVersion["patches"][version];
+  std::string latest = m_parsedVersion["latest"];
+  nlohmann::ordered_json& jsonPatches = m_parsedVersion["patches"][latest][version];
   if (!jsonPatches.is_object()) {
     A_printf("[Kachemak/GetPatch] Failed to find patch %s\n", version.c_str());
     return std::nullopt;
   }
 
   KachemakPatch ret = {
-      .szUrl = jsonPatches["url"].get<std::string>(),
+      .szUrl = jsonPatches["file_p2p"].get<std::string>(),
       .szFilename = jsonPatches["file"].get<std::string>(),
       .lTempRequired = jsonPatches["tempreq"].get<std::uintmax_t>(),
   };
@@ -57,12 +58,7 @@ std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version) { //
 }
 
 std::optional<KachemakVersion> Kachemak::GetLatestKMVersion() {
-  std::string versionId;
-  for (auto& el : m_parsedVersion["versions"].items()) {
-    versionId = el.key();
-  };
-
-  return GetKMVersion(versionId);
+  return GetKMVersion(m_parsedVersion["latest"]);
 }
 
 /*
