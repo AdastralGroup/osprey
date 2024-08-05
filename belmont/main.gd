@@ -44,7 +44,6 @@ func load_image(path):
 
 func _ready():
 	pass
-	#theme = load("res://themes/pf2_theme.tres")
 	
 func _on_Button4_pressed():
 	pass
@@ -167,6 +166,7 @@ func t_game_updated(game):
 		tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
 		await get_tree().create_timer(0.2).timeout
 		$ProgressBar.hide()
+		set_buttons(current_game)
 
 
 func disabled(color):
@@ -190,7 +190,6 @@ func set_buttons(game_name):
 		$InstalledVersion.text = "[left]Not Installed!"
 		$Verify.disabled = true
 		$Install.disabled = false
-		
 	else:
 		if game_name in games.keys(): # this is insanely cooked
 			if "status" in games[game_name].keys():
@@ -203,7 +202,7 @@ func set_buttons(game_name):
 			$Install.text = "Launch"
 			$Verify.disabled = false
 			$Verify.text = "Verify"
-		elif int(s.get_installed_version(game_name)) < int(s.get_latest_version(game_name)): ## not on latest but installed
+		else:
 			$Verify.text = "Verify"
 			$Install.disabled = false
 			$Verify.disabled = false

@@ -11,7 +11,6 @@ struct GameMetadata{
   Kachemak* l1;
 };
 
-
 class palace {
 public:
     palace();

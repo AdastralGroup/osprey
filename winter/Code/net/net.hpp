@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-
-#define PRIMARY_URL "https://fusion.adastral.net/"
+#define SB_URL "https://cockatoo.kate.pet/api/v3/Southbank"
+#define ROOT_URL "https://fusion.adastral.net/"
 class net {
  public:
   static std::string download_to_temp(std::string url, std::string name, bool progress = false,EventSystem* event = nullptr, std::filesystem::path* path = nullptr);
