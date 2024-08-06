@@ -54,6 +54,7 @@ func transition():
 	$TextureRect5.hide()
 	$TextureRect6.hide()
 	$Label3.reparent($Control/Main)
+	await get_tree().create_timer(0.5).timeout
 	
 
 

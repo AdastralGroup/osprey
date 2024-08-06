@@ -297,8 +297,7 @@ layout_mode = 0
 offset_left = 80.0
 offset_top = 260.0
 offset_right = 770.0
-offset_bottom = 272.0
-show_percentage = false
+offset_bottom = 281.0
 
 [node name="Install" type="Button" parent="Main"]
 layout_mode = 0
@@ -322,7 +321,6 @@ theme_override_font_sizes/font_size = 22
 text = "Verify"
 
 [node name="Wordmark" type="TextureRect" parent="Main"]
-visible = false
 material = SubResource("ShaderMaterial_ikao0")
 layout_mode = 0
 offset_left = 85.0

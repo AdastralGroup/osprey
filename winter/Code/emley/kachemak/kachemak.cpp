@@ -30,25 +30,26 @@ std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version
   KachemakVersion ret = {
       .szFileName = jsonVersion["file"].get<std::string>(),
 //      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
-      .szDownloadUrl = jsonVersion["url"].get<std::string>(),
+      .szDownloadUrl = jsonVersion["file_p2p"].get<std::string>(),
 //      .lDownloadSize = jsonVersion["presz"].get<std::size_t>(),
 //      .lExtractSize = jsonVersion["postsz"].get<std::size_t>(),
       .szVersion = version,
-      .szSignature = jsonVersion["signature"].get<std::string>(),
+      .szSignature = jsonVersion["sig"].get<std::string>(),
   };
 
   return ret;
 }
 
 std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version) { //this doesn't work if there's missing fields
-  nlohmann::ordered_json& jsonPatches = m_parsedVersion["patches"][version];
+  std::string latest = m_parsedVersion["latest"];
+  nlohmann::ordered_json& jsonPatches = m_parsedVersion["patches"][latest][version];
   if (!jsonPatches.is_object()) {
     A_printf("[Kachemak/GetPatch] Failed to find patch %s\n", version.c_str());
     return std::nullopt;
   }
 
   KachemakPatch ret = {
-      .szUrl = jsonPatches["url"].get<std::string>(),
+      .szUrl = jsonPatches["file_p2p"].get<std::string>(),
       .szFilename = jsonPatches["file"].get<std::string>(),
       .lTempRequired = jsonPatches["tempreq"].get<std::uintmax_t>(),
   };
@@ -57,12 +58,7 @@ std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version) { //
 }
 
 std::optional<KachemakVersion> Kachemak::GetLatestKMVersion() {
-  std::string versionId;
-  for (auto& el : m_parsedVersion["versions"].items()) {
-    versionId = el.key();
-  };
-
-  return GetKMVersion(versionId);
+  return GetKMVersion(m_parsedVersion["latest"]);
 }
 
 /*
@@ -179,7 +175,7 @@ int Kachemak::Update() {
 
   std::stringstream patchUrlFull_ss;
   patchUrlFull_ss << m_szSourceUrl << patch.value().szUrl;
-  std::filesystem::path stagingPath = m_szSourcemodPath / ("butler-staging-" + m_szFolderName.string()); // make this dynamic, so we can download multiple games at once
+  std::filesystem::path stagingPath = m_szSourcemodPath / ("butler-staging-" + m_szFolderName.string());
   A_printf("[Kachemak/Update] Patching %s from %s to %s, with staging dir at %s. ",m_szFolderName.c_str(),installedVersion.value().szVersion.c_str(),GetLatestVersion().c_str(),stagingPath.c_str());
   int patchRes = ButlerPatch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
                              dataDir_path.string(), patch.value().lTempRequired);
@@ -374,7 +370,7 @@ void Kachemak::FindInstalledVersion() {
     if (!data.fail()) {
       nlohmann::json filedata = nlohmann::json::parse(data);
       m_szInstalledVersion = filedata["version"];
-      A_printf("[Kachemak/InstalledVersion] version: %s\n",m_szInstalledVersion.c_str());
+      A_printf("[Kachemak/InstalledVersion] version: %s\n",GetInstalledVersionTag().c_str());
     }else{
       A_printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected."
           "Assuming best case and setting force_version.\n",m_szFolderName.c_str());
@@ -385,6 +381,15 @@ void Kachemak::FindInstalledVersion() {
     A_printf("[Kachemak/InstalledVersion] Game not installed. Booo.");
   }
 }
+
+std::string Kachemak::GetInstalledVersionTag() {
+  std::string versionId = GetInstalledVersion();
+  if(m_parsedVersion["versions"][versionId].contains("tag")) {
+    return m_parsedVersion["versions"][versionId]["tag"].get<std::string>();
+  };
+  return versionId;
+}
+
 std::string Kachemak::GetLatestVersion() {
   std::string versionId;
   for (auto& el : m_parsedVersion["versions"].items()) {
@@ -393,6 +398,13 @@ std::string Kachemak::GetLatestVersion() {
   return versionId;
 }
 
+std::string Kachemak::GetLatestVersionTag() {
+  std::string versionId = GetLatestVersion();
+  if(m_parsedVersion["versions"][versionId].contains("tag")) {
+    return m_parsedVersion["versions"][versionId]["tag"].get<std::string>();
+  };
+  return versionId;
+}
 void Kachemak::WriteVersion(){
   nlohmann::json test_json;
   test_json["version"] = m_szInstalledVersion;
