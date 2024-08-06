@@ -22,7 +22,7 @@ script = ExtResource("1_fvxd1")
 material = SubResource("CanvasItemMaterial_2ld2c")
 layout_mode = 0
 offset_right = 770.0
-offset_bottom = 350.0
+offset_bottom = 357.0
 color = Color(0, 0.27451, 0.490196, 1)
 
 [node name="TextureRect" type="TextureRect" parent="."]
@@ -39,12 +39,12 @@ texture = ExtResource("1_878ms")
 layout_mode = 0
 offset_left = 64.0
 offset_top = 73.0
-offset_right = 708.0
+offset_right = 712.0
 offset_bottom = 184.0
 theme_override_fonts/normal_font = ExtResource("2_cx3cw")
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
-text = "[center]This error is recoverable, but we haven't implemented an error handler for this yet. Not much you can do besides restart but at least you can rest in comfort knowing that this won't happen down the road."
+text = "[center]This error is recoverable, but we haven't implemented an error handler for this yet. You can try to fix the error if it's something simple - if not report it. You can, at least, can rest in comfort knowing that this won't happen down the road."
 scroll_active = false
 
 [node name="Label" type="Label" parent="."]

@@ -195,7 +195,10 @@ const std::map<std::string, std::string> proton_map_to_depot = {
 // returns non-zero if failed
 int palace::launch_game(const std::string& game_name, const std::string& arguments) {
   std::filesystem::path sdk_app_path = get_app_path(SOURCE_SDK_2013_APP_ID);
-  if (!std::filesystem::exists(sdk_app_path)) return 1;
+  if (!std::filesystem::exists(sdk_app_path)) {
+    A_error("[Palace/launch_game] sdk path doesn't exist...");
+    return 1;
+  }
 #ifdef WIN32
   std::string sdk_app_binary = (sdk_app_path / "hl2.exe").string();
 #else
@@ -226,6 +229,8 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
 
   if (CreateProcessA(sdk_app_binary.c_str(), command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL,
                      (LPSTR)sourcemodsPath.string().c_str(), &dummy_si, &dummy_pi) == 0) {
+
+    A_error("[Palace/launch_game] win32: CreateProcessA failed!");
     return 1;
   }
 #else
