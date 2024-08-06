@@ -1,6 +1,6 @@
 extends Control
 var pallete
-var theme_json = {"adastral":
+var theme_json = {"adastral": ## needed - adastral theme isn't stored remotely
 	{"id":"adastral","dark":"#00000000","light": "#f8f3ee",
 		"main": "#0064ad",
 		"accent": "#b76300",
@@ -44,7 +44,6 @@ func load_image(path):
 
 func _ready():
 	pass
-	#theme = load("res://themes/pf2_theme.tres")
 	
 func _on_Button4_pressed():
 	pass
@@ -64,6 +63,9 @@ func _on_game_updated(status,game):
 	
 func _on_error(error_detail):
 	print(error_detail)
+	if "sdk path" in error_detail: # absolutely absurd stopgap before I implement sev levels 
+		oops("Source SDK 2013 MP not installed. Go install it.")
+		
 	
 func _on_install_pressed():
 	if s.get_installed_version(current_game) == s.get_latest_version(current_game):
@@ -109,7 +111,7 @@ func change_game(game):
 	apply_theme(game)
 
 
-func ready_after_sutton():
+func ready_after_winter_init():
 	apply_theme("adastral")
 	s.connect("game_verified",_on_game_verified)
 	s.connect("game_updated",_on_game_updated)
@@ -167,6 +169,7 @@ func t_game_updated(game):
 		tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
 		await get_tree().create_timer(0.2).timeout
 		$ProgressBar.hide()
+		set_buttons(current_game)
 
 
 func disabled(color):
@@ -190,7 +193,6 @@ func set_buttons(game_name):
 		$InstalledVersion.text = "[left]Not Installed!"
 		$Verify.disabled = true
 		$Install.disabled = false
-		
 	else:
 		if game_name in games.keys(): # this is insanely cooked
 			if "status" in games[game_name].keys():
