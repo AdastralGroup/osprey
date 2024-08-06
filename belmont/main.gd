@@ -158,6 +158,7 @@ func t_game_verified(game):
 		tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
 		await get_tree().create_timer(0.2).timeout
 		$ProgressBar.hide()
+		set_buttons(current_game)
 
 func t_game_updated(game):
 	change_game(game)
@@ -201,14 +202,12 @@ func set_buttons(game_name):
 				else:
 					$Install.text = "Install"
 		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game_name)
+		$Install.disabled = false
+		$Verify.disabled = false
+		$Verify.text = "Verify"
 		if s.get_installed_version(game_name) == s.get_latest_version(game_name): ## on latest
 			$Install.text = "Launch"
-			$Verify.disabled = false
-			$Verify.text = "Verify"
 		else:
-			$Verify.text = "Verify"
-			$Install.disabled = false
-			$Verify.disabled = false
 			$Install.text = "Update"
 		
 

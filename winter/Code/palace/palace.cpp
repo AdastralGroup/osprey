@@ -206,6 +206,7 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
   /* "InstallConfigStore"->"Software"->"Valve"->"Steam"->CompatToolMapping */
   std::string sdk_app_binary;
   if (source_sdk_compat_tool.IsValid()) {
+    return 1; // proton doesn't work for now.
     const char* proton_app_name = source_sdk_compat_tool.Get("name").Value().string;
     if (!proton_map_to_depot.contains(proton_app_name)) {
       A_error("%s proton version couldn't be found\n", proton_app_name);
