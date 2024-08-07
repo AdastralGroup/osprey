@@ -50,11 +50,11 @@ jobs:
         shell: cmd
         run: |
           cd winter
-          cmake -B ${{github.workspace}}\Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake -B ${{github.workspace}}\Workspace -VCPKG_BUILD_TYPE=release -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
       - name: Build Bindings
         run: |
           cd winter
-          cmake --build ${{github.workspace}}/Workspace
+          cmake --build ${{github.workspace}}/Workspace -VCPKG_BUILD_TYPE=release
       - name: Export Godot Project
         shell: bash
         run: |
@@ -62,7 +62,7 @@ jobs:
           cp -r ../winter/Code/binding/lib/* bin/
           mkdir -v -p build/windows
           cp -r ../winter/Code/binding/lib/* build/windows
-          godot -v --export-debug --headless "Windows Desktop" build/windows/adastral.exe
+          godot -v --export-release --headless "Windows Desktop" build/windows/adastral.exe
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
