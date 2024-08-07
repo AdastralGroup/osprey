@@ -50,11 +50,11 @@ jobs:
         shell: cmd
         run: |
           cd winter
-          cmake -B ${{github.workspace}}\Workspace -VCPKG_BUILD_TYPE=release -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake -B ${{github.workspace}}\Workspace --config release -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
       - name: Build Bindings
         run: |
           cd winter
-          cmake --build ${{github.workspace}}/Workspace -VCPKG_BUILD_TYPE=release
+          cmake --build ${{github.workspace}}/Workspace --config release
       - name: Export Godot Project
         shell: bash
         run: |
