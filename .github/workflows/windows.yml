@@ -27,7 +27,7 @@ jobs:
           _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
           echo "target_tag=${_ts}" >> $GITHUB_ENV
           _build_type="${{matrix.BUILD_TYPE}}"
-          _triplet_value="${_build_type@L}"
+          echo "_build_type=${_build_type@L}" >> $GITHUB_ENV
       - name: Checkout main repo
         uses: actions/checkout@v2
         with:
@@ -45,9 +45,10 @@ jobs:
         with:
           arch: x64
       - name: Update Packages for Bindings
+        shell: cmd
         run: |
-          vcpkg install curl:VCPKG_BUILD_TYPE=$_triplet_value
-          vcpkg install libtorrent:VCPKG_BUILD_TYPE=$_triplet_value
+          vcpkg install curl:VCPKG_BUILD_TYPE=${{ env._build_type }}
+          vcpkg install libtorrent:VCPKG_BUILD_TYPE=${{ env._build_type }}
       - name: Configure CMake
         shell: cmd
         run: |
