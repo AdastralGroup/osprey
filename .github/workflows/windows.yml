@@ -47,7 +47,7 @@ jobs:
       - name: Update Packages for Bindings
         shell: cmd
         run: |
-          set VCPKG_BUILD_TYPE=${{ env._build_type }}
+          echo.set(VCPKG_BUILD_TYPE ${{ env._build_type }})>> %VCPKG_INSTALLATION_ROOT%\triplets\x64-windows.cmake
           vcpkg install curl
           vcpkg install libtorrent
       - name: Configure CMake
