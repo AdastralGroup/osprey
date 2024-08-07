@@ -44,13 +44,14 @@ jobs:
           arch: x64
       - name: Update Packages for Bindings
         run: |
-          vcpkg install curl
-          vcpkg install libtorrent
+          _triplet_value="REPO=${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
+          vcpkg install curl:VCPKG_BUILD_TYPE=$_triplet_value
+          vcpkg install libtorrent:VCPKG_BUILD_TYPE=$_triplet_value
       - name: Configure CMake
         shell: cmd
         run: |
           cd winter
-          cmake -B ${{github.workspace}}\Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake -B ${{github.workspace}}\Workspace -DVCPKG_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
       - name: Build Bindings
         run: |
           cd winter
