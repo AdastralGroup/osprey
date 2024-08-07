@@ -47,16 +47,19 @@ jobs:
       - name: Update Packages for Bindings
         shell: cmd
         run: |
-          vcpkg install curl:VCPKG_BUILD_TYPE=${{ env._build_type }}
-          vcpkg install libtorrent:VCPKG_BUILD_TYPE=${{ env._build_type }}
+          set VCPKG_BUILD_TYPE=${{ env._build_type }}
+          vcpkg install curl
+          vcpkg install libtorrent
       - name: Configure CMake
         shell: cmd
         run: |
           cd winter
+          set VCPKG_BUILD_TYPE=${{ env._build_type }}
           cmake -B ${{github.workspace}}\Workspace -DVCPKG_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
       - name: Build Bindings
         run: |
           cd winter
+          set VCPKG_BUILD_TYPE=${{ env._build_type }}
           cmake --build ${{github.workspace}}/Workspace --config ${{matrix.BUILD_TYPE}}
       - name: Export Godot Project
         shell: bash
