@@ -26,7 +26,8 @@ jobs:
         run: |
           _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
           echo "target_tag=${_ts}" >> $GITHUB_ENV
-          _triplet_value="REPO=${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
+          _build_type="${{matrix.BUILD_TYPE}}"
+          _triplet_value="${_build_type@L}"
       - name: Checkout main repo
         uses: actions/checkout@v2
         with:
