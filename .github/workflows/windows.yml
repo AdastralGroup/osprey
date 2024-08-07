@@ -26,6 +26,7 @@ jobs:
         run: |
           _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
           echo "target_tag=${_ts}" >> $GITHUB_ENV
+          _triplet_value="REPO=${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
       - name: Checkout main repo
         uses: actions/checkout@v2
         with:
@@ -44,7 +45,6 @@ jobs:
           arch: x64
       - name: Update Packages for Bindings
         run: |
-          _triplet_value="REPO=${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
           vcpkg install curl:VCPKG_BUILD_TYPE=$_triplet_value
           vcpkg install libtorrent:VCPKG_BUILD_TYPE=$_triplet_value
       - name: Configure CMake
