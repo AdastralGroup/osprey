@@ -1,6 +1,0 @@
-function(ad_detect_languages)
-    set(AD_LANGUAGES C CXX PARENT_SCOPE)
-    if ((CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows") AND (NOT CMAKE_GENERATOR STREQUAL "Ninja"))
-        set(AD_LANGUAGES C CXX CSharp PARENT_SCOPE)
-    endif ()
-endfunction()
