@@ -1,7 +1,6 @@
-[gd_resource type="Theme" load_steps=21 format=3 uid="uid://bqpi1momfja7u"]
+[gd_resource type="Theme" load_steps=20 format=3 uid="uid://bqpi1momfja7u"]
 
 [ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="1_0qd58"]
-[ext_resource type="Texture2D" uid="uid://k26yaq7v8rdk" path="res://assets/of_wordmark_big.png" id="2_j1ntd"]
 [ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="3_x1of1"]
 
 [sub_resource type="StyleBoxFlat" id="33"]
@@ -104,7 +103,6 @@ shadow_size = 5
 bg_color = Color(0.137255, 0.121569, 0.12549, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5kdb5"]
-texture = ExtResource("2_j1ntd")
 
 [resource]
 default_font = ExtResource("3_x1of1")
