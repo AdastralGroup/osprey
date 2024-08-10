@@ -140,7 +140,8 @@ int Kachemak::DoSymlink_InPath(std::filesystem::path customPath) {
     // Then check if they even or not. If they don't exist in the path itself, then one can create them.
     if (!std::filesystem::exists(symlinkPath)) {
       // Do the symbolic link through CreateSymbolicLink function.
-      int errorCode = CreateSymbolicLink(symlinkPath.string(), customPath.string(), SYMBOLIC_LINK_FLAG_DIRECTORY);
+      int errorCode = CreateSymbolicLinkW(symlinkPath.wstring().c_str(), customPath.wstring().c_str(),
+                                          SYMBOLIC_LINK_FLAG_DIRECTORY);
 
       // Hopefully it should work just fine, but if it can't do it it will return 0, which means we gotta check on it...
       if (errorCode == 0) {
