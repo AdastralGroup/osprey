@@ -36,13 +36,6 @@ int sys::DeleteDirectoryContent(const std::filesystem::path& dir) {
   return 0;
 }
 
-/*
-desc:
-        extract .zip file
-returns:
-        0: success
-*/
-
 int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
   A_printf("[sys/Extract] Extracting %s to %s..\n", szInputFile.c_str(), szOutputFile.c_str());
   int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
@@ -100,11 +93,14 @@ std::filesystem::path sys::GetSteamPath() {
   return std::filesystem::path(valueData);
 #else
   std::string home = getenv("HOME");
-  auto path = std::filesystem::path(home + "/.local/share/Steam/");
-  if (std::filesystem::exists(path)) {
-    return std::filesystem::canonical(path);
-  } else {
-    return std::filesystem::path("");
+  auto path_normal = std::filesystem::path(home + "/.local/share/Steam/");
+  if (std::filesystem::exists(path_normal)) {
+    return std::filesystem::canonical(path_normal);
   }
+  auto path_flatpak = std::filesystem::path(home +  "/.var/app/com.valvesoftware.Steam/data/Steam/");
+  if (std::filesystem::exists(path_flatpak)) {
+    return std::filesystem::canonical(path_flatpak);
+  }
+  return std::filesystem::path("");
 #endif
 }
