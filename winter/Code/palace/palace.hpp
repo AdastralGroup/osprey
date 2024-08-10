@@ -21,6 +21,7 @@ class palace {
   void download_assets();
   int init_games();
   int update_game(const std::string& gameName);
+  int update_game_with_path(const std::string& gameName, std::string customPath);
   int verify_game(const std::string& gameName);
   std::vector<std::string> get_games();
   std::vector<std::string> get_installed_games();

@@ -146,6 +146,28 @@ int palace::update_game(const std::string& game_name) {
   }
   return 0;
 }
+
+// creating the same function to accept in custom path names.
+int palace::update_game_with_path(const std::string& game_name, const std::string customPath) {
+  A_printf("[Palace/UpdateGameWithPath] Updating %s....", game_name.c_str());
+
+  // First, we sanitize the path and try to convert it to std::filesystem::path variable.
+  const std::filesystem::path sanitizedPath =
+      std::filesystem::u8path(customPath);  // windows-specific thing that may work on linux, need to try on that
+
+  // Then we practically do the same thing except inserting the sanitized path to the overloaded Install function.
+  if (serverGames[game_name]->l1->GetInstalledVersion().empty()) {
+    serverGames[game_name]->l1->Install_InPath(sanitizedPath);
+  }
+  // else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
+  // serverGames[game_name]->l1->force_verify){
+  //   serverGames[game_name]->l1->Verify();
+  // }
+  // else {
+  //  serverGames[game_name]->l1->Update();
+  //}
+  return 0;
+}
 std::vector<std::string> palace::get_games() {
   auto vec = std::vector<std::string>();
   for (const auto& it : serverGames) {
