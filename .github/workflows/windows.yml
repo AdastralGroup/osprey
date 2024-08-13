@@ -26,6 +26,8 @@ jobs:
         run: |
           _ts=$(date -d '${{ github.event.head_commit.timestamp}}' +'%Y%m%d%H%M%S')
           echo "target_tag=${_ts}" >> $GITHUB_ENV
+          _build_type="${{matrix.BUILD_TYPE}}"
+          echo "_build_type=${_build_type@L}" >> $GITHUB_ENV
       - name: Checkout main repo
         uses: actions/checkout@v2
         with:
@@ -43,18 +45,22 @@ jobs:
         with:
           arch: x64
       - name: Update Packages for Bindings
+        shell: cmd
         run: |
+          echo.set(VCPKG_BUILD_TYPE ${{ env._build_type }})>> %VCPKG_INSTALLATION_ROOT%\triplets\x64-windows.cmake
           vcpkg install curl
           vcpkg install libtorrent
       - name: Configure CMake
         shell: cmd
         run: |
           cd winter
-          cmake -B ${{github.workspace}}\Workspace -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          set VCPKG_BUILD_TYPE=${{ env._build_type }}
+          cmake -B ${{github.workspace}}\Workspace -DVCPKG_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} -DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Ninja" -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
       - name: Build Bindings
         run: |
           cd winter
-          cmake --build ${{github.workspace}}/Workspace
+          set VCPKG_BUILD_TYPE=${{ env._build_type }}
+          cmake --build ${{github.workspace}}/Workspace --config ${{matrix.BUILD_TYPE}}
       - name: Export Godot Project
         shell: bash
         run: |
@@ -62,7 +68,7 @@ jobs:
           cp -r ../winter/Code/binding/lib/* bin/
           mkdir -v -p build/windows
           cp -r ../winter/Code/binding/lib/* build/windows
-          godot -v --export-debug --headless "Windows Desktop" build/windows/adastral.exe
+          godot -v --export-release --headless "Windows Desktop" build/windows/adastral.exe
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:

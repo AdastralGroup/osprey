@@ -19,8 +19,8 @@ void binding::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_game_assets"), &binding::get_game_assets);
   ClassDB::bind_method(D_METHOD("update_game"), &binding::update_game);
   ClassDB::bind_method(D_METHOD("verify_game"), &binding::verify_game);
-  ClassDB::bind_method(D_METHOD("isSDKInstalled"), &binding::isSDKInstalled);
-  ClassDB::bind_method(D_METHOD("isTF2Installed"), &binding::isTF2Installed);
+  ClassDB::bind_method(D_METHOD("launch_game"), &binding::launch_game);
+  ClassDB::bind_method(D_METHOD("is_app_installed"), &binding::is_app_installed);
   ClassDB::bind_method(D_METHOD("init_games"), &binding::init_games);
   ClassDB::bind_method(D_METHOD("get_server_games"), &binding::get_server_games);
   ClassDB::bind_method(D_METHOD("find_sourcemod_path"), &binding::find_sourcemod_path);
@@ -44,7 +44,8 @@ Dictionary binding::get_game_assets(String game_name) {
     for (auto x : i.value()["belmont"].items()) {
       auto val = x.value();
       if (strcmp(val.type_name(), "string") != 0) {
-        std::string path = p->get_asset(val[1]).string(); // replace with something more robust in future in case of malformed json
+        std::string path =
+            p->get_asset(val[1]).string();  // replace with something more robust in future in case of malformed json
         dict[(godot::String)x.key().c_str()] = path.c_str();
         num++;
       } else {
@@ -66,16 +67,14 @@ void binding::init_palace() {  // yucky hack but we can manually start palace fr
 void binding::_init_palace() {
   A_init_error_system();
   A_error_system->RegisterListener(EventType::kOnError, [this](Event& ev) {
-      emit_signal("error", String(static_cast<ErrorMessage&>(ev).get_message().c_str()));
-    });
+    emit_signal("error", String(static_cast<ErrorMessage&>(ev).get_message().c_str()));
+  });
   UtilityFunctions::print("[binding] Firing up palace!");
   p = new palace;
   emit_signal("palace_started");
 }
 
-void binding::_raise_error(std::string error_str, unsigned int err_level) {
-  emit_signal("error");
-}
+void binding::_raise_error(std::string error_str, unsigned int err_level) { emit_signal("error"); }
 
 // WRAPPERS!
 int binding::update_game(godot::String gameName) {
@@ -101,8 +100,11 @@ void binding::_verify_game(String gameName) {
   emit_signal("game_verified", String(std::to_string(z).c_str()), gameName);
 }
 
-bool binding::isSDKInstalled() { return p->isSDKInstalled(); };
-bool binding::isTF2Installed() { return p->isTF2Installed(); };
+bool binding::is_app_installed(String app_id) { return p->is_app_installed(app_id.utf8().get_data()); }
+
+int binding::launch_game(String app_id, String arguments) {
+  return p->launch_game(app_id.utf8().get_data(), arguments.utf8().get_data());
+}
 
 int binding::init_games() {
   int ret = p->init_games();
@@ -133,13 +135,13 @@ godot::String binding::get_installed_version(godot::String gameName) {
   if (p->serverGames.count(gameName.utf8().get_data()) == 0) {
     return "";
   }
-  return p->serverGames[gameName.utf8().get_data()]->l1->GetInstalledVersion().c_str();
+  return p->serverGames[gameName.utf8().get_data()]->l1->GetInstalledVersionTag().c_str();
 };
 godot::String binding::get_latest_version(godot::String gameName) {
   if (p->serverGames.count(gameName.utf8().get_data()) == 0) {
     return "";
   }
-  return p->serverGames[gameName.utf8().get_data()]->l1->GetLatestVersion().c_str();
+  return p->serverGames[gameName.utf8().get_data()]->l1->GetLatestVersionTag().c_str();
 }
 void binding::set_sourcemod_path(godot::String gd_path) {
   std::filesystem::path path = std::filesystem::path(gd_path.utf8().get_data());
@@ -161,7 +163,5 @@ int binding::desktop_notification(String title, String desc) {
   return 0;
 #endif
 }
-
-
 
 binding::~binding() { UtilityFunctions::print("bye bye"); }

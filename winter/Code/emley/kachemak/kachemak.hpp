@@ -36,7 +36,9 @@ class Kachemak : public Version {
  public:
   Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
            const std::string& szSourceUrl,const std::filesystem::path& ButlerPath);
+  std::string GetInstalledVersionTag();
   std::string GetLatestVersion();
+  std::string GetLatestVersionTag();
   bool force_verify = false;
   int FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory& category);
   int FreeSpaceCheck_InPath(const uintmax_t size, const std::filesystem::path customPath);

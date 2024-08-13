@@ -1,6 +1,5 @@
 #include "sys.hpp"
 
-
 int sys::ExecWithParam(const std::vector<std::string>& params) {
   std::string param_str;
   for (const auto& i : params) {
@@ -37,95 +36,71 @@ int sys::DeleteDirectoryContent(const std::filesystem::path& dir) {
   return 0;
 }
 
-/*
-desc:
-        extract .zip file
-returns:
-        0: success
-*/
-
 int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
-  A_printf("[sys/Extract] Extracting %s to %s..\n",szInputFile.c_str(), szOutputFile.c_str());
+  A_printf("[sys/Extract] Extracting %s to %s..\n", szInputFile.c_str(), szOutputFile.c_str());
   int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
   return ret;
 }
 
-bool sys::CheckTF2Installed(const std::filesystem::path& steamDir) {
-  std::ifstream file(steamDir / std::filesystem::path("steamapps/libraryfolders.vdf"));
+KeyValueRoot* sys::ParseVDFFile(std::filesystem::path file_path) {
+  std::ifstream file(file_path);
+  KeyValueRoot* retval = new KeyValueRoot();
   if (!file.is_open()) {
-    return false;
+    return retval;
   }
-  std::string line;
-  while (getline(file, line))
-    if (line.find("440") != std::string::npos) {
-      A_printf("[sys] TF2 found!\n");
-      return true;
-    }
-  return false;
-}
 
-bool sys::CheckSDKInstalled(const std::filesystem::path& steamDir) {
-  std::ifstream file(steamDir / std::filesystem::path("steamapps/libraryfolders.vdf"));
-  if (!file.is_open()) {
-    return false;
-  }
-  std::string line;
-  while (getline(file, line))
-    if (line.find("243750") != std::string::npos) {
-      A_printf("[sys] SDK2013MP found!\n");
-      return true;
-    }
-  return false;
+  std::stringstream string_stream;
+  string_stream << file.rdbuf();
+  retval->Parse(string_stream.str().c_str());
+  retval->Solidify();
+  file.close();
+  return retval;
 }
-
 
 #if _WIN32
-inline bool Is64BitWindows()
-{
+inline bool Is64BitWindows() {
 #if _WIN64
-    return true;
+  return true;
 #else
-    USHORT ProcessMachine;
-    USHORT NativeMachine;
-    BOOL IsWow64 = IsWow64Process2(GetCurrentProcess(), &ProcessMachine, &NativeMachine);
+  USHORT ProcessMachine;
+  USHORT NativeMachine;
+  BOOL IsWow64 = IsWow64Process2(GetCurrentProcess(), &ProcessMachine, &NativeMachine);
 
-    if(IsWow64)
-    {
-        if(NativeMachine == IMAGE_FILE_MACHINE_AMD64) return true;
-    }
+  if (IsWow64) {
+    if (NativeMachine == IMAGE_FILE_MACHINE_AMD64) return true;
+  }
 
-    return false;
+  return false;
 #endif
 }
 #endif
 
-std::filesystem::path sys::GetSteamPath()
-{
+std::filesystem::path sys::GetSteamPath() {
 #if _WIN32
-	char valueData[MAX_PATH];
-	DWORD valueLen = MAX_PATH;
+  char valueData[MAX_PATH];
+  DWORD valueLen = MAX_PATH;
 
-	//Check if this is 64 bit or 32 bit process
-	const char* subKey = Is64BitWindows() ? "SOFTWARE\\WOW6432Node\\Valve\\Steam" : "\\SOFTWARE\\Valve\\Steam";
+  // Check if this is 64 bit or 32 bit process
+  const char* subKey = Is64BitWindows() ? "SOFTWARE\\WOW6432Node\\Valve\\Steam" : "\\SOFTWARE\\Valve\\Steam";
 
-    //Get steam install dir from registry
-	RegGetValueA(HKEY_LOCAL_MACHINE, subKey, "InstallPath", RRF_RT_ANY, nullptr, &valueData, &valueLen);
-    if (valueData[0] == 0)
-    {
-        //Registry key did not exist/had no value
-        return std::filesystem::path();
-    }
+  // Get steam install dir from registry
+  RegGetValueA(HKEY_LOCAL_MACHINE, subKey, "InstallPath", RRF_RT_ANY, nullptr, &valueData, &valueLen);
+  if (valueData[0] == 0) {
+    // Registry key did not exist/had no value
+    return std::filesystem::path();
+  }
 
-	return std::filesystem::path(valueData);
+  return std::filesystem::path(valueData);
 #else
-    std::string home = getenv("HOME");
-    auto path = std::filesystem::path(home + "/.local/share/Steam/");
-    if(std::filesystem::exists(path)){
-        return std::filesystem::canonical(path);
-    }else{
-        return std::filesystem::path("");
-    }
+  std::string home = getenv("HOME");
+  auto path_normal = std::filesystem::path(home + "/.local/share/Steam/");
+  if (std::filesystem::exists(path_normal)) {
+    return std::filesystem::canonical(path_normal);
+  }
+  auto path_flatpak = std::filesystem::path(home +  "/.var/app/com.valvesoftware.Steam/data/Steam/");
+  if (std::filesystem::exists(path_flatpak)) {
+    return std::filesystem::canonical(path_flatpak);
+  }
+  return std::filesystem::path("");
 #endif
 }
-
-
