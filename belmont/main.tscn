@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://d2fac2xibuh1b"]
+[gd_scene load_steps=32 format=3 uid="uid://d2fac2xibuh1b"]
 
 [ext_resource type="Theme" uid="uid://bqpi1momfja7u" path="res://themes/base.tres" id="1_iqqha"]
 [ext_resource type="FontVariation" uid="uid://th0tjv2xcuen" path="res://fonts/main_font.tres" id="3_qwbhy"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://main.gd" id="6"]
 [ext_resource type="Shader" path="res://rounded.gdshader" id="9_ife38"]
 [ext_resource type="Texture2D" uid="uid://b21fcl1p2qpc8" path="res://assets/settings.png" id="10"]
+[ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="13_eso48"]
 [ext_resource type="FontFile" uid="uid://pskwpwxk0pd4" path="res://fonts/HankenGrotesk-SemiBold.ttf" id="15_m18sp"]
 [ext_resource type="Script" path="res://starspin.gd" id="16"]
 [ext_resource type="FontFile" uid="uid://cknx8yer7op7k" path="res://fonts/HankenGrotesk.ttf" id="16_aeh5c"]
@@ -42,6 +43,40 @@ base_font = ExtResource("16_aeh5c")
 shader = ExtResource("4_5diq2")
 shader_parameter/weight = null
 shader_parameter/alpha = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vvc6i"]
+bg_color = Color(0.503906, 0.503906, 0.503906, 1)
+corner_radius_top_left = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 6
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8d2wc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kop0i"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7uotb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w0ql2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_574mr"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7efqp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tqixq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m6748"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b6eaa"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rk3o6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s5vb6"]
+bg_color = Color(0.609375, 0.609375, 0.609375, 1)
+corner_radius_top_left = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(0, 0, 0, 0.168627)
+shadow_size = 8
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -95,7 +130,6 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="AdvancedButton" type="TextureButton" parent="Main/TopPanel"]
-visible = false
 layout_mode = 0
 offset_left = 724.0
 offset_top = 14.0
@@ -323,6 +357,134 @@ theme_type_variation = &"WMPanel"
 expand_mode = 1
 stretch_mode = 4
 
+[node name="AdvancedPanel" type="Panel" parent="Main"]
+layout_mode = 0
+offset_left = 770.0
+offset_top = 60.0
+offset_right = 1319.0
+offset_bottom = 350.0
+theme_type_variation = &"AdvancedPanel"
+theme_override_styles/panel = SubResource("StyleBoxFlat_vvc6i")
+
+[node name="TextureRect" type="TextureRect" parent="Main/AdvancedPanel"]
+visible = false
+layout_mode = 0
+offset_left = 124.0
+offset_top = 13.0
+offset_right = 448.0
+offset_bottom = 337.0
+texture = ExtResource("12_qhs8s")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/AdvancedPanel"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 13.0
+offset_right = 124.0
+offset_bottom = 278.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Main/AdvancedPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Button" parent="Main/AdvancedPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"ImportantButton"
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxEmpty_8d2wc")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_kop0i")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_7uotb")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_w0ql2")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_574mr")
+text = "General"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Main/AdvancedPanel/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Button" parent="Main/AdvancedPanel/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_type_variation = &"ImportantButton"
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7efqp")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_tqixq")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_m6748")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_b6eaa")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_rk3o6")
+text = "Download"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Main/AdvancedPanel/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Button" parent="Main/AdvancedPanel/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+theme_type_variation = &"ImportantButton"
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxEmpty_7efqp")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_tqixq")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_m6748")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_b6eaa")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_rk3o6")
+text = "Launching"
+
+[node name="Panel" type="Panel" parent="Main/AdvancedPanel"]
+layout_mode = 0
+offset_left = 146.0
+offset_right = 549.0
+offset_bottom = 290.0
+theme_type_variation = &"LightPanel"
+theme_override_styles/panel = SubResource("StyleBoxFlat_s5vb6")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/AdvancedPanel/Panel"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 6.0
+offset_right = 388.0
+offset_bottom = 280.0
+
+[node name="Label" type="Label" parent="Main/AdvancedPanel/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_eso48")
+theme_override_font_sizes/font_size = 24
+text = "General Options"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/AdvancedPanel/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Install Path"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="InstallPath" type="LineEdit" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Apply"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Main/AdvancedPanel/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Launch Options"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="LaunchOptions" type="LineEdit" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+text = "Apply"
+
 [node name="TextureRect" type="TextureRect" parent="."]
 visible = false
 modulate = Color(1, 1, 1, 0.537255)
@@ -335,3 +497,6 @@ expand_mode = 1
 [connection signal="pressed" from="Main/TopPanel/AdvancedButton" to="Main" method="_on_Button4_pressed"]
 [connection signal="pressed" from="Main/Install" to="Main" method="_on_install_pressed"]
 [connection signal="pressed" from="Main/Verify" to="Main" method="_on_verify_pressed"]
+[connection signal="pressed" from="Main/AdvancedPanel/VBoxContainer/HBoxContainer/Label" to="Main" method="_on_label_pressed"]
+[connection signal="pressed" from="Main/AdvancedPanel/VBoxContainer/HBoxContainer2/Label" to="Main" method="_on_label2_pressed"]
+[connection signal="pressed" from="Main/AdvancedPanel/VBoxContainer/HBoxContainer3/Label" to="Main" method="_on_label2_pressed"]

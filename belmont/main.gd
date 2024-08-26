@@ -13,6 +13,7 @@ var games: Dictionary
 var s : binding
 var current_screen : String # use an enum damnit!!!!
 var current_game = ""
+var advanced_open = false
 signal change_to(game)
 signal update_game(game)
 signal verify_game(game)
@@ -46,7 +47,15 @@ func _ready():
 	pass
 	
 func _on_Button4_pressed():
-	pass
+	if current_game == "adastral":
+		return
+	var t = get_tree().create_tween()
+	if not advanced_open:
+		t.tween_property($AdvancedPanel,"position",Vector2(221,60),0.5).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+		advanced_open = true
+	else:
+		t.tween_property($AdvancedPanel,"position",Vector2(770,60),0.5).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+		advanced_open = false
 
 func _on_progress_update(game,progress):
 	call_deferred("t_progress_update",game,progress)
@@ -68,7 +77,7 @@ func _on_error(error_detail):
 		
 	
 func _on_install_pressed():
-	if s.get_installed_version(current_game) == s.get_latest_version(current_game):
+	if s.get_installed_version(current_game) == s.get_latest_version(current_game) and s.get_latest_version(current_game) != "" :
 		print(s.launch_game(current_game,""))
 		return
 	games[current_game]["status"] = "installing"
@@ -276,6 +285,8 @@ func apply_theme(theme_name):
 	tween.tween_property($TopPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["dark"]), 0.2)
 	tween.tween_property($SidePanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["secondary"]), 0.2)
 	tween.tween_property($Install.get_theme_stylebox("normal"),"bg_color", Color(pallete["accent"]), 0.2)
+	tween.tween_property($AdvancedPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["accent"]), 0.2)
+	tween.tween_property($AdvancedPanel/Panel.get_theme_stylebox("panel"),"bg_color", Color(pallete["secondary"]), 0.2)
 	tween.tween_property($Install.get_theme_stylebox("hover"),"bg_color", Color(pallete["accent"]), 0.2)
 	tween.tween_property($Verify.get_theme_stylebox("normal"),"bg_color", Color(pallete["light"]), 0.2)
 	tween.tween_property($Verify.get_theme_stylebox("hover"),"bg_color", Color(pallete["light"]), 0.2)
@@ -294,6 +305,8 @@ func apply_theme(theme_name):
 	$TopPanel/AdastralLogo.texture = newstar
 	$Panel2/Background.texture = newbgtexture
 	set_stylebox_colour(base_theme.get_stylebox("panel","AccentPanel"),Color(pallete["main"]))
+	set_stylebox_colour(base_theme.get_stylebox("panel","AdvancedPanel"),Color(pallete["main"]))
+	set_stylebox_colour(base_theme.get_stylebox("panel","LightPanel"),Color(pallete["light"]))
 	set_stylebox_colour(base_theme.get_stylebox("panel","TopPanel"),Color(pallete["dark"]))
 	set_stylebox_colour(base_theme.get_stylebox("panel","SidePanel"),Color(pallete["secondary"]))
 	set_stylebox_colour(base_theme.get_stylebox("normal","Button"),Color(pallete["light"]))
@@ -329,3 +342,11 @@ func _process(delta):
 		if "progress" in games[current_game].keys():
 			if games[current_game]["progress"] != 0:
 				$ProgressBar.value = games[current_game]["progress"]
+
+
+func _on_label_pressed():
+	pass # Replace with function body.
+
+
+func _on_label2_pressed():
+	pass # Replace with function body.
