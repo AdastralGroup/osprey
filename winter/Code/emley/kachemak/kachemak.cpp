@@ -292,7 +292,7 @@ int Kachemak::Install_InPath(std::filesystem::path customPath) {
   // Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   if (err_c == 0) {
     A_printf("[Kachemak/InstallInPath] Extraction done! \n");
-    DoSymlink();
+    DoSymlink_InPath(customPath);
     m_szInstalledVersion = GetLatestVersion();
     WriteVersion();
     return 0;
