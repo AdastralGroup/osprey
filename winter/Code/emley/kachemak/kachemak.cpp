@@ -124,14 +124,15 @@ int Kachemak::DoSymlink() {
 #endif
 }
 
-int Kachemak::DoSymlink_InPath(std::filesystem::path customPath) {
+int Kachemak::CreateSymlink(std::filesystem::path customPath) {
 #ifdef _WIN32
   // Abandon all hope, ye who enter there, for I am pulling the ancient arts of Windows API.
   // So ancient, even if the IDE complains about the strings it actually works just fine.
 
-  for (const auto& item : TO_SYMLINK) {
+ 
     // First, get the path and check if it would even exist
-    const std::filesystem::path symlinkPath = m_szSourcemodPath / m_szFolderName / item[1];
+    const std::filesystem::path symlinkPath = m_szSourcemodPath / m_szFolderName;
+    std::cout << customPath << std::endl << symlinkPath << std::endl;
 
     // Then check if they even or not. If they don't exist in the path itself, then one can create them.
     if (!std::filesystem::exists(symlinkPath)) {
@@ -143,18 +144,17 @@ int Kachemak::DoSymlink_InPath(std::filesystem::path customPath) {
       if (errorCode == 0) {
         // Get the error code
         DWORD err = GetLastError();
-        std::cout << "[kachemak/Windows API] "
+        std::cout << "[kachemak/CreateSymlink/Windows API] "
                   << "Couldn't create a symbolic link to " << m_szFolderName.string() << "!"
                   << " Windows error message code: " << err << std::endl;
 
       } else {
         // If you are at this point, then congratulations, you have survived the curses of Windows API, get yourself a
         // cookie.
-        std::cout << "[kachemak]"
+        std::cout << "[kachemak/CreateSymlink/Windows API]"
                   << "Created a symlink to: " << m_szFolderName.string() << "!" << std::endl;
       }
     }
-  }
   return 0;
 #else
   return 0;  // leave this for now
@@ -238,6 +238,48 @@ int Kachemak::Update() {
   return 0;
 }
 
+int Kachemak::Update_InPath() {
+  A_printf("[Kachemak/Update_I] Updating %s... ", m_szFolderName.c_str());
+  if (m_szInstalledVersion == GetLatestVersion() || force_verify) {
+    return 3;
+  }
+  int symlinkRes = PrepareSymlink();
+  if (symlinkRes != 0) {
+    return 1;
+  }
+
+  std::optional<KachemakPatch> patch = GetPatch(m_szInstalledVersion);
+  if (!patch) return 3;
+
+  if (FreeSpaceCheck(patch.value().lTempRequired, FreeSpaceCheckCategory::Permanent) != 0) {
+    return 2;
+  }
+
+  std::optional<KachemakVersion> installedVersion = GetKMVersion(m_szInstalledVersion);
+  if (!installedVersion) return 4;
+
+  // full signature url
+  std::stringstream sigUrlFull_ss;
+  sigUrlFull_ss << m_szSourceUrl << installedVersion.value().szSignature;
+  // Data path for current install
+  std::filesystem::path dataDir_path = m_szSourcemodPath / m_szFolderName;
+  std::stringstream healUrl_ss;
+  healUrl_ss << m_szSourceUrl << installedVersion.value().szFileName;
+  int verifyRes = ButlerVerify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
+
+  std::stringstream patchUrlFull_ss;
+  patchUrlFull_ss << m_szSourceUrl << patch.value().szUrl;
+  std::filesystem::path stagingPath = m_szSourcemodPath / ("butler-staging-" + m_szFolderName.string());
+  A_printf("[Kachemak/Update] Patching %s from %s to %s, with staging dir at %s. ", m_szFolderName.c_str(),
+           installedVersion.value().szVersion.c_str(), GetLatestVersion().c_str(), stagingPath.c_str());
+  int patchRes = ButlerPatch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
+                             dataDir_path.string(), patch.value().lTempRequired);
+
+  DoSymlink();
+  m_szInstalledVersion = GetLatestVersion();
+  WriteVersion();
+  return 0;
+}
 int Kachemak::Install() {
   if (PrepareSymlink() != 0) {
     return 1;
@@ -292,7 +334,7 @@ int Kachemak::Install_InPath(std::filesystem::path customPath) {
   // Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   if (err_c == 0) {
     A_printf("[Kachemak/InstallInPath] Extraction done! \n");
-    DoSymlink_InPath(customPath);
+    DoSymlink();
     m_szInstalledVersion = GetLatestVersion();
     WriteVersion();
     return 0;

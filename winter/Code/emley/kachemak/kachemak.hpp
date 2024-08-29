@@ -44,8 +44,9 @@ class Kachemak : public Version {
   int FreeSpaceCheck_InPath(const uintmax_t size, const std::filesystem::path customPath);
   int PrepareSymlink();
   int DoSymlink();
-  int DoSymlink_InPath(std::filesystem::path customPath);
+  int CreateSymlink(std::filesystem::path customPath);
   int Update();
+  int Update_InPath();
   virtual int Install();
   virtual int Install_InPath(std::filesystem::path customPath);
   int Verify();

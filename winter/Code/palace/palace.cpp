@@ -145,17 +145,20 @@ int palace::update_game_with_path(const std::string& game_name, const std::strin
   const std::filesystem::path sanitizedPath =
       std::filesystem::u8path(customPath);  // windows-specific thing that may work on linux, need to try on that
 
-  // Then we practically do the same thing except inserting the sanitized path to the overloaded Install function.
+  // We assign in the symlink first before doing the update first, as we assume its already installed, just in a different path
   if (serverGames[game_name]->l1->GetInstalledVersion().empty()) {
-    serverGames[game_name]->l1->Install_InPath(sanitizedPath);
+    //serverGames[game_name]->l1->Install_InPath(sanitizedPath);
+    serverGames[game_name]->l1->CreateSymlink(sanitizedPath);
+    
   }
-  // else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
-  // serverGames[game_name]->l1->force_verify){
-  //   serverGames[game_name]->l1->Verify();
-  // }
-  // else {
-  //  serverGames[game_name]->l1->Update();
-  //}
+  
+  if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
+    serverGames[game_name]->l1->force_verify){
+    serverGames[game_name]->l1->Verify();
+   }
+   else {
+    serverGames[game_name]->l1->Update();
+  }
   return 0;
 }
 std::vector<std::string> palace::get_games() {
