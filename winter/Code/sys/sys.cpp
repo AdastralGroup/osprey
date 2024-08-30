@@ -87,6 +87,7 @@ std::filesystem::path sys::GetSteamPath() {
   RegGetValueA(HKEY_LOCAL_MACHINE, subKey, "InstallPath", RRF_RT_ANY, nullptr, &valueData, &valueLen);
   if (valueData[0] == 0) {
     // Registry key did not exist/had no value
+    A_error("Steam not detected!");
     return std::filesystem::path();
   }
 
@@ -101,6 +102,7 @@ std::filesystem::path sys::GetSteamPath() {
   if (std::filesystem::exists(path_flatpak)) {
     return std::filesystem::canonical(path_flatpak);
   }
+  A_error("Steam not detected!");
   return std::filesystem::path("");
 #endif
 }

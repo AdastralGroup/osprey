@@ -4,16 +4,26 @@
 #include "KeyValue.h"
 #include "adastral_defs.h"
 
-palace::palace() {
+palace::palace(std::string path) {
+  if(path == "") {
+    if(sys::GetSteamPath() == std::filesystem::path("")) {
+      throw std::runtime_error("Failed to obtain steam path! reinit palace with correct path manually.");
+    }
+    steamPath = sys::GetSteamPath();
+  }else {
+    steamPath = std::filesystem::path(path);
+  }
   A_printf("[Palace/Init] Fetching server data...");
   fetch_server_data();
   A_printf("[Palace/Init] Downloading assets... ");
   download_assets();
-  library_folders = sys::ParseVDFFile(sys::GetSteamPath() / "steamapps" / "libraryfolders.vdf");
+  library_folders = sys::ParseVDFFile(steamPath/ "steamapps" / "libraryfolders.vdf");
 #if __unix__
-  config_file = sys::ParseVDFFile(sys::GetSteamPath() / "config" / "config.vdf");
+  config_file = sys::ParseVDFFile(steamPath/ "config" / "config.vdf");
 #endif
 }
+
+
 
 palace::~palace() {
   for (const auto& it : serverGames) {
@@ -22,9 +32,17 @@ palace::~palace() {
   delete library_folders;
 }
 
+
 void palace::fetch_server_data() {
   std::string json = net().get_string_data_from_server(SB_URL);
-  southbankJson = nlohmann::json::parse(json);  // do error checking here
+  try
+  {
+    southbankJson = nlohmann::json::parse(json);  // do error checking here
+  }
+  catch (nlohmann::json::parse_error& ex)
+  {
+    A_error("Can't fetch southbank. Check your internet connection!");
+  }
 }
 
 void palace::download_assets() {
@@ -83,7 +101,6 @@ void palace::download_assets() {
 std::filesystem::path palace::get_asset(std::string hash) { return cachemap[hash]; }
 
 std::filesystem::path palace::find_sourcemod_path() {
-  std::filesystem::path steamPath = sys::GetSteamPath();
   if (steamPath != "") {
     A_printf("[Palace] Steam Path found!");
     sourcemodsPath = steamPath / "steamapps" / "sourcemods";
@@ -94,8 +111,6 @@ std::filesystem::path palace::find_sourcemod_path() {
       A_printf("[Palace] Sourcemod folder doesn't exist - creating...");
       std::filesystem::create_directories(sourcemodsPath);
     }
-  } else {
-    A_printf("[Palace] NO STEAM PATH?!");
   }
   return sourcemodsPath;
 }
@@ -234,7 +249,7 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
       A_error("%s proton version couldn't be found\n", proton_app_name);
       return 1;
     }
-    setenv("STEAM_COMPAT_DATA_PATH", (sys::GetSteamPath() / "steamapps" / "compatdata").string().c_str(), 1);
+    setenv("STEAM_COMPAT_DATA_PATH", (steamPath/ "steamapps" / "compatdata").string().c_str(), 1);
     setenv("STEAM_COMPAT_CLIENT_INSTALL_PATH", sys::GetSteamPath().string().c_str(), 1);
     std::filesystem::path proton_app_path = get_app_path(proton_map_to_depot.at(proton_app_name)); 
     sdk_app_binary.append("python3 \"" + proton_app_path.string() + "/\"proton waitforexitandrun \"" + (sdk_app_path / "hl2.exe\"").string());

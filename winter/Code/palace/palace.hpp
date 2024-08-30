@@ -13,7 +13,7 @@ struct GameMetadata{
 
 class palace {
 public:
-    palace();
+    palace(std::string path = "");
     ~palace();
     void fetch_server_data();
     void download_assets();
@@ -31,6 +31,7 @@ public:
     std::unordered_map<std::string,std::string> cachemap;
     std::filesystem::path get_asset(std::string hash);
     std::filesystem::path sourcemodsPath;
+    std::filesystem::path steamPath;
     std::filesystem::path find_sourcemod_path();
     KeyValueRoot* library_folders;
     KeyValueRoot* config_file;

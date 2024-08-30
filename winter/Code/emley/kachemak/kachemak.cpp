@@ -476,15 +476,15 @@ void Kachemak::FindInstalledVersion() {
     if (!data.fail()) {
       nlohmann::json filedata = nlohmann::json::parse(data);
       m_szInstalledVersion = filedata["version"];
-      A_printf("[Kachemak/InstalledVersion] version: %s",GetInstalledVersionTag().c_str());
+      A_printf("[Kachemak/InstalledVersion] %s version: %s",m_szFolderName.c_str(),GetInstalledVersionTag().c_str());
     }else{
-      A_printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected."
+      A_printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected.\n"
           "Assuming best case and setting force_version.",m_szFolderName.c_str());
       m_szInstalledVersion = GetLatestVersion();
       force_verify = true;
     }
   }else{
-    A_printf("[Kachemak/InstalledVersion] Game not installed. Booo.");
+    A_printf("[Kachemak/InstalledVersion] %s not installed.",m_szFolderName.c_str());
   }
 }
 
