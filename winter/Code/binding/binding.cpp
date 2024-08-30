@@ -70,7 +70,12 @@ void binding::_init_palace() {
     emit_signal("error", String(static_cast<ErrorMessage&>(ev).get_message().c_str()));
   });
   UtilityFunctions::print("[binding] Firing up palace!");
-  p = new palace;
+  try {
+    p = new palace;
+  }catch(std::runtime_error &e) {
+    A_error(e.what());
+    return;
+  }
   emit_signal("palace_started");
 }
 
