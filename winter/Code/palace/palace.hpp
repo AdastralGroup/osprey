@@ -8,6 +8,8 @@
 
 struct GameMetadata{
   std::string name;
+    bool requires_proton;
+    std::string base_sdk;
   Kachemak* l1;
 };
 
