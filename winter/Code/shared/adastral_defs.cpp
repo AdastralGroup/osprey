@@ -5,11 +5,11 @@ void A_init_error_system() {
 }
 void A_printf(const char *const format ,...){
 #ifndef GODOT
-  //#pragma warning ("GODOT DISABLED.")
   va_list argptr;
   va_start(argptr, format);
   vfprintf(stdout, format, argptr);
   va_end(argptr);
+  printf("\n"); // kinda dumb, but this makes parity with the godot ver. ideally it'd be the other way around, but there's no way to knock off the \n in godot's case.
 #else
   //#pragma warning ("GODOT ENABLED.")
   va_list argptr;

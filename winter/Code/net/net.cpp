@@ -62,7 +62,7 @@ std::string net::download_to_temp(std::string url, std::string name, bool progre
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
   if(progress) {
     if(event != nullptr) {
-      A_printf("[net] events should have been enabled... \n");
+      A_printf("[net] events should have been enabled...");
       curl_easy_setopt(curl, CURLOPT_XFERINFODATA, event);
     }
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);

@@ -6,7 +6,7 @@ int sys::ExecWithParam(const std::vector<std::string>& params) {
     param_str += i + " ";
   }
 
-  A_printf("%s\n", param_str.c_str());
+  A_printf("%s", param_str.c_str());
   return system(param_str.c_str());
 }
 
@@ -37,7 +37,7 @@ int sys::DeleteDirectoryContent(const std::filesystem::path& dir) {
 }
 
 int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
-  A_printf("[sys/Extract] Extracting %s to %s..\n", szInputFile.c_str(), szOutputFile.c_str());
+  A_printf("[sys/Extract] Extracting %s to %s..", szInputFile.c_str(), szOutputFile.c_str());
   int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
   return ret;
 }

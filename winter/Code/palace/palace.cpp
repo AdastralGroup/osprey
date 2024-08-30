@@ -5,9 +5,9 @@
 #include "adastral_defs.h"
 
 palace::palace() {
-  A_printf("[Palace/Init] Fetching server data...\n");
+  A_printf("[Palace/Init] Fetching server data...");
   fetch_server_data();
-  A_printf("[Palace/Init] Downloading assets... \n");
+  A_printf("[Palace/Init] Downloading assets... ");
   download_assets();
   library_folders = sys::ParseVDFFile(sys::GetSteamPath() / "steamapps" / "libraryfolders.vdf");
 #if __unix__
@@ -85,17 +85,17 @@ std::filesystem::path palace::get_asset(std::string hash) { return cachemap[hash
 std::filesystem::path palace::find_sourcemod_path() {
   std::filesystem::path steamPath = sys::GetSteamPath();
   if (steamPath != "") {
-    A_printf("[Palace] Steam Path found!\n");
+    A_printf("[Palace] Steam Path found!");
     sourcemodsPath = steamPath / "steamapps" / "sourcemods";
     if (std::filesystem::exists(sourcemodsPath)) {
-      A_printf("[Palace] Sourcemod folder exists\n");
+      A_printf("[Palace] Sourcemod folder exists");
       return sourcemodsPath;
     } else {
-      A_printf("[Palace] Sourcemod folder doesn't exist - creating...\n");
+      A_printf("[Palace] Sourcemod folder doesn't exist - creating...");
       std::filesystem::create_directories(sourcemodsPath);
     }
   } else {
-    A_printf("[Palace] NO STEAM PATH?!\n");
+    A_printf("[Palace] NO STEAM PATH?!");
   }
   return sourcemodsPath;
 }
