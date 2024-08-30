@@ -498,10 +498,7 @@ std::string Kachemak::GetInstalledVersionTag() {
 
 std::string Kachemak::GetLatestVersion() {
   std::string versionId;
-  for (auto& el : m_parsedVersion["versions"].items()) {
-    versionId = el.key();
-  };
-  return versionId;
+  return m_parsedVersion["latest"];
 }
 
 std::string Kachemak::GetLatestVersionTag() {
