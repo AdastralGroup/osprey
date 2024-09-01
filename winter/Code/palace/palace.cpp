@@ -169,7 +169,9 @@ int palace::verify_game(const std::string& gameName) {
 bool palace::is_app_installed(const std::string& app_id) {
   for(auto directory: library_folders.childs){
     auto apps = directory.second->childs["apps"];
-    if (apps->attribs.find(app_id) != apps->attribs.end()) return true;
+    if (apps->attribs.find(app_id) != apps->attribs.end()) {
+      return true;
+    };
   }
   return false;
 }
@@ -177,16 +179,14 @@ bool palace::is_app_installed(const std::string& app_id) {
 std::filesystem::path palace::get_app_path(const std::string& app_id) {
   for(auto directory: library_folders.childs){
     auto apps = directory.second->childs["apps"];
-    if (apps->attribs.find(app_id) != apps->attribs.end()) {
-      std::filesystem::path apps_path = std::filesystem::path(directory.second->attribs["path"]) / "steamapps";
+    if (apps->attribs.find(app_id) != apps->attribs.end()) { // if the app is found in this specific depot
+      std::filesystem::path apps_path = std::filesystem::path(directory.second->attribs["path"]) / "steamapps"; // where the app's installed ("libraryfolders" -> [incrementing id] -> path)
       std::string manifest_file = "appmanifest_" + app_id + ".acf";
       auto kv_parsed = sys::ParseVDFFile(apps_path / manifest_file);
-      std::string install_dir = kv_parsed.attribs["installdir"];
-      std::filesystem::path retval = apps_path / "common" / std::filesystem::path(install_dir);
-      return retval;
+      return apps_path / "common" / kv_parsed.attribs["installdir"];
     }
   }
-  return std::filesystem::path();
+  return std::filesystem::path(); // it's not there
 }
 
 #define SOURCE_SDK_2013_APP_ID "243750"
