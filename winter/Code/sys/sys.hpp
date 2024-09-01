@@ -1,5 +1,5 @@
 #pragma once
-#include <KeyValue.h>
+#include <include/vdf_parser.hpp>
 #include <adastral_defs.h>
 
 #include <filesystem>
@@ -22,6 +22,6 @@ class sys {
   static int ExecWithParam(const std::vector<std::string>& params);
   static int DeleteDirectoryContent(const std::filesystem::path& dir);
   static int ExtractZip(const std::string& szInputFile, const std::string& szOutputFile);
-  static KeyValueRoot* ParseVDFFile(std::filesystem::path file_path);
+  static tyti::vdf::object ParseVDFFile(std::filesystem::path file_path);
   static std::filesystem::path GetSteamPath();
 };

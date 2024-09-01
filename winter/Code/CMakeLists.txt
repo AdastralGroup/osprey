@@ -1,4 +1,4 @@
-FetchContent_Declare(keyvalues GIT_REPOSITORY https://github.com/ozxybox/SpeedyKeyV.git GIT_TAG master)
+FetchContent_Declare(keyvalues GIT_REPOSITORY https://github.com/TinyTinni/ValveFileVDF GIT_TAG master)
 FetchContent_MakeAvailable(keyvalues)
 include_directories(${keyvalues_SOURCE_DIR})
 

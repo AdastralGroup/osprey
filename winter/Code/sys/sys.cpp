@@ -42,18 +42,12 @@ int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputF
   return ret;
 }
 
-KeyValueRoot* sys::ParseVDFFile(std::filesystem::path file_path) {
+tyti::vdf::object sys::ParseVDFFile(std::filesystem::path file_path) {
   std::ifstream file(file_path);
-  KeyValueRoot* retval = new KeyValueRoot();
   if (!file.is_open()) {
-    return retval;
+    throw std::runtime_error("invalid file!");
   }
-
-  std::stringstream string_stream;
-  string_stream << file.rdbuf();
-  retval->Parse(string_stream.str().c_str());
-  retval->Solidify();
-  file.close();
+  tyti::vdf::object retval = tyti::vdf::read(file);
   return retval;
 }
 
