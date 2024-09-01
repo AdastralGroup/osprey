@@ -213,8 +213,7 @@ const std::map<std::string, std::string> proton_map_to_depot = {
 
 // returns non-zero if failed
 int palace::launch_game(const std::string& game_name, const std::string& arguments) {
-  std::string args = "-secure -steam -secure -steam -game " + std::string(steamPath / "steamapps" / "sourcemods" / game_name); // possibly add option to disable secure mode
-  A_printf("%s",args.c_str());
+  std::string args = "-secure -steam -secure -steam -game \"" + (steamPath / "steamapps" / "sourcemods" / game_name).string() + "\""; // possibly add option to disable secure mode
   std::string last_args = sys::GetLaunchArgsForRecentUser(steamPath,std::string(SOURCE_SDK_2013_APP_ID));
   sys::SetLaunchArgsForRecentUser(steamPath,std::string(SOURCE_SDK_2013_APP_ID),args);
 #ifdef WIN32

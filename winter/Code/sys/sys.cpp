@@ -77,9 +77,9 @@ std::string sys::GetLocalConfigPathForRecentUser(std::filesystem::path steam_pat
       id = user.first;
     }
   }
-  std::string id3 = std::to_string(std::stol(id) & 4294967295); // 2^32-1, we need to turn the id64 into the id3 bottom component so we saw off the top 32 bits
+  std::string id3 = std::to_string(std::stoll(id) & 4294967295); // 2^32-1, we need to turn the id64 into the id3 bottom component so we saw off the top 32 bits
   std::filesystem::path localconfig_path = steam_path / "userdata" / id3 / "config" / "localconfig.vdf";
-  return localconfig_path;
+  return localconfig_path.string();
 }
 
 
