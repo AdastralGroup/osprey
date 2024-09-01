@@ -39,7 +39,7 @@ int sys::DeleteDirectoryContent(const std::filesystem::path& dir) {
 
 int sys::SetLaunchArgsForRecentUser(std::filesystem::path steam_path, std::string appid, std::string args) {
   std::filesystem::path localconfig = GetLocalConfigPathForRecentUser(steam_path);
-  KeyValueRoot* localconfig_vdf = ParseVDFFile(steam_path);
+  auto localconfig_vdf = ParseVDFFile(localconfig);
   return 0;
 
 
@@ -51,20 +51,17 @@ std::string sys::GetLaunchArgsForRecentUser(std::filesystem::path steam_path, st
 
 std::string sys::GetLocalConfigPathForRecentUser(std::filesystem::path steam_path) {
   std::filesystem::path loginusers = steam_path / "config" / "loginusers.vdf";
-  KeyValueRoot* loginusers_vdf = ParseVDFFile(loginusers);
-  size_t amt_of_users = loginusers_vdf->ChildCount();
+  auto loginusers_vdf = ParseVDFFile(loginusers);
   std::string id;
-  for(int i = 0 ; i < amt_of_users; i++) {
-    KeyValue& user = loginusers_vdf->Get("users").At(i);
-    A_printf("[sys/GetLocalConfigPathForRecentUser] id %s mostrecent %s\n",user.Key().string,user.Get("MostRecent").Value().string);
-    if(strcmp(user.Get("MostRecent").Value().string,"1") == 0) {
-      id = user.Key().string;
+  for(auto& user : loginusers_vdf.childs) {
+    A_printf("[sys/GetLocalConfigPathForRecentUser] id %s mostrecent %s\n",user.first.c_str(),user.second->attribs["MostRecent"].c_str());
+    if(user.second->attribs["MostRecent"] == "1") {
+      id = user.first;
     }
   }
   std::string id3 = std::to_string(std::stol(id) & 4294967295); // 2^32-1, we need to turn the id64 into the id3 bottom component so we saw off the top 32 bits
   std::filesystem::path localconfig_path = steam_path / "userdata" / id3 / "config" / "localconfig.vdf";
   A_printf("[sys/GetLocalConfigPathForRecentUser] Local config path is %s",localconfig_path.c_str());
-  delete loginusers_vdf;
   return "beans";
 }
 
