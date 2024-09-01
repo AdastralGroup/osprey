@@ -213,17 +213,15 @@ const std::map<std::string, std::string> proton_map_to_depot = {
 
 // returns non-zero if failed
 int palace::launch_game(const std::string& game_name, const std::string& arguments) {
-  std::string last_args = sys::GetLaunchArgsForRecentUser(steamPath,"243750_3661242217");
-  sys::SetLaunchArgsForRecentUser(steamPath,std::string(SOURCE_SDK_2013_APP_ID),arguments);
+  std::string args = "-secure -steam -secure -steam -game " + std::string(steamPath / "steamapps" / "sourcemods" / game_name); // possibly add option to disable secure mode
+  A_printf("%s",args.c_str());
+  std::string last_args = sys::GetLaunchArgsForRecentUser(steamPath,std::string(SOURCE_SDK_2013_APP_ID));
+  sys::SetLaunchArgsForRecentUser(steamPath,std::string(SOURCE_SDK_2013_APP_ID),args);
 #ifdef WIN32
   std::string run_cmd = "start steam://run/" + std::string(SOURCE_SDK_2013_APP_ID);
+  system(run_cmd.c_str()); // iirc system is deprecated?
 #else
   std::string run_cmd = "xdg-open steam://run/" + std::string(SOURCE_SDK_2013_APP_ID);
-#endif
-#ifdef WIN32
-  system(run_cmd.c_str())
-  }
-#else
   popen(run_cmd.c_str(), "r") == NULL;
 #endif
   sys::SetLaunchArgsForRecentUser(steamPath,std::string(SOURCE_SDK_2013_APP_ID),last_args);
