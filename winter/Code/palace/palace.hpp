@@ -4,7 +4,10 @@
 #include <kachemak/kachemak.hpp>
 #include <nlohmann/json.hpp>
 #include <adastral_defs.h>
-#include <KeyValue.h>
+#include <cstdlib>
+#include <map>
+#include "vdf_parser.hpp"
+#include "adastral_defs.h"
 
 struct GameMetadata{
   std::string name;
@@ -15,7 +18,7 @@ struct GameMetadata{
 
 class palace {
 public:
-    palace();
+    palace(std::string path = "");
     ~palace();
     void fetch_server_data();
     void download_assets();
@@ -33,7 +36,8 @@ public:
     std::unordered_map<std::string,std::string> cachemap;
     std::filesystem::path get_asset(std::string hash);
     std::filesystem::path sourcemodsPath;
+    std::filesystem::path steamPath;
     std::filesystem::path find_sourcemod_path();
-    KeyValueRoot* library_folders;
-    KeyValueRoot* config_file;
+    tyti::vdf::object library_folders;
+    tyti::vdf::object config_file;
 };

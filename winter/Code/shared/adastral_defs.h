@@ -52,7 +52,7 @@ std::string string_format( const std::string& format, Args ... args )
 template<typename ... Args>
 void A_error(const std::string& format, Args ... args) {
   std::string error_detail = string_format(format,args ...);
-  A_printf("### ERROR: %s\n",error_detail.c_str());
+  A_printf("### ERROR: %s",error_detail.c_str());
 #ifndef GODOT
 #else
   ErrorMessage e = ErrorMessage(std::move(error_detail));

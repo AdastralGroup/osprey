@@ -6,7 +6,7 @@ int sys::ExecWithParam(const std::vector<std::string>& params) {
     param_str += i + " ";
   }
 
-  A_printf("%s\n", param_str.c_str());
+  A_printf("%s", param_str.c_str());
   return system(param_str.c_str());
 }
 
@@ -18,11 +18,6 @@ res:
   1: input path doesn't exist
   2: input path isn't a directory
 */
-
-
-
-
-
 int sys::DeleteDirectoryContent(const std::filesystem::path& dir) {
   if (!std::filesystem::exists(dir)) {
     return 1;
@@ -76,21 +71,17 @@ std::string sys::GetLocalConfigPathForRecentUser(std::filesystem::path steam_pat
 
 
 int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
-  A_printf("[sys/Extract] Extracting %s to %s..\n", szInputFile.c_str(), szOutputFile.c_str());
+  A_printf("[sys/Extract] Extracting %s to %s..", szInputFile.c_str(), szOutputFile.c_str());
   int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
   return ret;
 }
 
-KeyValueRoot* sys::ParseVDFFile(std::filesystem::path file_path) {
+tyti::vdf::object sys::ParseVDFFile(std::filesystem::path file_path) {
   std::ifstream file(file_path);
-  KeyValueRoot* retval = new KeyValueRoot();
   if (!file.is_open()) {
-    return retval;
+    throw std::runtime_error("invalid file!");
   }
-  std::stringstream string_stream;
-  string_stream << file.rdbuf();
-  retval->Parse(string_stream.str().c_str());
-  file.close();
+  tyti::vdf::object retval = tyti::vdf::read(file);
   return retval;
 }
 
@@ -124,20 +115,22 @@ std::filesystem::path sys::GetSteamPath() {
   RegGetValueA(HKEY_LOCAL_MACHINE, subKey, "InstallPath", RRF_RT_ANY, nullptr, &valueData, &valueLen);
   if (valueData[0] == 0) {
     // Registry key did not exist/had no value
+    A_error("Steam not detected!");
     return std::filesystem::path();
   }
 
   return std::filesystem::path(valueData);
 #else
   std::string home = getenv("HOME");
-  //auto path_normal = std::filesystem::path(home + "/.local/share/Steam/");
-  //if (std::filesystem::exists(path_normal)) {
-  //  return std::filesystem::canonical(path_normal);
-  //}
+  auto path_normal = std::filesystem::path(home + "/.local/share/Steam/");
+  if (std::filesystem::exists(path_normal)) {
+    return std::filesystem::canonical(path_normal);
+  }
   auto path_flatpak = std::filesystem::path(home +  "/.var/app/com.valvesoftware.Steam/data/Steam/");
   if (std::filesystem::exists(path_flatpak)) {
     return std::filesystem::canonical(path_flatpak);
   }
+  A_error("Steam not detected!");
   return std::filesystem::path("");
 #endif
 }
