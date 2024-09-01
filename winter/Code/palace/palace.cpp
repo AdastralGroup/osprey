@@ -1,8 +1,5 @@
 #include "palace.hpp"
-#include <cstdlib>
-#include <map>
-#include "include/vdf_parser.hpp"
-#include "adastral_defs.h"
+
 
 palace::palace() {
   A_printf("[Palace/Init] Fetching server data...\n");

@@ -1,6 +1,6 @@
 FetchContent_Declare(keyvalues GIT_REPOSITORY https://github.com/TinyTinni/ValveFileVDF GIT_TAG master)
 FetchContent_MakeAvailable(keyvalues)
-include_directories(${keyvalues_SOURCE_DIR})
+include_directories(${keyvalues_SOURCE_DIR}/include)
 
 add_subdirectory(shared)
 add_subdirectory(sys)

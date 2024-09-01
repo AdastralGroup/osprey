@@ -4,7 +4,10 @@
 #include <kachemak/kachemak.hpp>
 #include <nlohmann/json.hpp>
 #include <adastral_defs.h>
-#include <include/vdf_parser.hpp>
+#include <cstdlib>
+#include <map>
+#include "vdf_parser.hpp"
+#include "adastral_defs.h"
 
 struct GameMetadata{
   std::string name;
