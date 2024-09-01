@@ -22,7 +22,7 @@ palace::~palace() {
   delete library_folders;
 }
 
-void palace::fetch_server_data() {
+void palace::fetch_server_data() { // function is separate so we can grab the server data again if needs be
   std::string json = net().get_string_data_from_server(SB_URL);
   southbankJson = nlohmann::json::parse(json);  // do error checking here
 }
@@ -187,6 +187,7 @@ bool palace::is_app_installed(const std::string& app_id) {
 std::filesystem::path palace::get_app_path(const std::string& app_id) {
   std::filesystem::path apps_path = sys::GetSteamPath() / "steamapps";
   std::string manifest_file = "appmanifest_" + app_id + ".acf";
+  if(!std::filesystem::exists(apps_path / manifest_file)){return std::filesystem::path("");}
   KeyValueRoot* kv_parsed = sys::ParseVDFFile(apps_path / manifest_file);
   kvString_t install_dir = kv_parsed->Children()->Get("installdir").Value();
   std::filesystem::path retval = apps_path / "common" / std::filesystem::path(install_dir.string);
@@ -204,51 +205,6 @@ const std::map<std::string, std::string> proton_map_to_depot = {
 
 // returns non-zero if failed
 int palace::launch_game(const std::string& game_name, const std::string& arguments) {
-  std::filesystem::path sdk_app_path = get_app_path(SOURCE_SDK_2013_APP_ID);
-  if (!std::filesystem::exists(sdk_app_path)) {
-    A_error("[Palace/launch_game] sdk path doesn't exist...");
-    return 1;
-  }
-#ifdef WIN32
-  std::string sdk_app_binary = (sdk_app_path / "hl2.exe").string();
-#else
-  KeyValue& source_sdk_compat_tool = config_file->Children()->Children()->Children()->Children()->Get("CompatToolMapping").Get(SOURCE_SDK_2013_APP_ID); 
-  /* "InstallConfigStore"->"Software"->"Valve"->"Steam"->CompatToolMapping */
-  std::string sdk_app_binary;
-  if (source_sdk_compat_tool.IsValid()) {
-    const char* proton_app_name = source_sdk_compat_tool.Get("name").Value().string;
-    if (!proton_map_to_depot.contains(proton_app_name)) {
-      A_error("%s proton version couldn't be found\n", proton_app_name);
-      return 1;
-    }
-    //return 1; // proton doesn't work for now.
-    setenv("STEAM_COMPAT_DATA_PATH", (sys::GetSteamPath() / "steamapps" / "compatdata" / proton_map_to_depot.at(proton_app_name)).string().c_str(), 1);
-    setenv("STEAM_COMPAT_CLIENT_INSTALL_PATH", sys::GetSteamPath().string().c_str(), 1);
-    std::filesystem::path proton_app_path = get_app_path(proton_map_to_depot.at(proton_app_name)); 
-    sdk_app_binary.append("python3  \"" + proton_app_path.string() + "/proton\" waitforexitandrun \"" + (sdk_app_path / "hl2.exe\"").string());
-  } else {
-    sdk_app_binary.append("\"" + (sdk_app_path / "hl2.sh").string() + "\"");
-  }
-#endif
-  char* command_line = new char[1024];  // yeah i don't think anyone needs more
-  snprintf(command_line, 1024, "%s -game sourcetest -steam -game \"%s\" -steam -secure %s", sdk_app_binary.c_str(),
-           (sourcemodsPath / game_name).string().c_str(), arguments.c_str());
-#ifdef WIN32
-  STARTUPINFO dummy_si = {0};
-  dummy_si.cb = sizeof(dummy_si);
-  PROCESS_INFORMATION dummy_pi = {0};
-
-  if (CreateProcessA(sdk_app_binary.c_str(), command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL,
-                     (LPSTR)sourcemodsPath.string().c_str(), &dummy_si, &dummy_pi) == 0) {
-
-    A_error("[Palace/launch_game] win32: CreateProcessA failed!");
-    return 1;
-  }
-#else
-  setenv("SteamEnv", "1", 1);
-  A_printf(command_line);
-  if (popen(command_line, "r") == NULL) return 1;
-#endif
-
-  return 0;
+  sys::SetLaunchArgsForRecentUser(sys::GetSteamPath(),"","");
+  return 1;
 }
