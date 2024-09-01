@@ -1,23 +1,25 @@
 #include "headless.h"
 int main() {
   printf(WELCOME_TEXT);
-  auto p = new palace;  // does sanity checks
   A_init_error_system();
   A_error_system->RegisterListener(EventType::kOnError, [](Event& ev) {
     printf(static_cast<ErrorMessage&>(ev).get_message().c_str());
   });
-  p->find_sourcemod_path();
-  if (p->sourcemodsPath.empty()) {
-    printf("We couldn't find your sourcemod folder. Please input an alternate sourcemods path.\n");
-  try_again:
-    std::string path;
+  palace* p;
+  try {
+    p = new palace;  // does sanity checks
+  }catch(std::runtime_error &e){
+    printf("We couldn't find your steam folder. Please input an alternate sourcemods path.\n");
+    try_again:
+      std::string path;
     getline(std::cin, path);
     if (!std::filesystem::exists(path)) {
       printf("That's not a valid path. Probably. Try again. Note the folder needs to exist.\n");
       goto try_again;
     }
-    p->sourcemodsPath = std::filesystem::path(path);
+    p = new palace(path);
   }
+  p->find_sourcemod_path();
   int code = p->init_games();
   switch (code) {
     case 0:
@@ -35,8 +37,8 @@ int main() {
     std::cout << "[headless] "
               << "Game Available: " << i.second->name << " (" << i.first << ")" << std::endl;
   }
-  printf("[headless] Updating open_fortress.\n");
-  p->launch_game("open_fortress", "");  // you should check the force_verify to see if verification alone is needed.
+  //printf("[headless] Updating open_fortress.\n");
+  //p->launch_game("open_fortress", "");  // you should check the force_verify to see if verification alone is needed.
   delete(p);
   printf("[headless] Everything done.\n");
   return 0;

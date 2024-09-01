@@ -89,6 +89,6 @@ done:
   return 0;
 } catch (std::exception &e) {
   A_error(e.what());
-  A_printf("[torrent] Error: %s\n",e.what());
+  A_printf("[torrent] Error: %s",e.what());
   return 1;
 }
