@@ -250,7 +250,7 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
       return 1;
     }
     setenv("STEAM_COMPAT_DATA_PATH", (steamPath/ "steamapps" / "compatdata").string().c_str(), 1);
-    setenv("STEAM_COMPAT_CLIENT_INSTALL_PATH", sys::GetSteamPath().string().c_str(), 1);
+    setenv("STEAM_COMPAT_CLIENT_INSTALL_PATH", steamPath.c_str(), 1);
     std::filesystem::path proton_app_path = get_app_path(proton_map_to_depot.at(proton_app_name)); 
     sdk_app_binary.append("python3 \"" + proton_app_path.string() + "/\"proton waitforexitandrun \"" + (sdk_app_path / "hl2.exe\"").string());
   } else {

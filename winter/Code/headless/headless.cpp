@@ -20,9 +20,6 @@ int main() {
     p = new palace(path);
   }
   p->find_sourcemod_path();
-  if (p->sourcemodsPath.empty()) {
-
-  }
   int code = p->init_games();
   switch (code) {
     case 0:
