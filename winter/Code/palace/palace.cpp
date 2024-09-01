@@ -1,8 +1,5 @@
 #include "palace.hpp"
-#include <cstdlib>
-#include <map>
-#include "KeyValue.h"
-#include "adastral_defs.h"
+
 
 palace::palace(std::string path) {
   if(path == "") {
@@ -29,7 +26,6 @@ palace::~palace() {
   for (const auto& it : serverGames) {
     delete it.second;
   }
-  delete library_folders;
 }
 
 
@@ -186,40 +182,26 @@ int palace::verify_game(const std::string& gameName) {
 }
 
 bool palace::is_app_installed(const std::string& app_id) {
-  KeyValue* directory = library_folders->Children()->Children();
-  while (directory && directory->IsValid()) {
-    KeyValue& apps = directory->Get("apps");
-    KeyValue& app = apps.Get(app_id.c_str());
-
-    if (app.IsValid()) return true;
-
-    directory = directory->Next();
+  for(auto directory: library_folders.childs){
+    auto apps = directory.second->childs["apps"];
+    if (apps->attribs.find(app_id) != apps->attribs.end()) {
+      return true;
+    };
   }
-
   return false;
 }
 
 std::filesystem::path palace::get_app_path(const std::string& app_id) {
-  KeyValue* directory = library_folders->Children()->Children();
-
-  while (directory && directory->IsValid()) {
-    KeyValue& apps = directory->Get("apps");
-    KeyValue& app = apps.Get(app_id.c_str());
-
-    if (app.IsValid()) {
-      std::filesystem::path apps_path = std::filesystem::path(directory->Get("path").Value().string) / "steamapps";
+  for(auto directory: library_folders.childs){
+    auto apps = directory.second->childs["apps"];
+    if (apps->attribs.find(app_id) != apps->attribs.end()) { // if the app is found in this specific depot
+      std::filesystem::path apps_path = std::filesystem::path(directory.second->attribs["path"]) / "steamapps"; // where the app's installed ("libraryfolders" -> [incrementing id] -> path)
       std::string manifest_file = "appmanifest_" + app_id + ".acf";
-      KeyValueRoot* kv_parsed = sys::ParseVDFFile(apps_path / manifest_file);
-      kvString_t install_dir = kv_parsed->Children()->Get("installdir").Value();
-      std::filesystem::path retval = apps_path / "common" / std::filesystem::path(install_dir.string);
-      delete kv_parsed;
-      return retval;
+      auto kv_parsed = sys::ParseVDFFile(apps_path / manifest_file);
+      return apps_path / "common" / kv_parsed.attribs["installdir"];
     }
-
-    directory = directory->Next();
   }
-
-  return std::filesystem::path();
+  return std::filesystem::path(); // it's not there
 }
 
 #define SOURCE_SDK_2013_APP_ID "243750"
@@ -239,12 +221,13 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
 #ifdef WIN32
   std::string sdk_app_binary = (sdk_app_path / "hl2.exe").string();
 #else
-  KeyValue& source_sdk_compat_tool = config_file->Children()->Children()->Children()->Children()->Get("CompatToolMapping").Get(SOURCE_SDK_2013_APP_ID); 
+
+  auto source_sdk_compat_tool = config_file.childs["Software"]->childs["Valve"]->childs["Steam"]->childs["CompatToolMapping"]->childs[SOURCE_SDK_2013_APP_ID];
   /* "InstallConfigStore"->"Software"->"Valve"->"Steam"->CompatToolMapping */
   std::string sdk_app_binary;
-  if (source_sdk_compat_tool.IsValid()) {
+  if (source_sdk_compat_tool) {
     return 1; // proton doesn't work for now.
-    const char* proton_app_name = source_sdk_compat_tool.Get("name").Value().string;
+    const char* proton_app_name = source_sdk_compat_tool->attribs["name"].c_str();
     if (!proton_map_to_depot.contains(proton_app_name)) {
       A_error("%s proton version couldn't be found\n", proton_app_name);
       return 1;

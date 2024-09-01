@@ -4,7 +4,10 @@
 #include <kachemak/kachemak.hpp>
 #include <nlohmann/json.hpp>
 #include <adastral_defs.h>
-#include <KeyValue.h>
+#include <cstdlib>
+#include <map>
+#include "vdf_parser.hpp"
+#include "adastral_defs.h"
 
 struct GameMetadata{
   std::string name;
@@ -33,6 +36,6 @@ public:
     std::filesystem::path sourcemodsPath;
     std::filesystem::path steamPath;
     std::filesystem::path find_sourcemod_path();
-    KeyValueRoot* library_folders;
-    KeyValueRoot* config_file;
+    tyti::vdf::object library_folders;
+    tyti::vdf::object config_file;
 };
