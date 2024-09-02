@@ -56,7 +56,7 @@ void A_error(const std::string& format, Args ... args) {
 #ifndef GODOT
 #else
   ErrorMessage e = ErrorMessage(std::move(error_detail));
-  A_error_system->TriggerEvent(e);
+  A_error_system->trigger_event(e);
 #endif
 }
 void A_init_error_system();
