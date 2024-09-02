@@ -1,8 +1,10 @@
 #include "sys.hpp"
 
-int sys::ExecWithParam(const std::vector<std::string>& params) {
+int sys::ExecWithParam(const std::vector<std::string>& params)
+{
   std::string param_str;
-  for (const auto& i : params) {
+  for(const auto& i : params)
+  {
     param_str += i + " ";
   }
 
@@ -18,33 +20,43 @@ res:
   1: input path doesn't exist
   2: input path isn't a directory
 */
-int sys::DeleteDirectoryContent(const std::filesystem::path& dir) {
-  if (!std::filesystem::exists(dir)) {
+int sys::DeleteDirectoryContent(const std::filesystem::path& dir)
+{
+  if(!std::filesystem::exists(dir))
+  {
     return 1;
   }
-  if (!std::filesystem::is_directory(dir)) {
+  if(!std::filesystem::is_directory(dir))
+  {
     return 2;
   }
-  for (const auto& entry : std::filesystem::directory_iterator(dir)) {
-    if (std::filesystem::is_directory(entry)) {
+  for(const auto& entry : std::filesystem::directory_iterator(dir))
+  {
+    if(std::filesystem::is_directory(entry))
+    {
       DeleteDirectoryContent(entry);
       std::filesystem::remove(entry);
-    } else {
+    }
+    else
+    {
       std::filesystem::remove(entry);
     }
   }
   return 0;
 }
 
-int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile) {
+int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile)
+{
   A_printf("[sys/Extract] Extracting %s to %s..", szInputFile.c_str(), szOutputFile.c_str());
   int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
   return ret;
 }
 
-tyti::vdf::object sys::ParseVDFFile(std::filesystem::path file_path) {
+tyti::vdf::object sys::ParseVDFFile(std::filesystem::path file_path)
+{
   std::ifstream file(file_path);
-  if (!file.is_open()) {
+  if(!file.is_open())
+  {
     throw std::runtime_error("invalid file!");
   }
   tyti::vdf::object retval = tyti::vdf::read(file);
@@ -52,7 +64,8 @@ tyti::vdf::object sys::ParseVDFFile(std::filesystem::path file_path) {
 }
 
 #if _WIN32
-inline bool Is64BitWindows() {
+inline bool Is64BitWindows()
+{
 #if _WIN64
   return true;
 #else
@@ -60,8 +73,10 @@ inline bool Is64BitWindows() {
   USHORT NativeMachine;
   BOOL IsWow64 = IsWow64Process2(GetCurrentProcess(), &ProcessMachine, &NativeMachine);
 
-  if (IsWow64) {
-    if (NativeMachine == IMAGE_FILE_MACHINE_AMD64) return true;
+  if(IsWow64)
+  {
+    if(NativeMachine == IMAGE_FILE_MACHINE_AMD64)
+      return true;
   }
 
   return false;
@@ -69,7 +84,8 @@ inline bool Is64BitWindows() {
 }
 #endif
 
-std::filesystem::path sys::GetSteamPath() {
+std::filesystem::path sys::GetSteamPath()
+{
 #if _WIN32
   char valueData[MAX_PATH];
   DWORD valueLen = MAX_PATH;
@@ -79,7 +95,8 @@ std::filesystem::path sys::GetSteamPath() {
 
   // Get steam install dir from registry
   RegGetValueA(HKEY_LOCAL_MACHINE, subKey, "InstallPath", RRF_RT_ANY, nullptr, &valueData, &valueLen);
-  if (valueData[0] == 0) {
+  if(valueData[0] == 0)
+  {
     // Registry key did not exist/had no value
     A_error("Steam not detected!");
     return std::filesystem::path();
@@ -89,11 +106,13 @@ std::filesystem::path sys::GetSteamPath() {
 #else
   std::string home = getenv("HOME");
   auto path_normal = std::filesystem::path(home + "/.local/share/Steam/");
-  if (std::filesystem::exists(path_normal)) {
+  if(std::filesystem::exists(path_normal))
+  {
     return std::filesystem::canonical(path_normal);
   }
-  auto path_flatpak = std::filesystem::path(home +  "/.var/app/com.valvesoftware.Steam/data/Steam/");
-  if (std::filesystem::exists(path_flatpak)) {
+  auto path_flatpak = std::filesystem::path(home + "/.var/app/com.valvesoftware.Steam/data/Steam/");
+  if(std::filesystem::exists(path_flatpak))
+  {
     return std::filesystem::canonical(path_flatpak);
   }
   A_error("Steam not detected!");

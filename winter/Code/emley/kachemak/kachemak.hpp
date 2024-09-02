@@ -3,7 +3,6 @@
 #include <array>
 #include <cstdio>
 #include <cstdlib>
-#include <version/version.hpp>
 #include <events/error.hpp>
 #include <filesystem>
 #include <iostream>
@@ -14,8 +13,10 @@
 #include <sys.hpp>
 #include <system_error>
 #include <torrent.hpp>
+#include <version/version.hpp>
 
-struct KachemakVersion {
+struct KachemakVersion
+{
   std::string szFileName;
   std::string szDownloadUrl;
   std::size_t lDownloadSize;
@@ -24,18 +25,24 @@ struct KachemakVersion {
   std::string szSignature;
 };
 
-struct KachemakPatch {
+struct KachemakPatch
+{
   std::string szUrl;
   std::string szFilename;
   std::size_t lTempRequired;
 };
 
-enum class FreeSpaceCheckCategory { Temporary, Permanent };
+enum class FreeSpaceCheckCategory
+{
+  Temporary,
+  Permanent
+};
 
-class Kachemak : public Version {
+class Kachemak : public Version
+{
  public:
   Kachemak(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
-           const std::string& szSourceUrl,const std::filesystem::path& ButlerPath);
+           const std::string& szSourceUrl, const std::filesystem::path& ButlerPath);
   std::string GetInstalledVersionTag();
   std::string GetLatestVersion();
   std::string GetLatestVersionTag();
@@ -69,7 +76,7 @@ class Kachemak : public Version {
   std::filesystem::path m_szButlerLocation;
 
   inline static const char* TO_SYMLINK[][2] = {
-      {"bin/server.so", "bin/server_srv.so"},
+    { "bin/server.so", "bin/server_srv.so" },
   };
   void WriteVersion();
 };

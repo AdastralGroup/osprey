@@ -1,63 +1,70 @@
 #include "palace.hpp"
 
-
-palace::palace(std::string path) {
-  if(path == "") {
-    if(sys::GetSteamPath() == std::filesystem::path("")) {
+palace::palace(std::string path)
+{
+  if(path == "")
+  {
+    if(sys::GetSteamPath() == std::filesystem::path(""))
+    {
       throw std::runtime_error("Failed to obtain steam path! reinit palace with correct path manually.");
     }
     steamPath = sys::GetSteamPath();
-  }else {
+  }
+  else
+  {
     steamPath = std::filesystem::path(path);
   }
   A_printf("[Palace/Init] Fetching server data...");
   fetch_server_data();
   A_printf("[Palace/Init] Downloading assets... ");
   download_assets();
-  library_folders = sys::ParseVDFFile(steamPath/ "steamapps" / "libraryfolders.vdf");
+  library_folders = sys::ParseVDFFile(steamPath / "steamapps" / "libraryfolders.vdf");
 #if __unix__
-  config_file = sys::ParseVDFFile(steamPath/ "config" / "config.vdf");
+  config_file = sys::ParseVDFFile(steamPath / "config" / "config.vdf");
 #endif
 }
 
-
-
-palace::~palace() {
-  for (const auto& it : serverGames) {
+palace::~palace()
+{
+  for(const auto& it : serverGames)
+  {
     delete it.second;
   }
 }
 
-
-void palace::fetch_server_data() {
+void palace::fetch_server_data()
+{
   std::string json = net().get_string_data_from_server(SB_URL);
   try
   {
     southbankJson = nlohmann::json::parse(json);  // do error checking here
   }
-  catch (nlohmann::json::parse_error& ex)
+  catch(nlohmann::json::parse_error& ex)
   {
     A_error("Can't fetch southbank. Check your internet connection!");
   }
 }
 
-void palace::download_assets() {
+void palace::download_assets()
+{
 #ifdef _WIN32
   std::filesystem::path appdata_path = std::filesystem::path(getenv("APPDATA")) / "adastral";
 #else
   std::filesystem::path appdata_path = std::filesystem::path(getenv("HOME")) / ".local" / "share" / "adastral";
 #endif
-  if (!std::filesystem::exists(appdata_path)) {
+  if(!std::filesystem::exists(appdata_path))
+  {
     std::filesystem::create_directory(appdata_path);
   }
-  std::unordered_map<std::string, std::string> initmap = {{BUTLER, std::string(BUTLER) + ".sha256"}};
-
-  for (auto& item : initmap) {
+  std::unordered_map<std::string, std::string> initmap = { { BUTLER, std::string(BUTLER) + ".sha256" } };
+  for(auto& item : initmap)
+  {
     std::string local_file_path = (appdata_path / item.first).string();
     std::string local_hash = A_SHA256(local_file_path);
     std::string server_hash = net().get_string_data_from_server(std::string(ROOT_URL) + item.second);
     cachemap[item.first] = local_file_path;  // very naughty
-    if (strncmp(local_hash.c_str(), server_hash.c_str(), 64) == NULL) continue;
+    if(strncmp(local_hash.c_str(), server_hash.c_str(), 64) == NULL)
+      continue;
     net().download_to_temp(std::string(ROOT_URL) + item.first, local_file_path);
     A_printf("%s | %s", item.first.c_str(), local_file_path.c_str());
 #if _DEBUG
@@ -66,17 +73,24 @@ void palace::download_assets() {
   }
 #ifndef GODOT
 #else
-  for (const auto& game : southbankJson["games"].items()) {
-    if(game.key().find("$") != std::string::npos){continue;}
+  for(const auto& game : southbankJson["games"].items())
+  {
+    if(game.key().find("$") != std::string::npos)
+    {
+      continue;
+    }
     std::filesystem::path game_asset_dir = appdata_path / game.key();
-    if (!std::filesystem::exists(game_asset_dir)) {
+    if(!std::filesystem::exists(game_asset_dir))
+    {
       std::filesystem::create_directory(game_asset_dir);
     }
-    for (const auto& belmont_item : game.value()["belmont"].items()) {
+    for(const auto& belmont_item : game.value()["belmont"].items())
+    {
       bool is_asset =
           belmont_item.value().is_array();  // Southbank holds colors & assets in the same object, by looking if it is
                                             // an array we can tell if it has an sha256 value or not
-      if (!is_asset) continue;
+      if(!is_asset)
+        continue;
 
       std::string file_url = belmont_item.value()[0].get<std::string>();
       std::string file_extension = file_url.substr(file_url.find_last_of("."));
@@ -84,7 +98,8 @@ void palace::download_assets() {
       std::filesystem::path local_file_path = game_asset_dir / (belmont_item.key() + file_extension);
       std::string local_file_checksum = A_SHA256(local_file_path.string());
       cachemap[server_file_checksum] = local_file_path.string();
-      if (strncmp(local_file_checksum.c_str(), server_file_checksum.c_str(), 64) == NULL) continue;
+      if(strncmp(local_file_checksum.c_str(), server_file_checksum.c_str(), 64) == NULL)
+        continue;
       net().download_to_temp(file_url, local_file_path.string());
 #if _DEBUG
       printf("Downloading game asset: %s\n", file_url.c_str());
@@ -96,14 +111,19 @@ void palace::download_assets() {
 
 std::filesystem::path palace::get_asset(std::string hash) { return cachemap[hash]; }
 
-std::filesystem::path palace::find_sourcemod_path() {
-  if (steamPath != "") {
+std::filesystem::path palace::find_sourcemod_path()
+{
+  if(steamPath != "")
+  {
     A_printf("[Palace] Steam Path found!");
     sourcemodsPath = steamPath / "steamapps" / "sourcemods";
-    if (std::filesystem::exists(sourcemodsPath)) {
+    if(std::filesystem::exists(sourcemodsPath))
+    {
       A_printf("[Palace] Sourcemod folder exists");
       return sourcemodsPath;
-    } else {
+    }
+    else
+    {
       A_printf("[Palace] Sourcemod folder doesn't exist - creating...");
       std::filesystem::create_directories(sourcemodsPath);
     }
@@ -111,45 +131,56 @@ std::filesystem::path palace::find_sourcemod_path() {
   return sourcemodsPath;
 }
 
-int palace::init_games() {
+int palace::init_games()
+{
   A_printf("[Palace/InitGames] Initialising games...");
-  if (!std::filesystem::exists(std::filesystem::canonical(sourcemodsPath))) {
+  if(!std::filesystem::exists(std::filesystem::canonical(sourcemodsPath)))
+  {
     return 2;
   }
-  for (const auto& it : southbankJson["games"].items()) {
+  for(const auto& it : southbankJson["games"].items())
+  {
     std::string version;
     std::string id = it.key();
-    if(id.find("$") != std::string::npos){continue;}
+    if(id.find("$") != std::string::npos)
+    {
+      continue;
+    }
     serverGames[id] = new GameMetadata;
     serverGames[id]->name = it.value()["name"];
     std::string full_url = southbankJson["dl_url"];
     full_url += id;
     full_url += '/';  // this is dumb, make it do this inside kachemak....
     auto* game = new Kachemak(sourcemodsPath, it.key(), full_url,
-                              get_asset(BUTLER));  // getting the json is versioning impl specific so we let it get it
+                              get_asset(BUTLER));
+    // getting the json is versioning impl specific so we let it get it
     // i'm aware i'm breaking one of the rules, but it makes more sense
     serverGames[id]->l1 = game;
   }
   return 0;
 }
 
-int palace::update_game(const std::string& game_name) {
+int palace::update_game(const std::string& game_name)
+{
   A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
-  if (serverGames[game_name]->l1->GetInstalledVersion().empty()) {
+  if(serverGames[game_name]->l1->GetInstalledVersion().empty())
+  {
     serverGames[game_name]->l1->Install();
   }
   // else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
   // serverGames[game_name]->l1->force_verify){
   //   serverGames[game_name]->l1->Verify();
   // }
-  else {
+  else
+  {
     serverGames[game_name]->l1->Update();
   }
   return 0;
 }
 
 // creating the same function to accept in custom path names.
-int palace::update_game_with_path(const std::string& game_name, const std::string customPath) {
+int palace::update_game_with_path(const std::string& game_name, const std::string customPath)
+{
   A_printf("[Palace/UpdateGameWithPath] Updating %s....", game_name.c_str());
 
   // First, we sanitize the path and try to convert it to std::filesystem::path variable.
@@ -157,7 +188,8 @@ int palace::update_game_with_path(const std::string& game_name, const std::strin
       std::filesystem::u8path(customPath);  // windows-specific thing that may work on linux, need to try on that
 
   // Then we practically do the same thing except inserting the sanitized path to the overloaded Install function.
-  if (serverGames[game_name]->l1->GetInstalledVersion().empty()) {
+  if(serverGames[game_name]->l1->GetInstalledVersion().empty())
+  {
     serverGames[game_name]->l1->Install_InPath(sanitizedPath);
   }
   // else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
@@ -169,52 +201,64 @@ int palace::update_game_with_path(const std::string& game_name, const std::strin
   //}
   return 0;
 }
-std::vector<std::string> palace::get_games() {
+std::vector<std::string> palace::get_games()
+{
   auto vec = std::vector<std::string>();
-  for (const auto& it : serverGames) {
+  for(const auto& it : serverGames)
+  {
     vec.push_back(it.first);
   }
   return vec;
 }
-int palace::verify_game(const std::string& gameName) {
+int palace::verify_game(const std::string& gameName)
+{
   serverGames[gameName]->l1->Verify();
   return 0;
 }
 
-bool palace::is_app_installed(const std::string& app_id) {
-  for(auto directory: library_folders.childs){
+bool palace::is_app_installed(const std::string& app_id)
+{
+  for(auto directory : library_folders.childs)
+  {
     auto apps = directory.second->childs["apps"];
-    if (apps->attribs.find(app_id) != apps->attribs.end()) {
+    if(apps->attribs.find(app_id) != apps->attribs.end())
+    {
       return true;
     };
   }
   return false;
 }
 
-std::filesystem::path palace::get_app_path(const std::string& app_id) {
-  for(auto directory: library_folders.childs){
+std::filesystem::path palace::get_app_path(const std::string& app_id)
+{
+  for(auto directory : library_folders.childs)
+  {
     auto apps = directory.second->childs["apps"];
-    if (apps->attribs.find(app_id) != apps->attribs.end()) { // if the app is found in this specific depot
-      std::filesystem::path apps_path = std::filesystem::path(directory.second->attribs["path"]) / "steamapps"; // where the app's installed ("libraryfolders" -> [incrementing id] -> path)
+    if(apps->attribs.find(app_id) != apps->attribs.end())
+    {  // if the app is found in this specific depot
+      std::filesystem::path apps_path =
+          std::filesystem::path(directory.second->attribs["path"]) /
+          "steamapps";  // where the app's installed ("libraryfolders" -> [incrementing id] -> path)
       std::string manifest_file = "appmanifest_" + app_id + ".acf";
       auto kv_parsed = sys::ParseVDFFile(apps_path / manifest_file);
       return apps_path / "common" / kv_parsed.attribs["installdir"];
     }
   }
-  return std::filesystem::path(); // it's not there
+  return std::filesystem::path();  // it's not there
 }
 
 #define SOURCE_SDK_2013_APP_ID "243750"
 
-// no idea if there is somewhere an map like that in my steam directory and i don't wanna read every app manifest / call steam api over this silly thing 
-const std::map<std::string, std::string> proton_map_to_depot = {
-  {"proton_experimental", "1493710"}
-};
+// no idea if there is somewhere an map like that in my steam directory and i don't wanna read every app manifest / call
+// steam api over this silly thing
+const std::map<std::string, std::string> proton_map_to_depot = { { "proton_experimental", "1493710" } };
 
 // returns non-zero if failed
-int palace::launch_game(const std::string& game_name, const std::string& arguments) {
+int palace::launch_game(const std::string& game_name, const std::string& arguments)
+{
   std::filesystem::path sdk_app_path = get_app_path(SOURCE_SDK_2013_APP_ID);
-  if (!std::filesystem::exists(sdk_app_path)) {
+  if(!std::filesystem::exists(sdk_app_path))
+  {
     A_error("[Palace/launch_game] sdk path doesn't exist...");
     return 1;
   }
@@ -222,21 +266,30 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
   std::string sdk_app_binary = (sdk_app_path / "hl2.exe").string();
 #else
 
-  auto source_sdk_compat_tool = config_file.childs["Software"]->childs["Valve"]->childs["Steam"]->childs["CompatToolMapping"]->childs[SOURCE_SDK_2013_APP_ID];
+  auto source_sdk_compat_tool = config_file.childs["Software"]
+                                    ->childs["Valve"]
+                                    ->childs["Steam"]
+                                    ->childs["CompatToolMapping"]
+                                    ->childs[SOURCE_SDK_2013_APP_ID];
   /* "InstallConfigStore"->"Software"->"Valve"->"Steam"->CompatToolMapping */
   std::string sdk_app_binary;
-  if (source_sdk_compat_tool) {
-    return 1; // proton doesn't work for now.
+  if(source_sdk_compat_tool)
+  {
+    return 1;  // proton doesn't work for now.
     const char* proton_app_name = source_sdk_compat_tool->attribs["name"].c_str();
-    if (!proton_map_to_depot.contains(proton_app_name)) {
+    if(!proton_map_to_depot.contains(proton_app_name))
+    {
       A_error("%s proton version couldn't be found\n", proton_app_name);
       return 1;
     }
-    setenv("STEAM_COMPAT_DATA_PATH", (steamPath/ "steamapps" / "compatdata").string().c_str(), 1);
+    setenv("STEAM_COMPAT_DATA_PATH", (steamPath / "steamapps" / "compatdata").string().c_str(), 1);
     setenv("STEAM_COMPAT_CLIENT_INSTALL_PATH", steamPath.c_str(), 1);
-    std::filesystem::path proton_app_path = get_app_path(proton_map_to_depot.at(proton_app_name)); 
-    sdk_app_binary.append("python3 \"" + proton_app_path.string() + "/\"proton waitforexitandrun \"" + (sdk_app_path / "hl2.exe\"").string());
-  } else {
+    std::filesystem::path proton_app_path = get_app_path(proton_map_to_depot.at(proton_app_name));
+    sdk_app_binary.append("python3 \"" + proton_app_path.string() + "/\"proton waitforexitandrun \"" +
+                          (sdk_app_path / "hl2.exe\"").string());
+  }
+  else
+  {
     sdk_app_binary.append((sdk_app_path / "hl2.sh").string());
   }
 #endif
@@ -244,19 +297,20 @@ int palace::launch_game(const std::string& game_name, const std::string& argumen
   snprintf(command_line, 1024, "%s -game sourcetest -steam -game \"%s\" -steam -secure %s", sdk_app_binary.c_str(),
            (sourcemodsPath / game_name).string().c_str(), arguments.c_str());
 #ifdef WIN32
-  STARTUPINFO dummy_si = {0};
+  STARTUPINFO dummy_si = { 0 };
   dummy_si.cb = sizeof(dummy_si);
-  PROCESS_INFORMATION dummy_pi = {0};
+  PROCESS_INFORMATION dummy_pi = { 0 };
 
-  if (CreateProcessA(sdk_app_binary.c_str(), command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL,
-                     (LPSTR)sourcemodsPath.string().c_str(), &dummy_si, &dummy_pi) == 0) {
-
+  if(CreateProcessA(sdk_app_binary.c_str(), command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL,
+                    (LPSTR)sourcemodsPath.string().c_str(), &dummy_si, &dummy_pi) == 0)
+  {
     A_error("[Palace/launch_game] win32: CreateProcessA failed!");
     return 1;
   }
 #else
   setenv("SteamEnv", "1", 1);
-  if (popen(command_line, "r") == NULL) return 1;
+  if(popen(command_line, "r") == NULL)
+    return 1;
 #endif
 
   return 0;

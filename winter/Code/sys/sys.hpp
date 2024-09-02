@@ -1,13 +1,11 @@
 #pragma once
-#include <vdf_parser.hpp>
 #include <adastral_defs.h>
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vdf_parser.hpp>
 #include <vector>
-
 #include "zip/zip.h"
 
 #ifdef _WIN32
@@ -16,8 +14,8 @@
 #include <Winreg.h>
 #endif
 
-
-class sys {
+class sys
+{
  public:
   static int ExecWithParam(const std::vector<std::string>& params);
   static int DeleteDirectoryContent(const std::filesystem::path& dir);

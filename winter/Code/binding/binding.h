@@ -1,6 +1,5 @@
 #include <adastral_defs.h>
 #include <sha256.h>
-
 #include <events/progress.hpp>
 #include <filesystem>
 #include <godot_cpp/classes/json.hpp>
@@ -15,8 +14,10 @@
 #include <libnotify/notify.h>
 #endif
 
-namespace godot {
-class binding : public Node {
+namespace godot
+{
+class binding : public Node
+{
   GDCLASS(binding, Node);
 
  public:
