@@ -166,7 +166,7 @@ godot::String binding::get_installed_version(godot::String gameName)
   {
     return "";
   }
-  return p->serverGames[gameName.utf8().get_data()]->l1->GetInstalledVersionTag().c_str();
+  return p->serverGames[gameName.utf8().get_data()]->l1->get_installed_version_tag().c_str();
 };
 godot::String binding::get_latest_version(godot::String gameName)
 {
@@ -174,7 +174,7 @@ godot::String binding::get_latest_version(godot::String gameName)
   {
     return "";
   }
-  return p->serverGames[gameName.utf8().get_data()]->l1->GetLatestVersionTag().c_str();
+  return p->serverGames[gameName.utf8().get_data()]->l1->get_latest_version_tag().c_str();
 }
 void binding::set_sourcemod_path(godot::String gd_path)
 {

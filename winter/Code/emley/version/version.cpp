@@ -9,4 +9,4 @@ Version::Version(const std::filesystem::path& szSourcemodPath, const std::filesy
 {
 }
 
-const std::string& Version::GetInstalledVersion() { return m_szInstalledVersion; }
+const std::string& Version::get_installed_version() { return m_szInstalledVersion; }

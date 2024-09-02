@@ -9,10 +9,10 @@ class Version
  public:
   Version(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
           const std::string& szSourceUrl);
-  const std::string& GetInstalledVersion();
+  const std::string& get_installed_version();
   std::string name;
-  virtual int Verify() = 0;
-  virtual int Install() = 0;
+  virtual int verify() = 0;
+  virtual int install() = 0;
   EventSystem m_eventSystem;  // we need to yoink it into palace and then sutton
 
  protected:

@@ -14,7 +14,7 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
     throw std::runtime_error("INVALID JSON. \n " + szSourceUrl + "bullseye.json");
   }
   m_parsedVersion = nlohmann::ordered_json::parse(ver_string);
-  FindInstalledVersion();
+  find_installed_version();
   m_eventSystem.RegisterListener(EventType::kOnUpdate,
                                  [](Event& ev)
                                  {
@@ -25,12 +25,12 @@ Kachemak::Kachemak(const std::filesystem::path& szSourcemodPath, const std::file
                                  });
 }
 
-std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version)
+std::optional<KachemakVersion> Kachemak::get_km_version(const std::string& version)
 {
   nlohmann::ordered_json& jsonVersion = m_parsedVersion["versions"][version];
   if(!jsonVersion.is_object())
   {
-    A_printf("[Kachemak/GetKMVersion] Failed to find version %s", version.c_str());
+    A_printf("[Kachemak/get_km_version] Failed to find version %s", version.c_str());
     return std::nullopt;
   }
 
@@ -47,13 +47,13 @@ std::optional<KachemakVersion> Kachemak::GetKMVersion(const std::string& version
   return ret;
 }
 
-std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version)
+std::optional<KachemakPatch> Kachemak::get_patch(const std::string& version)
 {  // this doesn't work if there's missing fields
   std::string latest = m_parsedVersion["latest"];
   nlohmann::ordered_json& jsonPatches = m_parsedVersion["patches"][latest][version];
   if(!jsonPatches.is_object())
   {
-    A_printf("[Kachemak/GetPatch] Failed to find patch %s", version.c_str());
+    A_printf("[Kachemak/get_patch] Failed to find patch %s", version.c_str());
     return std::nullopt;
   }
 
@@ -66,7 +66,7 @@ std::optional<KachemakPatch> Kachemak::GetPatch(const std::string& version)
   return ret;
 }
 
-std::optional<KachemakVersion> Kachemak::GetLatestKMVersion() { return GetKMVersion(m_parsedVersion["latest"]); }
+std::optional<KachemakVersion> Kachemak::get_latest_km_version() { return get_km_version(m_parsedVersion["latest"]); }
 
 /*
 description:
@@ -76,7 +76,7 @@ res:
   1: not enough temp storage
   2: not enough permanent storage
 */
-int Kachemak::FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory& category)
+int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategory& category)
 {
   switch(category)
   {
@@ -96,7 +96,7 @@ int Kachemak::FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory&
   return 0;
 }
 
-int Kachemak::FreeSpaceCheck_InPath(const uintmax_t size, const std::filesystem::path customPath)
+int Kachemak::free_space_check_path(const uintmax_t size, const std::filesystem::path customPath)
 {
   if(std::filesystem::space(customPath).free < size)
   {
@@ -105,7 +105,7 @@ int Kachemak::FreeSpaceCheck_InPath(const uintmax_t size, const std::filesystem:
   return 0;
 }
 
-int Kachemak::PrepareSymlink()
+int Kachemak::prepare_symlink()
 {
 #ifdef _WIN32
   return 0;
@@ -123,7 +123,7 @@ int Kachemak::PrepareSymlink()
 #endif
 }
 
-int Kachemak::DoSymlink()
+int Kachemak::do_symlink()
 {
 #ifdef _WIN32
   return 0;
@@ -142,7 +142,7 @@ int Kachemak::DoSymlink()
 #endif
 }
 
-int Kachemak::DoSymlink_InPath(std::filesystem::path customPath)
+int Kachemak::do_symlink_path(std::filesystem::path customPath)
 {
 #ifdef _WIN32
   // Abandon all hope, ye who enter there, for I am pulling the ancient arts of Windows API.
@@ -194,9 +194,9 @@ int Kachemak::DoSymlink_InPath(std::filesystem::path customPath)
 #endif
 }
 
-int Kachemak::Verify()
+int Kachemak::verify()
 {
-  std::optional<KachemakVersion> installedKMVersion = GetKMVersion(m_szInstalledVersion);
+  std::optional<KachemakVersion> installedKMVersion = get_km_version(m_szInstalledVersion);
   if(!installedKMVersion)
     return 4;
   // full signature url
@@ -206,9 +206,9 @@ int Kachemak::Verify()
   std::filesystem::path dataDir_path = m_szSourcemodPath / m_szFolderName;
   std::stringstream healUrl_ss;
   healUrl_ss << m_szSourceUrl << installedKMVersion.value().szFileName;
-  int verifyRes = ButlerVerify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
+  int verifyRes = butler_verify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
   force_verify = false;
-  WriteVersion();
+  write_version();
   return 0;
 }
 
@@ -222,29 +222,29 @@ res:
   3: already on latest / verification needed first
 */
 
-int Kachemak::Update()
+int Kachemak::update()
 {
-  A_printf("[Kachemak/Update] Updating %s... ", m_szFolderName.c_str());
-  if(m_szInstalledVersion == GetLatestVersion() || force_verify)
+  A_printf("[Kachemak/update] Updating %s... ", m_szFolderName.c_str());
+  if(m_szInstalledVersion == get_latest_version() || force_verify)
   {
     return 3;
   }
-  int symlinkRes = PrepareSymlink();
+  int symlinkRes = prepare_symlink();
   if(symlinkRes != 0)
   {
     return 1;
   }
 
-  std::optional<KachemakPatch> patch = GetPatch(m_szInstalledVersion);
+  std::optional<KachemakPatch> patch = get_patch(m_szInstalledVersion);
   if(!patch)
     return 3;
 
-  if(FreeSpaceCheck(patch.value().lTempRequired, FreeSpaceCheckCategory::Permanent) != 0)
+  if(free_space_check(patch.value().lTempRequired, FreeSpaceCheckCategory::Permanent) != 0)
   {
     return 2;
   }
 
-  std::optional<KachemakVersion> installedVersion = GetKMVersion(m_szInstalledVersion);
+  std::optional<KachemakVersion> installedVersion = get_km_version(m_szInstalledVersion);
   if(!installedVersion)
     return 4;
 
@@ -255,55 +255,55 @@ int Kachemak::Update()
   std::filesystem::path dataDir_path = m_szSourcemodPath / m_szFolderName;
   std::stringstream healUrl_ss;
   healUrl_ss << m_szSourceUrl << installedVersion.value().szFileName;
-  int verifyRes = ButlerVerify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
+  int verifyRes = butler_verify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
 
   std::stringstream patchUrlFull_ss;
   patchUrlFull_ss << m_szSourceUrl << patch.value().szUrl;
   std::filesystem::path stagingPath = m_szSourcemodPath / ("butler-staging-" + m_szFolderName.string());
-  A_printf("[Kachemak/Update] Patching %s from %s to %s, with staging dir at %s. ", m_szFolderName.c_str(),
-           installedVersion.value().szVersion.c_str(), GetLatestVersion().c_str(), stagingPath.c_str());
-  int patchRes = ButlerPatch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
+  A_printf("[Kachemak/update] Patching %s from %s to %s, with staging dir at %s. ", m_szFolderName.c_str(),
+           installedVersion.value().szVersion.c_str(), get_latest_version().c_str(), stagingPath.c_str());
+  int patchRes = butler_patch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
                              dataDir_path.string(), patch.value().lTempRequired);
 
-  DoSymlink();
-  m_szInstalledVersion = GetLatestVersion();
-  WriteVersion();
+  do_symlink();
+  m_szInstalledVersion = get_latest_version();
+  write_version();
   return 0;
 }
 
-int Kachemak::Install()
+int Kachemak::install()
 {
-  if(PrepareSymlink() != 0)
+  if(prepare_symlink() != 0)
   {
     return 1;
   }
-  std::optional<KachemakVersion> latestVersion = GetLatestKMVersion();
+  std::optional<KachemakVersion> latestVersion = get_latest_km_version();
   if(!latestVersion)
     return 2;
-  int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
+  int diskSpaceStatus = free_space_check(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if(diskSpaceStatus != 0)
     return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-  A_printf("[Kachemak/Install] Downloading via torrent...");
-  int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string(), &m_eventSystem);
+  A_printf("[Kachemak/install] Downloading via torrent...");
+  int downloadStatus = torrent::libtorrent_download(downloadUri, m_szTempPath.string(), &m_eventSystem);
   // std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName,
   // true,&m_eventSystem);
   if(downloadStatus != 0)
   {
-    A_error("[Kachemak/Install] Download failed - ret val %d \n", downloadStatus);
+    A_error("[Kachemak/install] Download failed - ret val %d \n", downloadStatus);
     return downloadStatus;
   }
-  A_printf("[Kachemak/Install] Download complete: extracting...");
+  A_printf("[Kachemak/install] Download complete: extracting...");
   std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
-  int err_c = Extract(latestVersion.value().szFileName, (m_szSourcemodPath / m_szFolderName).string(),
+  int err_c = extract(latestVersion.value().szFileName, (m_szSourcemodPath / m_szFolderName).string(),
                       latestVersion.value().lExtractSize);
-  // Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
+  // extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   if(err_c == 0)
   {
-    A_printf("[Kachemak/Install] Extraction done!");
-    DoSymlink();
-    m_szInstalledVersion = GetLatestVersion();
-    WriteVersion();
+    A_printf("[Kachemak/install] Extraction done!");
+    do_symlink();
+    m_szInstalledVersion = get_latest_version();
+    write_version();
     return 0;
   }
   else
@@ -312,21 +312,21 @@ int Kachemak::Install()
   }
 }
 
-int Kachemak::Install_InPath(std::filesystem::path customPath)
+int Kachemak::install_path(std::filesystem::path customPath)
 {
-  if(PrepareSymlink() != 0)
+  if(prepare_symlink() != 0)
   {
     return 1;
   }
-  std::optional<KachemakVersion> latestVersion = GetLatestKMVersion();
+  std::optional<KachemakVersion> latestVersion = get_latest_km_version();
   if(!latestVersion)
     return 2;
-  int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
+  int diskSpaceStatus = free_space_check(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
   if(diskSpaceStatus != 0)
     return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
   A_printf("[Kachemak/InstallInPath] Downloading via torrent...");
-  int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string(), &m_eventSystem);
+  int downloadStatus = torrent::libtorrent_download(downloadUri, m_szTempPath.string(), &m_eventSystem);
   // std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName,
   // true,&m_eventSystem);
   if(downloadStatus != 0)
@@ -336,15 +336,15 @@ int Kachemak::Install_InPath(std::filesystem::path customPath)
   }
   A_printf("[Kachemak/InstallInPath] Download complete: extracting...");
   std::filesystem::create_directory(customPath.string() / m_szFolderName);
-  int err_c = Extract_InPath(latestVersion.value().szFileName, (customPath / m_szFolderName).string(),
+  int err_c = extract_path(latestVersion.value().szFileName, (customPath / m_szFolderName).string(),
                              latestVersion.value().lExtractSize);
-  // Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
+  // extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   if(err_c == 0)
   {
     A_printf("[Kachemak/InstallInPath] Extraction done!");
-    DoSymlink();
-    m_szInstalledVersion = GetLatestVersion();
-    WriteVersion();
+    do_symlink();
+    m_szInstalledVersion = get_latest_version();
+    write_version();
     return 0;
   }
   else
@@ -360,46 +360,46 @@ res:
         0: success
         1: not enough free space
 */
-int Kachemak::Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize)
+int Kachemak::extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize)
 {
-  A_printf("[Kachemak/Extract] Input File %s, Output %s, size %lu", szInputFile.c_str(), szOutputDirectory.c_str(),
+  A_printf("[Kachemak/extract] Input File %s, Output %s, size %lu", szInputFile.c_str(), szOutputDirectory.c_str(),
            szSize);
-  if(FreeSpaceCheck(szSize * 2, FreeSpaceCheckCategory::Permanent) != 0)
+  if(free_space_check(szSize * 2, FreeSpaceCheckCategory::Permanent) != 0)
   {
-    A_printf("[Kachemak/Extract] Not enough space. Exiting.");
+    A_printf("[Kachemak/extract] Not enough space. Exiting.");
     return 1;
   }
-  int ret = sys::ExtractZip((m_szTempPath / szInputFile).string(), szOutputDirectory);
+  int ret = sys::extract_zip((m_szTempPath / szInputFile).string(), szOutputDirectory);
   if(ret != 0)
   {
-    A_error("[Kachemak/Extract] Extraction Failed - %s\n", zip_strerror(ret));
+    A_error("[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
     return -1;
   }
-  m_szInstalledVersion = GetLatestVersion();
-  WriteVersion();
+  m_szInstalledVersion = get_latest_version();
+  write_version();
   return 0;
 }
 
-int Kachemak::Extract_InPath(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize)
+int Kachemak::extract_path(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize)
 {
   A_printf("[Kachemak/ExtractInPath] Input File %s, Output %s, size %lu", szInputFile.c_str(),
            szOutputDirectory.c_str(), szSize);
 
   // Variable to get the path
   std::filesystem::path sanitizedPath = std::filesystem::u8path(szOutputDirectory);
-  if(FreeSpaceCheck_InPath(szSize * 2, sanitizedPath) != 0)
+  if(free_space_check_path(szSize * 2, sanitizedPath) != 0)
   {
     A_printf("[Kachemak/ExtractInPath] Not enough space. Exiting.");
     return 1;
   }
-  int ret = sys::ExtractZip((m_szTempPath / szInputFile).string(), szOutputDirectory);
+  int ret = sys::extract_zip((m_szTempPath / szInputFile).string(), szOutputDirectory);
   if(ret != 0)
   {
     A_error("[Kachemak/ExtractInPath] Extraction Failed - %s\n", zip_strerror(ret));
     return -1;
   }
-  m_szInstalledVersion = GetLatestVersion();
-  WriteVersion();
+  m_szInstalledVersion = get_latest_version();
+  write_version();
   return 0;
 }
 
@@ -410,7 +410,7 @@ res:
   0: success
   i: return code from butler (when not 0)
 */
-int Kachemak::ButlerVerify(const std::string& szSignature, const std::string& szGameDir, const std::string& szRemote)
+int Kachemak::butler_verify(const std::string& szSignature, const std::string& szGameDir, const std::string& szRemote)
 {
   std::stringstream params;
 
@@ -420,7 +420,7 @@ int Kachemak::ButlerVerify(const std::string& szSignature, const std::string& sz
          << " "
          << "--heal=archive," << szRemote << " --json";
   A_printf(szSignature.c_str());
-  int status = ButlerParseCommand(params.str());
+  int status = butler_parse_command(params.str());
   if(status != NULL)
     return status;
 
@@ -433,7 +433,7 @@ res:
   0: success
   1: failed to download patch
   2: failed to apply patch*/
-int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path& sz_stagingDir,
+int Kachemak::butler_patch(const std::string& sz_url, const std::filesystem::path& sz_stagingDir,
                           const std::string& sz_patchFileName, const std::string& sz_gameDir,
                           const uintmax_t downloadSize)
 {
@@ -443,32 +443,32 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
   {
     if(!std::filesystem::create_directory(sz_stagingDir))
     {
-      A_printf("[Kachemak/ButlerPatch] Failed to create directory: %s", sz_stagingDir.c_str());
+      A_printf("[Kachemak/butler_patch] Failed to create directory: %s", sz_stagingDir.c_str());
     }
   }
   if(stagingDir_exists && stagingDir_isDir)
   {
-    switch(sys::DeleteDirectoryContent(sz_stagingDir))
+    switch(sys::delete_directory_content(sz_stagingDir))
     {
       case 1:
-        A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+        A_printf("[Kachemak/butler_patch] Failed to delete staging directory content "
                  "(doesn't exist)");
         break;
       case 2:
-        A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+        A_printf("[Kachemak/butler_patch] Failed to delete staging directory content "
                  "(not a directory)");
         break;
     }
   }
 
-  int diskSpaceStatus = FreeSpaceCheck(downloadSize, FreeSpaceCheckCategory::Temporary);
+  int diskSpaceStatus = free_space_check(downloadSize, FreeSpaceCheckCategory::Temporary);
   if(diskSpaceStatus != 0)
     return diskSpaceStatus;
 
   // temporarily setting up to download through libtorrent instead
 
-  A_printf("[Kachemak/ButlerPatch] Downloading through ButlerPatch()");
-  int downloadStatus = torrent::LibTorrentDownload(sz_url, m_szTempPath.string());
+  A_printf("[Kachemak/butler_patch] Downloading through butler_patch()");
+  int downloadStatus = torrent::libtorrent_download(sz_url, m_szTempPath.string());
   // net::download_to_temp(sz_url, sz_patchFileName, true,&m_eventSystem,&m_szTempPath);
   if(downloadStatus != 0)
     return downloadStatus;
@@ -488,28 +488,28 @@ int Kachemak::ButlerPatch(const std::string& sz_url, const std::filesystem::path
          << " ";
   params << "--json";
 
-  A_printf("[Kachemak/ButlerPatch] Applying patch.");
-  if(int butlerStatus = ButlerParseCommand(params.str()); butlerStatus != NULL)
+  A_printf("[Kachemak/butler_patch] Applying patch.");
+  if(int butlerStatus = butler_parse_command(params.str()); butlerStatus != NULL)
   {
-    A_printf("[Kachemak/ButlerPatch] Failed to apply patch: %s", butlerStatus);
+    A_printf("[Kachemak/butler_patch] Failed to apply patch: %s", butlerStatus);
     return 2;
   }
 
-  switch(sys::DeleteDirectoryContent(sz_stagingDir))
+  switch(sys::delete_directory_content(sz_stagingDir))
   {
     case 1:
-      A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+      A_printf("[Kachemak/butler_patch] Failed to delete staging directory content "
                "(doesn't exist)");
       break;
     case 2:
-      A_printf("[Kachemak/ButlerPatch] Failed to delete staging directory content "
+      A_printf("[Kachemak/butler_patch] Failed to delete staging directory content "
                "(not a directory)");
       break;
   }
   return 0;
 }
 
-int Kachemak::ButlerParseCommand(const std::string& command)
+int Kachemak::butler_parse_command(const std::string& command)
 {
   FILE* pipe = popen(command.c_str(), "r");
   if(!pipe)
@@ -547,7 +547,7 @@ int Kachemak::ButlerParseCommand(const std::string& command)
 
   return 0;
 }
-void Kachemak::FindInstalledVersion()
+void Kachemak::find_installed_version()
 {
   if(exists(m_szSourcemodPath / m_szFolderName))
   {
@@ -556,14 +556,14 @@ void Kachemak::FindInstalledVersion()
     {
       nlohmann::json filedata = nlohmann::json::parse(data);
       m_szInstalledVersion = filedata["version"];
-      A_printf("[Kachemak/InstalledVersion] %s version: %s", m_szFolderName.c_str(), GetInstalledVersionTag().c_str());
+      A_printf("[Kachemak/InstalledVersion] %s version: %s", m_szFolderName.c_str(), get_installed_version_tag().c_str());
     }
     else
     {
       A_printf("[Kachemak/InstalledVersion] Adastral supported game detected (%s), but .adastral not detected.\n"
                "Assuming best case and setting force_version.",
                m_szFolderName.c_str());
-      m_szInstalledVersion = GetLatestVersion();
+      m_szInstalledVersion = get_latest_version();
       force_verify = true;
     }
   }
@@ -573,9 +573,9 @@ void Kachemak::FindInstalledVersion()
   }
 }
 
-std::string Kachemak::GetInstalledVersionTag()
+std::string Kachemak::get_installed_version_tag()
 {
-  std::string versionId = GetInstalledVersion();
+  std::string versionId = get_installed_version();
   if(m_parsedVersion["versions"][versionId].contains("tag"))
   {
     return m_parsedVersion["versions"][versionId]["tag"].get<std::string>();
@@ -583,22 +583,22 @@ std::string Kachemak::GetInstalledVersionTag()
   return versionId;
 }
 
-std::string Kachemak::GetLatestVersion()
+std::string Kachemak::get_latest_version()
 {
   std::string versionId;
   return m_parsedVersion["latest"];
 }
 
-std::string Kachemak::GetLatestVersionTag()
+std::string Kachemak::get_latest_version_tag()
 {
-  std::string versionId = GetLatestVersion();
+  std::string versionId = get_latest_version();
   if(m_parsedVersion["versions"][versionId].contains("tag"))
   {
     return m_parsedVersion["versions"][versionId]["tag"].get<std::string>();
   };
   return versionId;
 }
-void Kachemak::WriteVersion()
+void Kachemak::write_version()
 {
   nlohmann::json test_json;
   test_json["version"] = m_szInstalledVersion;

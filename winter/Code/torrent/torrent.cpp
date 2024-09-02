@@ -31,7 +31,7 @@ char const* state(lt::torrent_status::state_t s)
 }  // anonymous namespace
 
 // Adding in extra printf functions to log actions when possible.
-int torrent::LibTorrentDownload(const std::string& torrentfileurl, const std::string& path, EventSystem* event)
+int torrent::libtorrent_download(const std::string& torrentfileurl, const std::string& path, EventSystem* event)
 try
 {
   // First, list what are the current parameters.

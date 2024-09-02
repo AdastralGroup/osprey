@@ -1,6 +1,6 @@
 #include "sys.hpp"
 
-int sys::ExecWithParam(const std::vector<std::string>& params)
+int sys::exec_with_param(const std::vector<std::string>& params)
 {
   std::string param_str;
   for(const auto& i : params)
@@ -20,7 +20,7 @@ res:
   1: input path doesn't exist
   2: input path isn't a directory
 */
-int sys::DeleteDirectoryContent(const std::filesystem::path& dir)
+int sys::delete_directory_content(const std::filesystem::path& dir)
 {
   if(!std::filesystem::exists(dir))
   {
@@ -34,7 +34,7 @@ int sys::DeleteDirectoryContent(const std::filesystem::path& dir)
   {
     if(std::filesystem::is_directory(entry))
     {
-      DeleteDirectoryContent(entry);
+      delete_directory_content(entry);
       std::filesystem::remove(entry);
     }
     else
@@ -45,14 +45,14 @@ int sys::DeleteDirectoryContent(const std::filesystem::path& dir)
   return 0;
 }
 
-int sys::ExtractZip(const std::string& szInputFile, const std::string& szOutputFile)
+int sys::extract_zip(const std::string& szInputFile, const std::string& szOutputFile)
 {
   A_printf("[sys/Extract] Extracting %s to %s..", szInputFile.c_str(), szOutputFile.c_str());
   int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
   return ret;
 }
 
-tyti::vdf::object sys::ParseVDFFile(std::filesystem::path file_path)
+tyti::vdf::object sys::parse_vdf_file(std::filesystem::path file_path)
 {
   std::ifstream file(file_path);
   if(!file.is_open())
@@ -84,7 +84,7 @@ inline bool Is64BitWindows()
 }
 #endif
 
-std::filesystem::path sys::GetSteamPath()
+std::filesystem::path sys::get_steam_path()
 {
 #if _WIN32
   char valueData[MAX_PATH];

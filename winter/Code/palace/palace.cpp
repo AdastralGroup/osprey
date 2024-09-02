@@ -4,11 +4,11 @@ palace::palace(std::string path)
 {
   if(path == "")
   {
-    if(sys::GetSteamPath() == std::filesystem::path(""))
+    if(sys::get_steam_path() == std::filesystem::path(""))
     {
       throw std::runtime_error("Failed to obtain steam path! reinit palace with correct path manually.");
     }
-    steamPath = sys::GetSteamPath();
+    steamPath = sys::get_steam_path();
   }
   else
   {
@@ -18,9 +18,9 @@ palace::palace(std::string path)
   fetch_server_data();
   A_printf("[Palace/Init] Downloading assets... ");
   download_assets();
-  library_folders = sys::ParseVDFFile(steamPath / "steamapps" / "libraryfolders.vdf");
+  library_folders = sys::parse_vdf_file(steamPath / "steamapps" / "libraryfolders.vdf");
 #if __unix__
-  config_file = sys::ParseVDFFile(steamPath / "config" / "config.vdf");
+  config_file = sys::parse_vdf_file(steamPath / "config" / "config.vdf");
 #endif
 }
 
@@ -163,17 +163,17 @@ int palace::init_games()
 int palace::update_game(const std::string& game_name)
 {
   A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
-  if(serverGames[game_name]->l1->GetInstalledVersion().empty())
+  if(serverGames[game_name]->l1->get_installed_version().empty())
   {
-    serverGames[game_name]->l1->Install();
+    serverGames[game_name]->l1->install();
   }
-  // else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
+  // else if(serverGames[game_name]->l1->get_installed_version() == serverGames[game_name]->l1->GetLatestVersion() ||
   // serverGames[game_name]->l1->force_verify){
-  //   serverGames[game_name]->l1->Verify();
+  //   serverGames[game_name]->l1->verify();
   // }
   else
   {
-    serverGames[game_name]->l1->Update();
+    serverGames[game_name]->l1->update();
   }
   return 0;
 }
@@ -187,17 +187,17 @@ int palace::update_game_with_path(const std::string& game_name, const std::strin
   const std::filesystem::path sanitizedPath =
       std::filesystem::u8path(customPath);  // windows-specific thing that may work on linux, need to try on that
 
-  // Then we practically do the same thing except inserting the sanitized path to the overloaded Install function.
-  if(serverGames[game_name]->l1->GetInstalledVersion().empty())
+  // Then we practically do the same thing except inserting the sanitized path to the overloaded install function.
+  if(serverGames[game_name]->l1->get_installed_version().empty())
   {
-    serverGames[game_name]->l1->Install_InPath(sanitizedPath);
+    serverGames[game_name]->l1->install_path(sanitizedPath);
   }
-  // else if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
+  // else if(serverGames[game_name]->l1->get_installed_version() == serverGames[game_name]->l1->GetLatestVersion() ||
   // serverGames[game_name]->l1->force_verify){
-  //   serverGames[game_name]->l1->Verify();
+  //   serverGames[game_name]->l1->verify();
   // }
   // else {
-  //  serverGames[game_name]->l1->Update();
+  //  serverGames[game_name]->l1->update();
   //}
   return 0;
 }
@@ -212,7 +212,7 @@ std::vector<std::string> palace::get_games()
 }
 int palace::verify_game(const std::string& gameName)
 {
-  serverGames[gameName]->l1->Verify();
+  serverGames[gameName]->l1->verify();
   return 0;
 }
 
@@ -240,7 +240,7 @@ std::filesystem::path palace::get_app_path(const std::string& app_id)
           std::filesystem::path(directory.second->attribs["path"]) /
           "steamapps";  // where the app's installed ("libraryfolders" -> [incrementing id] -> path)
       std::string manifest_file = "appmanifest_" + app_id + ".acf";
-      auto kv_parsed = sys::ParseVDFFile(apps_path / manifest_file);
+      auto kv_parsed = sys::parse_vdf_file(apps_path / manifest_file);
       return apps_path / "common" / kv_parsed.attribs["installdir"];
     }
   }
