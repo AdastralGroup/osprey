@@ -8,5 +8,5 @@ class ErrorMessage : public Event {
   const std::string& get_message();
 
  private:
-  std::string m_szMessage;
+  std::string M_message;
 };

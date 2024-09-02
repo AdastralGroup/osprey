@@ -20,12 +20,12 @@ class net
   std::vector<char> get_bin_data_from_server(const std::string& url);
   // Get path object for the systems sourcemods folder (win/linux)
  private:
-  static int progress_func(void* ptr, curl_off_t TotalToDownload, curl_off_t NowDownloaded, curl_off_t TotalToUpload,
-                           curl_off_t NowUploaded);
+  static int progress_func(void* ptr, curl_off_t total_to_download, curl_off_t now_downloaded, curl_off_t total_to_upload,
+                           curl_off_t now_uploaded);
   static size_t static_curl_callback(void* buffer, size_t sz, size_t n, void* cptr);
   void curl_callback(void* buffer, size_t n);  // callback for the below. string only. we could r
   std::string
-      curl_string_data;  // we do curl calls synchronously, it's usually all string data so that ends up in here.
-  std::vector<char> curl_bin_data;  // idk lol
-  bool bin;
+      M_curl_string_data;  // we do curl calls synchronously, it's usually all string data so that ends up in here.
+  std::vector<char> M_curl_bin_data;  // idk lol
+  bool M_bin;
 };

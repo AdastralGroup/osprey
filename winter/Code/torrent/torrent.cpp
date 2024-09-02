@@ -81,7 +81,7 @@ try
         if(event != nullptr)
         {  // probably stupid to do this check on every event
           ProgressUpdateMessage message(s.download_payload_rate, s.progress);
-          event->TriggerEvent(message);
+          event->trigger_event(message);
         }
         // std::cout << '\r' << state(s.state) << ' '
         //   << (s.download_payload_rate / 1000) << " kB/s "

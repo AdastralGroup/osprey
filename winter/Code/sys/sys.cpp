@@ -45,10 +45,10 @@ int sys::delete_directory_content(const std::filesystem::path& dir)
   return 0;
 }
 
-int sys::extract_zip(const std::string& szInputFile, const std::string& szOutputFile)
+int sys::extract_zip(const std::string& input_file, const std::string& output_file)
 {
-  A_printf("[sys/Extract] Extracting %s to %s..", szInputFile.c_str(), szOutputFile.c_str());
-  int ret = zip_extract(szInputFile.c_str(), szOutputFile.c_str(), nullptr, nullptr);
+  A_printf("[sys/Extract] Extracting %s to %s..", input_file.c_str(), output_file.c_str());
+  int ret = zip_extract(input_file.c_str(), output_file.c_str(), nullptr, nullptr);
   return ret;
 }
 

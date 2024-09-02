@@ -10,9 +10,9 @@ class EventSystem {
 
  public:
   EventSystem();
-  void RegisterListener(EventType eventType, const EventLambda& fun);
-  void TriggerEvent(Event& data);
+  void register_listener(EventType event_type, const EventLambda& fun);
+  void trigger_event(Event& data);
 
  private:
-  std::map<EventType, std::vector<EventLambda>> m_subscribers;
+  std::map<EventType, std::vector<EventLambda>> subscribers;
 };

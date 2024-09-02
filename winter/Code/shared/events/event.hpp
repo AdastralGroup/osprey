@@ -7,9 +7,9 @@ enum class EventType { kOnUpdate = 0, kOnError = 1, kMax = 2 };
 
 class Event {
  public:
-  Event(EventType eventType);
-  EventType GetType();
+  Event(EventType event_type);
+  EventType get_type();
 
  private:
-  EventType m_type;
+  EventType M_type;
 };

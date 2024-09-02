@@ -1,12 +1,12 @@
 #include <fstream>
 #include <version/version.hpp>
 
-Version::Version(const std::filesystem::path& szSourcemodPath, const std::filesystem::path& szFolderName,
-                 const std::string& szSourceUrl) :
-    m_szSourcemodPath(szSourcemodPath),
-    m_szFolderName(szFolderName),
-    m_szSourceUrl(szSourceUrl)
+Version::Version(const std::filesystem::path& sourcemod_path, const std::filesystem::path& folder_name,
+                 const std::string& source_url) :
+    M_sourcemod_path(sourcemod_path),
+    M_folder_name(folder_name),
+    M_source_url(source_url)
 {
 }
 
-const std::string& Version::get_installed_version() { return m_szInstalledVersion; }
+const std::string& Version::get_installed_version() { return M_installed_version; }

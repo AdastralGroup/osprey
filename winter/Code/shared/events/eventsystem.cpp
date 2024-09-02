@@ -2,19 +2,19 @@
 
 EventSystem::EventSystem() {
   for (int i = 0; i < (int)EventType::kMax; i++) {
-    m_subscribers[(EventType)i] = std::vector<EventLambda>();
+    subscribers[(EventType)i] = std::vector<EventLambda>();
   }
 }
 
-void EventSystem::RegisterListener(EventType eventType, const EventLambda& fun) {
-  m_subscribers.at(eventType).push_back(fun);
+void EventSystem::register_listener(EventType event_type, const EventLambda& fun) {
+  subscribers.at(event_type).push_back(fun);
 }
 
-void EventSystem::TriggerEvent(Event& data) {
-  // if (!m_subscribers.contains(data.GetType()))
+void EventSystem::trigger_event(Event& data) {
+  // if (!subscribers.contains(data.get_type()))
   //	return;
 
-  std::vector<EventLambda>& events = m_subscribers.at(data.GetType());
+  std::vector<EventLambda>& events = subscribers.at(data.get_type());
   for (EventLambda& ev : events) {
     ev(data);
   }

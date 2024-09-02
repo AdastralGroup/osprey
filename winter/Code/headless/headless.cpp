@@ -3,7 +3,7 @@ int main()
 {
   printf(WELCOME_TEXT);
   A_init_error_system();
-  A_error_system->RegisterListener(EventType::kOnError,
+  A_error_system->register_listener(EventType::kOnError,
                                    [](Event& ev) { printf(static_cast<ErrorMessage&>(ev).get_message().c_str()); });
   palace* p;
   try
@@ -32,13 +32,13 @@ int main()
     case 2: printf("Steam sourcemods dir was not found. Is steam installed?\n"); return code;
   }
   p->fetch_server_data();
-  for(const auto& i : p->serverGames)
+  for(const auto& i : p->M_server_games)
   {
     std::cout << "[headless] "
               << "Game Available: " << i.second->name << " (" << i.first << ")" << std::endl;
   }
   // printf("[headless] Updating open_fortress.\n");
-  // p->launch_game("open_fortress", "");  // you should check the force_verify to see if verification alone is needed.
+  // p->launch_game("open_fortress", "");  // you should check the M_force_verify to see if verification alone is needed.
   delete(p);
   printf("[headless] Everything done.\n");
   return 0;

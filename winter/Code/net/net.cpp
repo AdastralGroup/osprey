@@ -2,11 +2,11 @@
 
 void net::curl_callback(void* buffer, size_t n)
 {
-  if(!bin)
-    curl_string_data += (char*)buffer;
+  if(!M_bin)
+    M_curl_string_data += (char*)buffer;
   else
   {
-    curl_bin_data.insert(curl_bin_data.end(), (char*)buffer, (char*)buffer + n);
+    M_curl_bin_data.insert(M_curl_bin_data.end(), (char*)buffer, (char*)buffer + n);
   }
 }
 
@@ -35,23 +35,23 @@ std::string net::get_string_data_from_server(const std::string& url)
     exit(256);
   }
   curl_easy_cleanup(curlHandle);
-  curl_string_data = curl_string_data_local;
-  return curl_string_data;
+  M_curl_string_data = curl_string_data_local;
+  return M_curl_string_data;
 }
 
-int net::progress_func(void* ptr, curl_off_t TotalToDownload, curl_off_t NowDownloaded, curl_off_t TotalToUpload,
-                       curl_off_t NowUploaded)
+int net::progress_func(void* ptr, curl_off_t total_to_download, curl_off_t now_downloaded, curl_off_t total_to_upload,
+                       curl_off_t now_uploaded)
 {
-  if(NowDownloaded != 0 && TotalToDownload != 0)
+  if(now_downloaded != 0 && total_to_download != 0)
   {
-    long double percentage = (static_cast<long double>(NowDownloaded) / static_cast<long double>(TotalToDownload));
+    long double percentage = (static_cast<long double>(now_downloaded) / static_cast<long double>(total_to_download));
     if(ptr != nullptr)
     {
       ProgressUpdateMessage message(0, percentage);
       auto* events = (EventSystem*)ptr;
-      events->TriggerEvent(message);
+      events->trigger_event(message);
     }
-    // A_printf("[net] Downloading... %Lg%%, now downloaded %ld, total %ld\n",percentage,NowDownloaded,TotalToDownload);
+    // A_printf("[net] Downloading... %Lg%%, now downloaded %ld, total %ld\n",percentage,NowDownloaded,total_to_download);
   }
   return 0;
 }
@@ -92,9 +92,9 @@ std::string net::download_to_temp(std::string url, std::string name, bool progre
 
 std::vector<char> net::get_bin_data_from_server(const std::string& url)
 {
-  bin = true;
+  M_bin = true;
   CURL* curlHandle = curl_easy_init();
-  curl_bin_data.clear();
+  M_curl_bin_data.clear();
   curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
   curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, net::static_curl_callback);
   curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
@@ -104,5 +104,5 @@ std::vector<char> net::get_bin_data_from_server(const std::string& url)
     exit(256);
   }
   curl_easy_cleanup(curlHandle);
-  return curl_bin_data;
+  return M_curl_bin_data;
 }

@@ -19,7 +19,7 @@ class sys
  public:
   static int exec_with_param(const std::vector<std::string>& params);
   static int delete_directory_content(const std::filesystem::path& dir);
-  static int extract_zip(const std::string& szInputFile, const std::string& szOutputFile);
+  static int extract_zip(const std::string& input_file, const std::string& output_file);
   static tyti::vdf::object parse_vdf_file(std::filesystem::path file_path);
   static std::filesystem::path get_steam_path();
 };
