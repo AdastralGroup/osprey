@@ -1,5 +1,4 @@
-#include "binding.h"
-#include <string>
+#include "binding.hpp"
 
 using namespace godot;
 

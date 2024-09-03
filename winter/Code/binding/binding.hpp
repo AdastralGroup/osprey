@@ -1,4 +1,4 @@
-#include <adastral_defs.h>
+#include <adastral_defs.hpp>
 #include <sha256.h>
 #include <events/progress.hpp>
 #include <filesystem>

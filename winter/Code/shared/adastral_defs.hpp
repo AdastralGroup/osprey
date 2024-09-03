@@ -1,10 +1,7 @@
 #pragma once
-#ifndef GODOT
 #include <cstdio>
 #include <cstdarg>
-#else
-#include <cstdio>
-#include <cstdarg>
+#ifdef GODOT
 #include <cstdlib>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>

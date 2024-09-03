@@ -1,5 +1,5 @@
 #pragma once
-#include <adastral_defs.h>
+#include <adastral_defs.hpp>
 #include <curl/curl.h>
 #include <events/eventsystem.hpp>
 #include <events/progress.hpp>

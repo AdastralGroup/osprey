@@ -1,5 +1,4 @@
-#include <fstream>
-#include <version/version.hpp>
+#include "version.hpp"
 
 Version::Version(const std::filesystem::path& sourcemod_path, const std::filesystem::path& folder_name,
                  const std::string& source_url) :

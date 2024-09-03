@@ -1,11 +1,10 @@
 #pragma once
-#include <adastral_defs.h>
+#include <adastral_defs.hpp>
 #include <curl/curl.h>
 #include <cstdlib>
 #include <kachemak/kachemak.hpp>
 #include <map>
 #include <nlohmann/json.hpp>
-#include "adastral_defs.h"
 #include "vdf_parser.hpp"
 
 struct GameMetadata

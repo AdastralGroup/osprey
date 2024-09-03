@@ -1,4 +1,4 @@
-#include "adastral_defs.h"
+#include "adastral_defs.hpp"
 
 void A_init_error_system() { A_error_system = new EventSystem; }
 void A_printf(const char* const format, ...)
