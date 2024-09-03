@@ -24,17 +24,17 @@ size_t cool_curl_callback(char* contents, size_t size, size_t nmemb, void* userp
 
 std::string net::get_string_data_from_server(const std::string& url)
 {
-  CURL* curlHandle = curl_easy_init();
+  CURL* curl_handle = curl_easy_init();
   std::string curl_string_data_local;
-  curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, cool_curl_callback);
-  curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &curl_string_data_local);
-  CURLcode res = curl_easy_perform(curlHandle);
+  curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, cool_curl_callback);
+  curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &curl_string_data_local);
+  CURLcode res = curl_easy_perform(curl_handle);
   if(res != CURLE_OK)
   {
     exit(256);
   }
-  curl_easy_cleanup(curlHandle);
+  curl_easy_cleanup(curl_handle);
   M_curl_string_data = curl_string_data_local;
   return M_curl_string_data;
 }

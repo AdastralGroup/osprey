@@ -40,7 +40,7 @@ try
 
   // Then check the torrent file. Since it is a vector of char, it should bring in
   // like weird garbled text to show that there's something being fetched from.
-  std::vector<char> torrentfile = net().get_bin_data_from_server(torrentfileurl);
+  std::vector<char> torrent_file = net().get_bin_data_from_server(torrentfileurl);
 
   A_printf("[torrent] the torrent file should be loaded.");
 
@@ -50,7 +50,7 @@ try
 
   A_printf("[torrent] Settings pack should be initialized.");
 
-  lt::add_torrent_params atp = lt::load_torrent_buffer(torrentfile);
+  lt::add_torrent_params atp = lt::load_torrent_buffer(torrent_file);
   atp.save_path = path;  // save in current dir
   A_printf("[torrent] Current atp.save_path: %s", atp.save_path.c_str());
   lt::torrent_handle h = ses.add_torrent(std::move(atp));

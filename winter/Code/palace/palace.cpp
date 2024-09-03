@@ -184,13 +184,13 @@ int palace::update_game_with_path(const std::string& game_name, const std::strin
   A_printf("[Palace/UpdateGameWithPath] Updating %s....", game_name.c_str());
 
   // First, we sanitize the path and try to convert it to std::filesystem::path variable.
-  const std::filesystem::path sanitizedPath =
+  const std::filesystem::path sanitized_path =
       std::filesystem::u8path(custom_path);  // windows-specific thing that may work on linux, need to try on that
 
   // Then we practically do the same thing except inserting the sanitized path to the overloaded install function.
   if(M_server_games[game_name]->l1->get_installed_version().empty())
   {
-    M_server_games[game_name]->l1->install_path(sanitizedPath);
+    M_server_games[game_name]->l1->install_path(sanitized_path);
   }
   // else if(M_server_games[game_name]->l1->get_installed_version() == M_server_games[game_name]->l1->GetLatestVersion() ||
   // M_server_games[game_name]->l1->M_force_verify){

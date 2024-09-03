@@ -1,17 +1,10 @@
 #pragma once
 
-#include <array>
-#include <cstdio>
-#include <cstdlib>
-#include <events/error.hpp>
 #include <filesystem>
-#include <iostream>
-#include <net.hpp>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <string>
 #include <sys.hpp>
-#include <system_error>
 #include <torrent.hpp>
 #include <version/version.hpp>
 
@@ -48,9 +41,6 @@ class Kachemak : public Version
   std::string get_latest_version_tag();
   int free_space_check(const uintmax_t size, const FreeSpaceCheckCategory& category);
   int free_space_check_path(const uintmax_t size, const std::filesystem::path custom_path);
-  int prepare_symlink();
-  int do_symlink();
-  int do_symlink_path(std::filesystem::path custom_path);
   int update();
   virtual int install();
   virtual int install_path(std::filesystem::path custom_path);
