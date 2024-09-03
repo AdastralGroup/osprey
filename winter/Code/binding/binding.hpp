@@ -1,5 +1,5 @@
 #include <adastral_defs.hpp>
-#include <sha256.h>
+#include <sha256.hpp>
 #include <events/progress.hpp>
 #include <filesystem>
 #include <godot_cpp/classes/json.hpp>
