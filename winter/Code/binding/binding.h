@@ -24,23 +24,23 @@ class binding : public Node
   binding();
   ~binding();
   void init_palace();
+  void _raise_error(std::string error_str, unsigned int err_level);
+  void set_sourcemod_path(godot::String path);
   static void _bind_methods();
   int sanity_checks();
-  godot::Dictionary get_game_assets(godot::String game_name);
-  godot::Array get_server_games();
+  int init_games();
   int update_game(godot::String gameName);
   int verify_game(godot::String gameName);
-  int init_games();
+  int launch_game(String app_id, String arguments);
+  int desktop_notification(String title, String desc);
+  bool is_app_installed(godot::String app_id);
+  godot::Array get_server_games();
+  godot::Dictionary get_game_assets(godot::String game_name);
   godot::String find_sourcemod_path();
   godot::String get_sourcemod_path();
-  void set_sourcemod_path(godot::String path);
-  bool is_app_installed(godot::String app_id);
-  int launch_game(String app_id, String arguments);
   godot::String get_installed_version(godot::String gameName);
   godot::String get_latest_version(godot::String gameName);
   godot::String is_installed(godot::String gameName);
-  int desktop_notification(String title, String desc);
-  void _raise_error(std::string error_str, unsigned int err_level);
 
  private:
   void _verify_game(String gameName);
