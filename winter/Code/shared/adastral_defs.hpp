@@ -1,20 +1,18 @@
 #pragma once
 #include <cstdio>
 #include <cstdarg>
+#include <fstream>
+#include <map>
+#include <memory>
+#include <string>
+#include <events/eventsystem.hpp>
+#include <events/error.hpp>
+#include "sha256.hpp"
 #ifdef GODOT
 #include <cstdlib>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #endif
-
-#include <sha256.h>
-
-#include <events/eventsystem.hpp>
-#include <events/error.hpp>
-#include <fstream>
-#include <map>
-#include <memory>
-#include <string>
 
 
 inline EventSystem* A_error_system;
