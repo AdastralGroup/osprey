@@ -2,11 +2,12 @@
 
 #include "event.hpp"
 
-class ErrorMessage : public Event {
- public:
-  ErrorMessage(std::string message);
-  const std::string& get_message();
+class ErrorMessage : public Event
+{
+  public:
+    ErrorMessage(std::string message);
+    const std::string &get_message();
 
- private:
-  std::string M_message;
+  private:
+    std::string M_message;
 };

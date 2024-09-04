@@ -17,6 +17,6 @@
 
 class torrent
 {
- public:
-  static int libtorrent_download(const std::string& torrent_url, const std::string& path, EventSystem* event = nullptr);
+  public:
+    static int libtorrent_download(const std::string &torrent_url, const std::string &path, EventSystem *event = nullptr);
 };
