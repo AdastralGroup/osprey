@@ -1,5 +1,11 @@
 #include <event.hpp>
 
-Event::Event(EventType type) { m_type = type; }
+Event::Event(EventType type)
+{
+    type = type;
+}
 
-EventType Event::GetType() { return m_type; }
+EventType Event::get_type()
+{
+    return type;
+}
