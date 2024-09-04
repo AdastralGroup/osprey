@@ -1,12 +1,13 @@
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <string>
 #include <sys.hpp>
-#include <torrent.hpp>
 #include <version/version.hpp>
+#include <torrent.hpp>
 
 struct KachemakVersion
 {
