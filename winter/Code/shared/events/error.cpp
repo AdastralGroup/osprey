@@ -1,11 +1,11 @@
 #include <error.hpp>
 
-ErrorMessage::ErrorMessage(std::string message) : Event(EventType::kOnError)
+ErrorMessage::ErrorMessage(std::string message) : Event(EventType::OnError)
 {
-    M_message = message;
+    message = message;
 }
 
 const std::string &ErrorMessage::get_message()
 {
-    return M_message;
+    return message;
 }

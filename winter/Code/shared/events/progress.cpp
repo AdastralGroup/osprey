@@ -1,17 +1,17 @@
 #include <progress.hpp>
 
-ProgressUpdateMessage::ProgressUpdateMessage(long double bps, long double progress) : Event(EventType::kOnUpdate)
+ProgressUpdateMessage::ProgressUpdateMessage(long double bps, long double progress) : Event(EventType::OnUpdate)
 {
-    M_bps = bps;
-    M_progress = progress;
+    bps = bps;
+    progress = progress;
 }
 
 long double ProgressUpdateMessage::get_bps()
 {
-    return M_bps;
+    return bps;
 }
 
 long double ProgressUpdateMessage::get_progress()
 {
-    return M_progress;
+    return progress;
 }

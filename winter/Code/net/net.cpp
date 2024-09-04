@@ -2,13 +2,13 @@
 
 void net::curl_callback(void *buffer, size_t n)
 {
-    if (!M_bin)
+    if (!bin)
     {
-        M_curl_string_data += (char *)buffer;
+        curl_string_data += (char *)buffer;
     }
     else
     {
-        M_curl_bin_data.insert(M_curl_bin_data.end(), (char *)buffer, (char *)buffer + n);
+        curl_bin_data.insert(curl_bin_data.end(), (char *)buffer, (char *)buffer + n);
     }
 }
 
@@ -37,8 +37,8 @@ std::string net::get_string_data_from_server(const std::string &url)
         exit(256);
     }
     curl_easy_cleanup(curl_handle);
-    M_curl_string_data = curl_string_data_local;
-    return M_curl_string_data;
+    curl_string_data = curl_string_data_local;
+    return curl_string_data;
 }
 
 int net::progress_func(void *ptr, curl_off_t total_to_download, curl_off_t now_downloaded, curl_off_t total_to_upload, curl_off_t now_uploaded)
@@ -92,9 +92,9 @@ std::string net::download_to_temp(std::string url, std::string name, bool progre
 
 std::vector<char> net::get_bin_data_from_server(const std::string &url)
 {
-    M_bin = true;
+    bin = true;
     CURL *curlHandle = curl_easy_init();
-    M_curl_bin_data.clear();
+    curl_bin_data.clear();
     curl_easy_setopt(curlHandle, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, net::static_curl_callback);
     curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, this);
@@ -104,5 +104,5 @@ std::vector<char> net::get_bin_data_from_server(const std::string &url)
         exit(256);
     }
     curl_easy_cleanup(curlHandle);
-    return M_curl_bin_data;
+    return curl_bin_data;
 }

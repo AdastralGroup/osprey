@@ -46,9 +46,9 @@ class Kachemak : public Version
   int extract(const std::string& input_file, const std::string& output_directory, const size_t& size);
   int extract_path(const std::string& input_file, const std::string& output_directory, const size_t& size);
   std::string get_installed_version_tag();
-  std::string get_latest_version();
+  std::string get_latest_version_code();
   std::string get_latest_version_tag();
-  bool M_force_verify = false;
+  bool force_verify = false;
 
  private:
   void find_installed_version();
@@ -60,7 +60,7 @@ class Kachemak : public Version
   std::optional<KachemakVersion> get_km_version(const std::string& version);
   std::optional<KachemakPatch> get_patch(const std::string& version);
   std::optional<KachemakVersion> get_latest_km_version();
-  std::filesystem::path M_temp_path;
-  std::filesystem::path M_butler_location;
-  nlohmann::ordered_json M_parsed_version;
+  std::filesystem::path temp_path;
+  std::filesystem::path butler_location;
+  nlohmann::ordered_json parsed_version;
 };

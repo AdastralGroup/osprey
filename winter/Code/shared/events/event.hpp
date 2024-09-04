@@ -5,9 +5,9 @@
 
 enum class EventType
 {
-    kOnUpdate = 0,
-    kOnError = 1,
-    kMax = 2
+    OnUpdate = 0,
+    OnError = 1,
+    Max = 2
 };
 
 class Event
@@ -17,5 +17,5 @@ class Event
     EventType get_type();
 
   private:
-    EventType M_type;
+    EventType type;
 };

@@ -2,10 +2,10 @@
 
 Event::Event(EventType type)
 {
-    M_type = type;
+    type = type;
 }
 
 EventType Event::get_type()
 {
-    return M_type;
+    return type;
 }

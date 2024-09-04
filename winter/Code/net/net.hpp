@@ -24,7 +24,7 @@ class net
                            curl_off_t now_uploaded);
   static size_t static_curl_callback(void* buffer, size_t sz, size_t n, void* cptr);
   void curl_callback(void* buffer, size_t n);
-  std::string M_curl_string_data;  // we do curl calls synchronously, it's usually all string data so that ends up in here.
-  std::vector<char> M_curl_bin_data;  // idk lol
-  bool M_bin;
+  std::string curl_string_data;  // we do curl calls synchronously, it's usually all string data so that ends up in here.
+  std::vector<char> curl_bin_data;  // idk lol
+  bool bin;
 };

@@ -37,7 +37,7 @@ Dictionary binding::get_game_assets(String game_name)
     dict["id"] = game_name;
     std::string str_gamename = game_name.utf8().get_data();
     int num = 0;
-    for (auto i : p->M_southbank_json["games"].items())
+    for (auto i : p->southbank_json["games"].items())
     {
         if (i.key() != str_gamename)
         {
@@ -75,7 +75,7 @@ void binding::init_palace()
 void binding::_init_palace()
 {
     A_init_error_system();
-    A_error_system->register_listener(EventType::kOnError, [this](Event &ev) { emit_signal("error", String(static_cast<ErrorMessage &>(ev).get_message().c_str())); });
+    A_error_system->register_listener(EventType::OnError, [this](Event &ev) { emit_signal("error", String(static_cast<ErrorMessage &>(ev).get_message().c_str())); });
     UtilityFunctions::print("[binding] Firing up palace!");
     try
     {
@@ -135,9 +135,9 @@ int binding::launch_game(String app_id, String arguments)
 int binding::init_games()
 {
     int ret = p->init_games();
-    for (auto i : p->M_server_games)
+    for (auto i : p->server_games)
     {
-        i.second->l1->M_event_system.register_listener(EventType::kOnUpdate,
+        i.second->l1->event_system.register_listener(EventType::OnUpdate,
                                                        [this, i](Event &ev)
                                                        {
                                                            double prog = ((ProgressUpdateMessage &)ev).get_progress();
@@ -154,7 +154,7 @@ godot::String binding::find_sourcemod_path()
 };
 godot::String binding::get_sourcemod_path()
 {
-    return p->M_sourcemods_path.c_str();
+    return p->sourcemods_path.c_str();
 };
 // practically a wrapper
 godot::Array binding::get_server_games()
@@ -169,26 +169,26 @@ godot::Array binding::get_server_games()
 }
 godot::String binding::get_installed_version(godot::String gameName)
 {
-    if (p->M_server_games.count(gameName.utf8().get_data()) == 0)
+    if (p->server_games.count(gameName.utf8().get_data()) == 0)
     {
         return "";
     }
-    return p->M_server_games[gameName.utf8().get_data()]->l1->get_installed_version_tag().c_str();
+    return p->server_games[gameName.utf8().get_data()]->l1->get_installed_version_tag().c_str();
 };
 godot::String binding::get_latest_version(godot::String gameName)
 {
-    if (p->M_server_games.count(gameName.utf8().get_data()) == 0)
+    if (p->server_games.count(gameName.utf8().get_data()) == 0)
     {
         return "";
     }
-    return p->M_server_games[gameName.utf8().get_data()]->l1->get_latest_version_tag().c_str();
+    return p->server_games[gameName.utf8().get_data()]->l1->get_latest_version_tag().c_str();
 }
 void binding::set_sourcemod_path(godot::String gd_path)
 {
     std::filesystem::path path = std::filesystem::path(gd_path.utf8().get_data());
     if (exists(path))
     {
-        p->M_sourcemods_path = path;
+        p->sourcemods_path = path;
     }
 };
 

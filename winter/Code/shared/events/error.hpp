@@ -9,5 +9,5 @@ class ErrorMessage : public Event
     const std::string &get_message();
 
   private:
-    std::string M_message;
+    std::string message;
 };

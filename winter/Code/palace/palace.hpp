@@ -31,11 +31,11 @@ class palace
     std::filesystem::path get_asset(std::string hash);
     std::vector<std::string> get_games();
     std::vector<std::string> get_installed_games();
-    std::filesystem::path M_sourcemods_path;
-    std::filesystem::path M_steam_path;
-    std::unordered_map<std::string, GameMetadata *> M_server_games;
-    std::unordered_map<std::string, std::string> M_cachemap;
-    nlohmann::json M_southbank_json;
-    tyti::vdf::object M_library_folders;
-    tyti::vdf::object M_config_file;
+    std::filesystem::path sourcemods_path;
+    std::filesystem::path steam_path;
+    std::unordered_map<std::string, GameMetadata *> server_games;
+    std::unordered_map<std::string, std::string> cachemap;
+    nlohmann::json southbank_json;
+    tyti::vdf::object library_folders;
+    tyti::vdf::object config_file;
 };

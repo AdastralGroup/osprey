@@ -9,6 +9,6 @@ class ProgressUpdateMessage : public Event
     long double get_progress();
 
   private:
-    long double M_bps;
-    long double M_progress;
+    long double bps;
+    long double progress;
 };
