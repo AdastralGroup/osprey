@@ -278,7 +278,7 @@ int palace::launch_game(const std::string &game_name, const std::string &argumen
         return 1;
     }
 #else
-    std::string url_launch = "steam -appid ";
+    std::string url_launch = "steam -applaunch ";
     url_launch += SOURCE_SDK_2013_APP_ID;
     url_launch += " -game ";
     url_launch += (sourcemods_path / game_name).string();
