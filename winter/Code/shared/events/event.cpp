@@ -2,7 +2,7 @@
 
 Event::Event(EventType type)
 {
-    type = type;
+    this->type = type;
 }
 
 EventType Event::get_type()

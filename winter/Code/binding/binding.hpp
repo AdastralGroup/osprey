@@ -29,8 +29,8 @@ class binding : public Node
     static void _bind_methods();
     int sanity_checks();
     int init_games();
-    int update_game(godot::String gameName);
-    int verify_game(godot::String gameName);
+    int update_game(godot::String game_name);
+    int verify_game(godot::String game_name);
     int launch_game(String app_id, String arguments);
     int desktop_notification(String title, String desc);
     bool is_app_installed(godot::String app_id);
@@ -38,13 +38,13 @@ class binding : public Node
     godot::Dictionary get_game_assets(godot::String game_name);
     godot::String find_sourcemod_path();
     godot::String get_sourcemod_path();
-    godot::String get_installed_version(godot::String gameName);
-    godot::String get_latest_version(godot::String gameName);
-    godot::String is_installed(godot::String gameName);
+    godot::String get_installed_version(godot::String game_name);
+    godot::String get_latest_version(godot::String game_name);
+    godot::String is_installed(godot::String game_name);
 
   private:
-    void _verify_game(String gameName);
-    void _update_game(String gameName);
+    void _verify_game(String game_name);
+    void _update_game(String game_name);
     void _init_palace();
     palace *p;
 };

@@ -2,8 +2,8 @@
 
 ProgressUpdateMessage::ProgressUpdateMessage(long double bps, long double progress) : Event(EventType::OnUpdate)
 {
-    bps = bps;
-    progress = progress;
+    this->bps = bps;
+    this->progress = progress;
 }
 
 long double ProgressUpdateMessage::get_bps()
