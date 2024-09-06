@@ -148,6 +148,35 @@ int Kachemak::CreateSymlink(std::filesystem::path customPath) {
                   << "Couldn't create a symbolic link to " << m_szFolderName.string() << "!"
                   << " Windows error message code: " << err << std::endl;
 
+        //If the error code  is ERROR_PRIVILEGE_NOT_HELD, then it needs admin privileges, so we ask gently for them.
+
+        
+        if (err == ERROR_PRIVILEGE_NOT_HELD) {
+          std::cout << "[kachemak/CreateSymlink/Windows API]"
+                    << "Attempting to run with elevated privileges..." << std::endl;
+            
+          wchar_t exePath[MAX_PATH];
+          GetModuleFileNameW(NULL, exePath, MAX_PATH);
+
+          SHELLEXECUTEINFOW sei = {sizeof(sei)};
+          sei.fMask = SEE_MASK_NOCLOSEPROCESS;
+          sei.hwnd = NULL;
+          sei.lpVerb = L"runas";    // Request elevation
+          sei.lpFile = exePath;     // The current executable
+          sei.lpParameters = NULL;  
+          sei.lpDirectory = NULL;
+          sei.nShow = SW_SHOWNORMAL;
+
+          if (ShellExecuteExW(&sei)) {
+            // Close the current (non-elevated) process
+            ExitProcess(0);  // Exit immediately
+          } else {
+            std::cout << "[kachemak/CreateSymlink/Windows API]"
+                      << "Failed to run in elevated privileges. Error: " << GetLastError() << std::endl;
+          
+          }
+        }
+
       } else {
         // If you are at this point, then congratulations, you have survived the curses of Windows API, get yourself a
         // cookie.
