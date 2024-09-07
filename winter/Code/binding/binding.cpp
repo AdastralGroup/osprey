@@ -95,31 +95,31 @@ void binding::_raise_error(std::string error_str, unsigned int err_level)
 }
 
 // WRAPPERS!
-int binding::update_game(godot::String gameName)
+int binding::update_game(godot::String game_name)
 {
-    std::thread thread_obj(&binding::_update_game, this, gameName);
+    std::thread thread_obj(&binding::_update_game, this, game_name);
     thread_obj.detach();
     return 0;
 }
 
-void binding::_update_game(String gameName)
+void binding::_update_game(String game_name)
 {
-    int z = p->update_game(gameName.utf8().get_data());
-    emit_signal("game_updated", String(std::to_string(z).c_str()), gameName);
+    int z = p->update_game(game_name.utf8().get_data());
+    emit_signal("game_updated", String(std::to_string(z).c_str()), game_name);
 }
 
-int binding::verify_game(godot::String gameName)
+int binding::verify_game(godot::String game_name)
 {
     //
-    std::thread thread_obj(&binding::_verify_game, this, gameName);
+    std::thread thread_obj(&binding::_verify_game, this, game_name);
     thread_obj.detach();
     return 0;
 }
 
-void binding::_verify_game(String gameName)
+void binding::_verify_game(String game_name)
 {
-    int z = p->verify_game(gameName.utf8().get_data());
-    emit_signal("game_verified", String(std::to_string(z).c_str()), gameName);
+    int z = p->verify_game(game_name.utf8().get_data());
+    emit_signal("game_verified", String(std::to_string(z).c_str()), game_name);
 }
 
 bool binding::is_app_installed(String app_id)
@@ -167,21 +167,21 @@ godot::Array binding::get_server_games()
     }
     return gd_games;
 }
-godot::String binding::get_installed_version(godot::String gameName)
+godot::String binding::get_installed_version(godot::String game_name)
 {
-    if (p->server_games.count(gameName.utf8().get_data()) == 0)
+    if (p->server_games.count(game_name.utf8().get_data()) == 0)
     {
         return "";
     }
-    return p->server_games[gameName.utf8().get_data()]->l1->get_installed_version_tag().c_str();
+    return p->server_games[game_name.utf8().get_data()]->l1->get_installed_version_tag().c_str();
 };
-godot::String binding::get_latest_version(godot::String gameName)
+godot::String binding::get_latest_version(godot::String game_name)
 {
-    if (p->server_games.count(gameName.utf8().get_data()) == 0)
+    if (p->server_games.count(game_name.utf8().get_data()) == 0)
     {
         return "";
     }
-    return p->server_games[gameName.utf8().get_data()]->l1->get_latest_version_tag().c_str();
+    return p->server_games[game_name.utf8().get_data()]->l1->get_latest_version_tag().c_str();
 }
 void binding::set_sourcemod_path(godot::String gd_path)
 {

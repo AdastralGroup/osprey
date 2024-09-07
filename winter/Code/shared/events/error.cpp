@@ -2,7 +2,7 @@
 
 ErrorMessage::ErrorMessage(std::string message) : Event(EventType::OnError)
 {
-    message = message;
+    this->message = message;
 }
 
 const std::string &ErrorMessage::get_message()
