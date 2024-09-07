@@ -168,12 +168,12 @@ int palace::init_games()
 
 int palace::update_game(const std::string &game_name)
 {
-    A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
+    A_printf("[Palace/updateGame] Updating %s....", game_name.c_str());
     if (server_games[game_name]->l1->get_installed_version_code().empty())
     {
         server_games[game_name]->l1->install();
     }
-    // else if(server_games[game_name]->l1->get_installed_version() == server_games[game_name]->l1->GetLatestVersion() ||
+    // else if(server_games[game_name]->l1->get_installed_version() == server_games[game_name]->l1->get_latest_version_code() ||
     // server_games[game_name]->l1->force_verify){
     //   server_games[game_name]->l1->verify();
     // }
@@ -187,24 +187,24 @@ int palace::update_game(const std::string &game_name)
 // creating the same function to accept in custom path names.
 int palace::update_game_with_path(const std::string &game_name, const std::string custom_path)
 {
-    A_printf("[Palace/UpdateGameWithPath] Updating %s....", game_name.c_str());
+    A_printf("[Palace/updateGameWithPath] Updating %s....", game_name.c_str());
 
     // First, we sanitize the path and try to convert it to std::filesystem::path variable.
     const std::filesystem::path sanitized_path = std::filesystem::u8path(custom_path); // windows-specific thing that may work on linux, need to try on that
 
   // We assign in the symlink first before doing the update first, as we assume its already installed, just in a different path
-  if (serverGames[game_name]->l1->GetInstalledVersion().empty()) {
-    //serverGames[game_name]->l1->Install_InPath(sanitizedPath);
-    serverGames[game_name]->l1->Install_InPath(sanitizedPath);
+  if (server_games[game_name]->l1->get_installed_version_code().empty()) {
+    //server_games[game_name]->l1->install_path(sanitizedPath);
+    server_games[game_name]->l1->install_path(sanitized_path);
     
   }
   
-  if(serverGames[game_name]->l1->GetInstalledVersion() == serverGames[game_name]->l1->GetLatestVersion() ||
-    serverGames[game_name]->l1->force_verify){
-    serverGames[game_name]->l1->Verify();
+  if(server_games[game_name]->l1->get_installed_version_code() == server_games[game_name]->l1->get_latest_version_code() ||
+    server_games[game_name]->l1->force_verify){
+    server_games[game_name]->l1->verify();
    }
    else {
-    serverGames[game_name]->l1->Update();
+    server_games[game_name]->l1->update();
   }
   return 0;
 }

@@ -115,7 +115,7 @@ int Kachemak::CreateSymlink(std::filesystem::path customPath) {
 
  
     // First, get the path and check if it would even exist
-    const std::filesystem::path symlinkPath = m_szSourcemodPath / m_szFolderName;
+    const std::filesystem::path symlinkPath = sourcemod_path / folder_name;
     std::cout << customPath << std::endl << symlinkPath << std::endl;
 
     // Then check if they even or not. If they don't exist in the path itself, then one can create them.
@@ -129,7 +129,7 @@ int Kachemak::CreateSymlink(std::filesystem::path customPath) {
         // Get the error code
         DWORD err = GetLastError();
         std::cout << "[kachemak/CreateSymlink/Windows API] "
-                  << "Couldn't create a symbolic link to " << m_szFolderName.string() << "!"
+                  << "Couldn't create a symbolic link to " << folder_name.string() << "!"
                   << " Windows error message code: " << err << std::endl;
 
         //If the error code  is ERROR_PRIVILEGE_NOT_HELD, then it needs admin privileges, so we ask gently for them.
@@ -138,36 +138,40 @@ int Kachemak::CreateSymlink(std::filesystem::path customPath) {
         if (err == ERROR_PRIVILEGE_NOT_HELD) {
           std::cout << "[kachemak/CreateSymlink/Windows API]"
                     << "Attempting to run with elevated privileges..." << std::endl;
-            
-          wchar_t exePath[MAX_PATH];
-          GetModuleFileNameW(NULL, exePath, MAX_PATH);
+            return 0;
+          //wchar_t exePath[MAX_PATH];
+          //GetModuleFileNameW(NULL, exePath, MAX_PATH);
 
-          SHELLEXECUTEINFOW sei = {sizeof(sei)};
-          sei.fMask = SEE_MASK_NOCLOSEPROCESS;
-          sei.hwnd = NULL;
-          sei.lpVerb = L"runas";    // Request elevation
-          sei.lpFile = exePath;     // The current executable
-          sei.lpParameters = NULL;  
-          sei.lpDirectory = NULL;
-          sei.nShow = SW_SHOWNORMAL;
+          //SHELLEXECUTEINFOW sei = {sizeof(sei)};
+          //sei.fMask = SEE_MASK_NOCLOSEPROCESS;
+          //sei.hwnd = NULL;
+          //sei.lpVerb = L"runas";    // Request elevation
+          //sei.lpFile = exePath;     // The current executable
+          //sei.lpParameters = NULL;  
+          //sei.lpDirectory = NULL;
+          //sei.nShow = SW_SHOWNORMAL;
 
-          if (ShellExecuteExW(&sei)) {
-            // Close the current (non-elevated) process
-            ExitProcess(0);  // Exit immediately
-          } else {
-            std::cout << "[kachemak/CreateSymlink/Windows API]"
-                      << "Failed to run in elevated privileges. Error: " << GetLastError() << std::endl;
-          
-          }
+          //if (ShellExecuteExW(&sei)) {
+          //  // Close the current (non-elevated) process
+          //  ExitProcess(0);  // Exit immediately
+          //} else {
+          //  std::cout << "[kachemak/CreateSymlink/Windows API]"
+          //            << "Failed to run in elevated privileges. Error: " << GetLastError() << std::endl;
+          //
+          //}
         }
 
       } else {
         // If you are at this point, then congratulations, you have survived the curses of Windows API, get yourself a
         // cookie.
         std::cout << "[kachemak/CreateSymlink/Windows API]"
-                  << "Created a symlink to: " << m_szFolderName.string() << "!" << std::endl;
+                  << "Created a symlink to: " << folder_name.string() << "!" << std::endl;
       }
     }
+    #else
+    //Add in for linux
+#endif
+    return 0;
 }
 
 /*
@@ -226,75 +230,101 @@ int Kachemak::update()
 }
 
 int Kachemak::Update_InPath() {
-  A_printf("[Kachemak/Update_I] Updating %s... ", m_szFolderName.c_str());
-  if (m_szInstalledVersion == GetLatestVersion() || force_verify) {
-    return 3;
-  }
-  int symlinkRes = PrepareSymlink();
-  if (symlinkRes != 0) {
-    return 1;
-  }
+  //A_printf("[Kachemak/Update_I] Updating %s... ", folder_name.c_str());
+  //if (installed_version_code == GetLatestVersion() || force_verify) {
+  //  return 3;
+  //}
+  //int symlinkRes = PrepareSymlink();
+  //if (symlinkRes != 0) {
+  //  return 1;
+  //}
 
-  std::optional<KachemakPatch> patch = GetPatch(m_szInstalledVersion);
-  if (!patch) return 3;
+  //std::optional<KachemakPatch> patch = GetPatch(m_szInstalledVersion);
+  //if (!patch) return 3;
 
-  if (FreeSpaceCheck(patch.value().lTempRequired, FreeSpaceCheckCategory::Permanent) != 0) {
-    return 2;
-  }
+  //if (FreeSpaceCheck(patch.value().lTempRequired, FreeSpaceCheckCategory::Permanent) != 0) {
+  //  return 2;
+  //}
 
-  std::optional<KachemakVersion> installedVersion = GetKMVersion(m_szInstalledVersion);
-  if (!installedVersion) return 4;
+  //std::optional<KachemakVersion> installedVersion = GetKMVersion(m_szInstalledVersion);
+  //if (!installedVersion) return 4;
 
-  // full signature url
-  std::stringstream sigUrlFull_ss;
-  sigUrlFull_ss << m_szSourceUrl << installedVersion.value().szSignature;
-  // Data path for current install
-  std::filesystem::path dataDir_path = m_szSourcemodPath / m_szFolderName;
-  std::stringstream healUrl_ss;
-  healUrl_ss << m_szSourceUrl << installedVersion.value().szFileName;
-  int verifyRes = ButlerVerify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
+  //// full signature url
+  //std::stringstream sigUrlFull_ss;
+  //sigUrlFull_ss << source_url << installedVersion.value().szSignature;
+  //// Data path for current install
+  //std::filesystem::path dataDir_path = m_szSourcemodPath / folder_name;
+  //std::stringstream healUrl_ss;
+  //healUrl_ss << source_url << installedVersion.value().szFileName;
+  //int verifyRes = butler_verify(sigUrlFull_ss.str(), dataDir_path.string(), healUrl_ss.str());
 
-  std::stringstream patchUrlFull_ss;
-  patchUrlFull_ss << m_szSourceUrl << patch.value().szUrl;
-  std::filesystem::path stagingPath = m_szSourcemodPath / ("butler-staging-" + m_szFolderName.string());
-  A_printf("[Kachemak/Update] Patching %s from %s to %s, with staging dir at %s. ", m_szFolderName.c_str(),
-           installedVersion.value().szVersion.c_str(), GetLatestVersion().c_str(), stagingPath.c_str());
-  int patchRes = ButlerPatch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
-                             dataDir_path.string(), patch.value().lTempRequired);
+  //std::stringstream patchUrlFull_ss;
+  //patchUrlFull_ss << source_url << patch.value().szUrl;
+  //std::filesystem::path stagingPath = m_szSourcemodPath / ("butler-staging-" + folder_name.string());
+  //A_printf("[Kachemak/Update] Patching %s from %s to %s, with staging dir at %s. ", folder_name.c_str(),
+  //         installedVersion.value().szVersion.c_str(), GetLatestVersion().c_str(), stagingPath.c_str());
+  //int patchRes = ButlerPatch(patchUrlFull_ss.str(), stagingPath.string(), patch.value().szFilename,
+  //                           dataDir_path.string(), patch.value().lTempRequired);
 
-  DoSymlink();
-  m_szInstalledVersion = GetLatestVersion();
-  WriteVersion();
+  //DoSymlink();
+  //m_szInstalledVersion = GetLatestVersion();
+  //WriteVersion();
   return 0;
 }
-int Kachemak::Install() {
-  if (PrepareSymlink() != 0) {
-    return 1;
-  }
-  std::optional<KachemakVersion> latestVersion = GetLatestKMVersion();
-  if (!latestVersion) return 2;
-  int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
-  if (diskSpaceStatus != 0) return diskSpaceStatus;
-  std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
-  A_printf("[Kachemak/Install] Downloading via torrent... \n");
-  int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string(),&m_eventSystem);
-  //std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName, true,&m_eventSystem);
-  if (downloadStatus != 0) {
-    A_error("[Kachemak/Install] Download failed - ret val %d \n",downloadStatus);
-    return downloadStatus;
-  }
-  A_printf("[Kachemak/Install] Download complete: extracting... \n");
-  std::filesystem::create_directory(m_szSourcemodPath.string() / m_szFolderName);
-  int err_c = Extract(latestVersion.value().szFileName, (m_szSourcemodPath / m_szFolderName).string(), latestVersion.value().lExtractSize);
-  //Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
-  if(err_c == 0) {
-    A_printf("[Kachemak/Install] Extraction done! \n");
-    DoSymlink();
-    m_szInstalledVersion = GetLatestVersion();
-    WriteVersion();
+int Kachemak::install()
+{
+    std::optional<KachemakVersion> latest_version = get_latest_km_version();
+    if (!latest_version)
+    {
+        return 2;
+    }
+    int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary);
+    if (disk_space_status != 0)
+    {
+        return disk_space_status;
+    }
+    std::string download_uri = source_url + latest_version.value().download_url;
+    A_printf("[Kachemak/install] Downloading via torrent...");
+    int download_status = torrent::libtorrent_download(download_uri, temp_path.string(), &event_system);
+    if (download_status != 0)
+    {
+        A_error("[Kachemak/install] Download failed - ret val %d \n", download_status);
+        return download_status;
+    }
+    A_printf("[Kachemak/install] Download complete: extracting...");
+    std::filesystem::create_directory(sourcemod_path.string() / folder_name);
+    int ret = extract(latest_version.value().file_name, (sourcemod_path / folder_name).string(), latest_version.value().extract_size);
+    if (ret == 0)
+    {
+        A_printf("[Kachemak/install] Extraction done!");
+        installed_version_code = get_latest_version_code();
+        write_version();
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
+int Kachemak::verify()
+{
+    std::optional<KachemakVersion> installed_km_version = get_km_version(installed_version_code);
+    if (!installed_km_version)
+    {
+        return 4;
+    }
+    // full signature url
+    std::stringstream sig_url_full;
+    sig_url_full << source_url << installed_km_version.value().signature;
+    // Data path for current install
+    std::filesystem::path dataDir_path = sourcemod_path / folder_name;
+    std::stringstream heal_url;
+    heal_url << source_url << installed_km_version.value().file_name;
+    butler_verify(sig_url_full.str(), dataDir_path.string(), heal_url.str());
+    force_verify = false;
+    write_version();
     return 0;
-  }
-  else{return 1;}
 }
 
 int Kachemak::install_path(std::filesystem::path custom_path)
@@ -304,7 +334,7 @@ int Kachemak::install_path(std::filesystem::path custom_path)
     {
         return 2;
     }
-    int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary);
+    int disk_space_status = free_space_check_path(latest_version.value().download_size, custom_path);
     if (disk_space_status != 0)
     {
         return disk_space_status;

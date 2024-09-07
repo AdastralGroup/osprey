@@ -50,18 +50,9 @@ class Kachemak : public Version
   std::string get_latest_version_tag();
   bool force_verify = false;
 
-  int FreeSpaceCheck(const uintmax_t size, const FreeSpaceCheckCategory& category);
-  int FreeSpaceCheck_InPath(const uintmax_t size, const std::filesystem::path customPath);
-  int PrepareSymlink();
-  int DoSymlink();
+
   int CreateSymlink(std::filesystem::path customPath);
-  int Update();
   int Update_InPath();
-  virtual int Install();
-  virtual int Install_InPath(std::filesystem::path customPath);
-  int Verify();
-  int Extract(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize);
-  int Extract_InPath(const std::string& szInputFile, const std::string& szOutputDirectory, const size_t& szSize);
 
  private:
   void find_installed_version();
