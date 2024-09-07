@@ -11,7 +11,11 @@ void A_printf(const char *const format, ...)
     va_start(argptr, format);
     vfprintf(stdout, format, argptr);
     va_end(argptr);
+#if _WIN32
+    printf("\r\n"):
+#else
     printf("\n"); // kinda dumb, but this makes parity with the godot ver. ideally it'd be the other way around, but there's no way to knock off the \n in godot's case.
+#endif
 #else
     // #pragma warning ("GODOT ENABLED.")
     va_list argptr;
