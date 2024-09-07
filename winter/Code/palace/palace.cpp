@@ -251,10 +251,6 @@ std::filesystem::path palace::get_app_path(const std::string &app_id)
 }
 
 #define SOURCE_SDK_2013_APP_ID "243750"
-
-// no idea if there is somewhere an map like that in my steam directory and i don't wanna read every app manifest / call steam api over this silly thing
-const std::map<std::string, std::string> proton_map_to_depot = {{"proton_experimental", "1493710"}};
-
 // returns non-zero if failed
 int palace::launch_game(const std::string &game_name, const std::string &arguments)
 {
