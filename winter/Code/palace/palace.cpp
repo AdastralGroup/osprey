@@ -148,7 +148,7 @@ int palace::update_game_with_path(const std::string& game_name, const std::strin
   // We assign in the symlink first before doing the update first, as we assume its already installed, just in a different path
   if (serverGames[game_name]->l1->GetInstalledVersion().empty()) {
     //serverGames[game_name]->l1->Install_InPath(sanitizedPath);
-    serverGames[game_name]->l1->CreateSymlink(sanitizedPath);
+    serverGames[game_name]->l1->Install_InPath(sanitizedPath);
     
   }
   

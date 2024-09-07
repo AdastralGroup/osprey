@@ -37,7 +37,7 @@ int main() {
   }
   //printf("[headless] Symlinking the open_fortress.\n");
   printf("[headless] Launching the game open_fortress");
-  p->update_game_with_path("open_fortress", "E:\\symlinktest\\open_fortress");
+  p->update_game_with_path("open_fortress", "E:\\installtest");
   p->launch_game("open_fortress", "");  // you should check the force_verify to see if verification alone is needed.
   delete(p);
   printf("[headless] Everything done.\n");

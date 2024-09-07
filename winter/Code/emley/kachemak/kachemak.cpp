@@ -345,11 +345,11 @@ int Kachemak::Install_InPath(std::filesystem::path customPath) {
   }
   std::optional<KachemakVersion> latestVersion = GetLatestKMVersion();
   if (!latestVersion) return 2;
-  int diskSpaceStatus = FreeSpaceCheck(latestVersion.value().lDownloadSize, FreeSpaceCheckCategory::Temporary);
+  int diskSpaceStatus = FreeSpaceCheck_InPath(latestVersion.value().lDownloadSize, customPath);
   if (diskSpaceStatus != 0) return diskSpaceStatus;
   std::string downloadUri = m_szSourceUrl + latestVersion.value().szDownloadUrl;
   A_printf("[Kachemak/InstallInPath] Downloading via torrent... \n");
-  int downloadStatus = torrent::LibTorrentDownload(downloadUri, m_szTempPath.string(), &m_eventSystem);
+  int downloadStatus = torrent::LibTorrentDownload(downloadUri, customPath.string(), &m_eventSystem);
   // std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().szFileName,
   // true,&m_eventSystem);
   if (downloadStatus != 0) {
@@ -363,7 +363,9 @@ int Kachemak::Install_InPath(std::filesystem::path customPath) {
   // Extract( path.string() , (m_szSourcemodPath/ m_szFolderName).string() , latestVersion.value().lExtractSize);
   if (err_c == 0) {
     A_printf("[Kachemak/InstallInPath] Extraction done! \n");
-    DoSymlink();
+    //DoSymlink();
+    CreateSymlink(customPath);
+    
     m_szInstalledVersion = GetLatestVersion();
     WriteVersion();
     return 0;
