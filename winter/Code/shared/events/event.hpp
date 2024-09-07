@@ -3,13 +3,19 @@
 #include <map>
 #include <string>
 
-enum class EventType { kOnUpdate = 0, kOnError = 1, kMax = 2 };
+enum class EventType
+{
+    OnUpdate = 0,
+    OnError = 1,
+    Max = 2
+};
 
-class Event {
- public:
-  Event(EventType eventType);
-  EventType GetType();
+class Event
+{
+  public:
+    Event(EventType event_type);
+    EventType get_type();
 
- private:
-  EventType m_type;
+  private:
+    EventType type;
 };

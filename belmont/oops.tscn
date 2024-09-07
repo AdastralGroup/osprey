@@ -69,3 +69,4 @@ theme_override_font_sizes/font_size = 27
 text = "Error: -1 (Error has not been inputted.)
 "
 horizontal_alignment = 1
+autowrap_mode = 2

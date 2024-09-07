@@ -8,6 +8,7 @@ var s: binding
 func _ready():
 	s = binding.new()
 	s.connect("palace_started",init)
+	s.connect("error",_on_error)
 	s.init_palace()
 
 
@@ -55,7 +56,13 @@ func transition():
 	$TextureRect6.hide()
 	$Label3.reparent($Control/Main)
 	await get_tree().create_timer(0.5).timeout
+
+
 	
-
-
-
+func _on_error(error_detail):
+	print(error_detail)
+	var z = oops.instantiate()
+	z.find_child("Label2").set("text",error_detail)
+	get_tree().get_root().call_deferred("add_child",z)
+	await get_tree().create_timer(1).timeout
+	get_tree().paused = true
