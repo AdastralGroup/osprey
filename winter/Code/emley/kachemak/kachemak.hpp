@@ -37,12 +37,11 @@ class Kachemak : public Version
  public:
   Kachemak(const std::filesystem::path& sourcemod_path, const std::filesystem::path& folder_name,
            const std::string& source_url, const std::filesystem::path& butler_path);
-  virtual int install();
-  virtual int install_path(std::filesystem::path custom_path);
+  virtual int install(std::filesystem::path path);
   int free_space_check(const uintmax_t size, const FreeSpaceCheckCategory& category);
   int free_space_check_path(const uintmax_t size, const std::filesystem::path custom_path);
-  int update();
-  int verify();
+  virtual int update();
+  virtual int verify();
   int extract(const std::string& input_file, const std::string& output_directory, const size_t& size);
   int extract_path(const std::string& input_file, const std::string& output_directory, const size_t& size);
   std::string get_installed_version_tag();

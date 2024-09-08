@@ -22,7 +22,7 @@ class palace
     void download_assets();
     int init_games();
     int update_game(const std::string &game_name);
-    int update_game_with_path(const std::string &game_name, std::string custom_path);
+    int update_game(const std::string &game_name,const std::string &install_path);
     int verify_game(const std::string &game_name);
     int launch_game(const std::string &game_name, const std::string &arguments);
     bool is_app_installed(const std::string &app_id);

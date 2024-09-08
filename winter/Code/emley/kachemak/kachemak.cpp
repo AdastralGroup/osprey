@@ -182,7 +182,7 @@ int Kachemak::update()
     return 0;
 }
 
-int Kachemak::install()
+int Kachemak::install(std::filesystem::path path)
 {
     std::optional<KachemakVersion> latest_version = get_latest_km_version();
     if (!latest_version)
@@ -203,50 +203,11 @@ int Kachemak::install()
         return download_status;
     }
     A_printf("[Kachemak/install] Download complete: extracting...");
-    std::filesystem::create_directory(sourcemod_path.string() / folder_name);
-    int ret = extract(latest_version.value().file_name, (sourcemod_path / folder_name).string(), latest_version.value().extract_size);
+    std::filesystem::create_directory(path.string() / folder_name);
+    int ret = extract(latest_version.value().file_name, (path / folder_name).string(), latest_version.value().extract_size);
     if (ret == 0)
     {
         A_printf("[Kachemak/install] Extraction done!");
-        installed_version_code = get_latest_version_code();
-        write_version();
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
-}
-
-int Kachemak::install_path(std::filesystem::path custom_path)
-{
-    std::optional<KachemakVersion> latest_version = get_latest_km_version();
-    if (!latest_version)
-    {
-        return 2;
-    }
-    int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary);
-    if (disk_space_status != 0)
-    {
-        return disk_space_status;
-    }
-    std::string download_uri = source_url + latest_version.value().download_url;
-    A_printf("[Kachemak/InstallInPath] Downloading via torrent...");
-    int download_status = torrent::libtorrent_download(download_uri, temp_path.string(), &event_system);
-    // std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().file_name,
-    // true,&event_system);
-    if (download_status != 0)
-    {
-        A_error("[Kachemak/InstallInPath] Download failed - ret val %d \n", download_status);
-        return download_status;
-    }
-    A_printf("[Kachemak/InstallInPath] Download complete: extracting...");
-    std::filesystem::create_directory(custom_path.string() / folder_name);
-    int ret = extract_path(latest_version.value().file_name, (custom_path / folder_name).string(), latest_version.value().extract_size);
-    // extract( path.string() , (sourcemod_path/ folder_name).string() , latestVersion.value().extract_size);
-    if (ret == 0)
-    {
-        A_printf("[Kachemak/InstallInPath] Extraction done!");
         installed_version_code = get_latest_version_code();
         write_version();
         return 0;

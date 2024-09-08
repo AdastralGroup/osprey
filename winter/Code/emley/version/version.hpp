@@ -10,7 +10,7 @@ class Version
   Version(const std::filesystem::path& sourcemod_path, const std::filesystem::path& folder_name,
           const std::string& source_url);
   virtual int verify() = 0;
-  virtual int install() = 0;
+  virtual int install(std::filesystem::path path) = 0;
   const std::string& get_installed_version_code();
   std::string name;
   EventSystem event_system;  // we need to yoink it into palace and then sutton
