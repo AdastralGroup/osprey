@@ -35,7 +35,7 @@ enum class FreeSpaceCheckCategory
 class Kachemak : public Version
 {
  public:
-  Kachemak(const std::filesystem::path& sourcemod_path, const std::filesystem::path& folder_name,
+  Kachemak(const std::filesystem::path& game_path, const std::filesystem::path& folder_name,
            const std::string& source_url, const std::filesystem::path& butler_path);
   virtual int install(std::filesystem::path path);
   int free_space_check(const uintmax_t size, const FreeSpaceCheckCategory& category);

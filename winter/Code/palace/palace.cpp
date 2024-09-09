@@ -158,9 +158,9 @@ int palace::init_games()
         std::string full_url = southbank_json["dl_url"];
         full_url += id;
         full_url += '/'; // this is dumb, make it do this inside kachemak....
-        auto *game = new Kachemak(sourcemods_path, it.key(), full_url, get_asset(BUTLER));
-        // getting the json is versioning impl specific so we let it get it
-        // i'm aware i'm breaking one of the rules, but it makes more sense
+        auto *game = new Kachemak(sourcemods_path / it.key(), it.key(), full_url, get_asset(BUTLER));
+        // If the game's already installed, this isn't an issue as wherever it's installed, the symlink will resolve.
+        // install_game takes in a path in the case that... it isn't.
         server_games[id]->l1 = game;
     }
     return 0;
@@ -169,36 +169,32 @@ int palace::init_games()
 int palace::update_game(const std::string &game_name)
 {
     A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
-    if (server_games[game_name]->l1->get_installed_version_code().empty())
-    {
-        server_games[game_name]->l1->install(sourcemods_path);
-    }
-    // else if(server_games[game_name]->l1->get_installed_version() == server_games[game_name]->l1->GetLatestVersion() ||
+    //if(server_games[game_name]->l1->get_installed_version() == server_games[game_name]->l1->GetLatestVersion() ||
     // server_games[game_name]->l1->force_verify){
     //   server_games[game_name]->l1->verify();
     // }
-    else
-    {
-        server_games[game_name]->l1->update();
-    }
+    server_games[game_name]->l1->update();
     return 0;
 }
 
 
-int palace::update_game(const std::string &game_name,const std::string &install_path)
+
+int palace::install_game(const std::string &game_name,const std::string &install_path = "")
 {
     A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
-    if (server_games[game_name]->l1->get_installed_version_code().empty())
+    if (install_path != "")
     {
         server_games[game_name]->l1->install(install_path);
-        std::filesystem::create_directory_symlink(install_path ,sourcemods_path / "game_name");
+        std::filesystem::create_directory_symlink(install_path ,sourcemods_path / game_name);
     }
     else
     {
-        server_games[game_name]->l1->update();
+        server_games[game_name]->l1->install(sourcemods_path);
     }
     return 0;
 }
+
+
 
 
 std::vector<std::string> palace::get_games()
