@@ -15,13 +15,13 @@ Kachemak::Kachemak(const std::filesystem::path &game_path, const std::filesystem
     parsed_version = nlohmann::ordered_json::parse(ver_string);
     find_installed_version();
     event_system.register_listener(EventType::OnUpdate,
-                                     [](Event &ev)
-                                     {
-                                         // long double prog = ((ProgressUpdateMessage&)ev).get_progress();
-                                         // long double prog2 = ((ProgressUpdateMessage&)ev).get_progress();
-                                         // A_printf("[Kachemak/Butler] Progress: %d (unrounded: %f)\n",
-                                         // round(prog2*100),prog);
-                                     });
+                                   [](Event &ev)
+                                   {
+                                       // long double prog = ((ProgressUpdateMessage&)ev).get_progress();
+                                       // long double prog2 = ((ProgressUpdateMessage&)ev).get_progress();
+                                       // A_printf("[Kachemak/Butler] Progress: %d (unrounded: %f)\n",
+                                       // round(prog2*100),prog);
+                                   });
 }
 
 std::optional<KachemakVersion> Kachemak::get_km_version(const std::string &version)
@@ -78,8 +78,12 @@ res:
   1: not enough temp storage
   2: not enough permanent storage
 */
-int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategory &category)
+int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategory &category, std::string perm_path)
 {
+    if (perm_path.empty())
+    {
+        perm_path = game_path;
+    }
     switch (category)
     {
     case FreeSpaceCheckCategory::Temporary:
@@ -89,20 +93,11 @@ int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategor
         }
         break;
     case FreeSpaceCheckCategory::Permanent:
-        if (std::filesystem::space(this->game_path).free < size)
+        if (std::filesystem::space(perm_path).free < size)
         {
             return 2;
         }
         break;
-    }
-    return 0;
-}
-
-int Kachemak::free_space_check_path(const uintmax_t size, const std::filesystem::path custom_path)
-{
-    if (std::filesystem::space(custom_path).free < size)
-    {
-        return 1;
     }
     return 0;
 }
@@ -168,14 +163,18 @@ int Kachemak::update()
     // Data path for current install
     std::stringstream heal_url;
     heal_url << source_url << km_installed_version.value().file_name;
-    int verifyRes = butler_verify(sig_url_full.str(), game_path.string(), heal_url.str());
+    int verify_ret = butler_verify(sig_url_full.str(), game_path.string(), heal_url.str());
     std::stringstream patch_url_full;
     patch_url_full << source_url << patch.value().url;
     std::filesystem::path staging_path = game_path / ("butler-staging-" + folder_name.string());
     A_printf("[Kachemak/update] Patching %s from %s to %s, with staging dir at %s. ", folder_name.c_str(), km_installed_version.value().version.c_str(), get_latest_version_code().c_str(),
              staging_path.c_str());
-    int patchRes = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, game_path.string(), patch.value().temp_required);
-
+    int patch_ret = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, game_path.string(), patch.value().temp_required);
+    if(patch_ret != 0)
+    {
+        A_error("Patching failed - error code %d\n",patch_ret);
+        return patch_ret;
+    }
     installed_version_code = get_latest_version_code();
     write_version();
     return 0;
@@ -188,9 +187,10 @@ int Kachemak::install(std::filesystem::path path)
     {
         return 2;
     }
-    int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary);
+    int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary,path);
     if (disk_space_status != 0)
     {
+        // should we error here?
         return disk_space_status;
     }
     std::string download_uri = source_url + latest_version.value().download_url;
@@ -224,7 +224,7 @@ res:
 int Kachemak::extract(const std::string &input_file, const std::string &output_directory, const size_t &size)
 {
     A_printf("[Kachemak/extract] Input File %s, Output %s, size %lu", input_file.c_str(), output_directory.c_str(), size);
-    if (free_space_check(size * 2, FreeSpaceCheckCategory::Permanent) != 0)
+    if (free_space_check(size * 2, FreeSpaceCheckCategory::Permanent,output_directory) != 0)
     {
         A_printf("[Kachemak/extract] Not enough space. Exiting.");
         return 1;
@@ -233,28 +233,6 @@ int Kachemak::extract(const std::string &input_file, const std::string &output_d
     if (ret != 0)
     {
         A_error("[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
-        return -1;
-    }
-    installed_version_code = get_latest_version_code();
-    write_version();
-    return 0;
-}
-
-int Kachemak::extract_path(const std::string &input_file, const std::string &output_directory, const size_t &size)
-{
-    A_printf("[Kachemak/ExtractInPath] Input File %s, Output %s, size %lu", input_file.c_str(), output_directory.c_str(), size);
-
-    // Variable to get the path
-    std::filesystem::path sanitized_path = std::filesystem::u8path(output_directory);
-    if (free_space_check_path(size * 2, sanitized_path) != 0)
-    {
-        A_printf("[Kachemak/ExtractInPath] Not enough space. Exiting.");
-        return 1;
-    }
-    int ret = sys::extract_zip((temp_path / input_file).string(), output_directory);
-    if (ret != 0)
-    {
-        A_error("[Kachemak/ExtractInPath] Extraction Failed - %s\n", zip_strerror(ret));
         return -1;
     }
     installed_version_code = get_latest_version_code();

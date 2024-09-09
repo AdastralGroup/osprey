@@ -185,7 +185,7 @@ int palace::install_game(const std::string &game_name,const std::string &install
     if (install_path != "")
     {
         server_games[game_name]->l1->install(install_path);
-        std::filesystem::create_directory_symlink(install_path ,sourcemods_path / game_name);
+        std::filesystem::create_directory_symlink(std::filesystem::path(install_path) / game_name,sourcemods_path / game_name);
     }
     else
     {
