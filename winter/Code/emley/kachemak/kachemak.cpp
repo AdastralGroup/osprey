@@ -118,10 +118,10 @@ int Kachemak::verify()
     std::stringstream sig_url_full;
     sig_url_full << source_url << installed_km_version.value().signature;
     // Data path for current install
-    std::filesystem::path dataDir_path = sourcemod_path / folder_name;
+    std::filesystem::path data_dir_path = sourcemod_path / folder_name;
     std::stringstream heal_url;
     heal_url << source_url << installed_km_version.value().file_name;
-    butler_verify(sig_url_full.str(), dataDir_path.string(), heal_url.str());
+    butler_verify(sig_url_full.str(), data_dir_path.string(), heal_url.str());
     force_verify = false;
     write_version();
     return 0;

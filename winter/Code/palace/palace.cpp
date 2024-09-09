@@ -188,7 +188,15 @@ int palace::update_game(const std::string &game_name)
 int palace::update_game(const std::string &game_name,const std::string &install_path)
 {
     A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
-    // stub for now
+    if (server_games[game_name]->l1->get_installed_version_code().empty())
+    {
+        server_games[game_name]->l1->install(install_path);
+        std::filesystem::create_directory_symlink(install_path ,sourcemods_path / "game_name");
+    }
+    else
+    {
+        server_games[game_name]->l1->update();
+    }
     return 0;
 }
 
