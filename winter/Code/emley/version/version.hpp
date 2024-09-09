@@ -7,7 +7,7 @@
 class Version
 {
  public:
-  Version(const std::filesystem::path& sourcemod_path, const std::filesystem::path& folder_name,
+  Version(const std::filesystem::path& game_path, const std::filesystem::path& folder_name,
           const std::string& source_url);
   virtual int verify() = 0;
   virtual int install(std::filesystem::path path) = 0;
@@ -18,6 +18,6 @@ class Version
  protected:
   std::string installed_version_code;
   std::string source_url;
-  std::filesystem::path sourcemod_path;
+  std::filesystem::path game_path;
   std::filesystem::path folder_name;
 };

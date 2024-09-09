@@ -1,7 +1,7 @@
 #include <kachemak/kachemak.hpp>
 
-Kachemak::Kachemak(const std::filesystem::path &sourcemod_path, const std::filesystem::path &folder_name, const std::string &source_url, const std::filesystem::path &butler_path)
-    : Version(sourcemod_path, folder_name, source_url)
+Kachemak::Kachemak(const std::filesystem::path &game_path, const std::filesystem::path &folder_name, const std::string &source_url, const std::filesystem::path &butler_path)
+    : Version(game_path, folder_name, source_url)
 {
     // placeholder
     temp_path = std::filesystem::temp_directory_path().string();
@@ -89,7 +89,7 @@ int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategor
         }
         break;
     case FreeSpaceCheckCategory::Permanent:
-        if (std::filesystem::space(sourcemod_path).free < size)
+        if (std::filesystem::space(this->game_path).free < size)
         {
             return 2;
         }
@@ -118,7 +118,7 @@ int Kachemak::verify()
     std::stringstream sig_url_full;
     sig_url_full << source_url << installed_km_version.value().signature;
     // Data path for current install
-    std::filesystem::path data_dir_path = sourcemod_path / folder_name;
+    std::filesystem::path data_dir_path = game_path / folder_name;
     std::stringstream heal_url;
     heal_url << source_url << installed_km_version.value().file_name;
     butler_verify(sig_url_full.str(), data_dir_path.string(), heal_url.str());
@@ -166,16 +166,15 @@ int Kachemak::update()
     std::stringstream sig_url_full;
     sig_url_full << source_url << km_installed_version.value().signature;
     // Data path for current install
-    std::filesystem::path data_dir_path = sourcemod_path / folder_name;
     std::stringstream heal_url;
     heal_url << source_url << km_installed_version.value().file_name;
-    int verifyRes = butler_verify(sig_url_full.str(), data_dir_path.string(), heal_url.str());
+    int verifyRes = butler_verify(sig_url_full.str(), game_path.string(), heal_url.str());
     std::stringstream patch_url_full;
     patch_url_full << source_url << patch.value().url;
-    std::filesystem::path staging_path = sourcemod_path / ("butler-staging-" + folder_name.string());
+    std::filesystem::path staging_path = game_path / ("butler-staging-" + folder_name.string());
     A_printf("[Kachemak/update] Patching %s from %s to %s, with staging dir at %s. ", folder_name.c_str(), km_installed_version.value().version.c_str(), get_latest_version_code().c_str(),
              staging_path.c_str());
-    int patchRes = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, data_dir_path.string(), patch.value().temp_required);
+    int patchRes = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, game_path.string(), patch.value().temp_required);
 
     installed_version_code = get_latest_version_code();
     write_version();
@@ -411,9 +410,9 @@ int Kachemak::butler_parse_command(const std::string &command)
 }
 void Kachemak::find_installed_version()
 {
-    if (exists(sourcemod_path / folder_name))
+    if (exists(game_path))
     {
-        std::ifstream data(sourcemod_path / folder_name / ".adastral");
+        std::ifstream data(game_path / ".adastral");
         if (!data.fail())
         {
             nlohmann::json file_data = nlohmann::json::parse(data);
@@ -463,7 +462,7 @@ void Kachemak::write_version()
 {
     nlohmann::json test_json;
     test_json["version"] = installed_version_code;
-    std::ofstream data(sourcemod_path / folder_name / ".adastral");
+    std::ofstream data(game_path / ".adastral");
     data << test_json;
     data.close();
 }
