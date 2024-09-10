@@ -28,7 +28,15 @@ void binding::_bind_methods()
 
 binding::binding()
 {
-    UtilityFunctions::print("[binding] Initialised. Ready to fire up palace.");
+    A_init_error_system();
+    A_error_system->register_listener(EventType::OnError, [this](Event &ev) { emit_signal("error", String(static_cast<ErrorMessage &>(ev).get_message().c_str())); });
+    UtilityFunctions::print("[binding/init] Error system initialised. Ready to fire up palace.");
+    std::set_terminate([]()
+    {
+        A_error("EXCEPTION NOT HANDLED.... EXPLODING IN 5 SECONDS");
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        abort();
+    });
 }
 
 Dictionary binding::get_game_assets(String game_name)
@@ -74,8 +82,7 @@ void binding::init_palace()
 
 void binding::_init_palace()
 {
-    A_init_error_system();
-    A_error_system->register_listener(EventType::OnError, [this](Event &ev) { emit_signal("error", String(static_cast<ErrorMessage &>(ev).get_message().c_str())); });
+
     UtilityFunctions::print("[binding] Firing up palace!");
     try
     {
