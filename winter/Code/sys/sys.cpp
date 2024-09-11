@@ -12,7 +12,7 @@ int sys::exec_with_param(const std::vector<std::string> &params)
     return system(param_str.c_str());
 }
 
-/*
+/**
 description:
   recursively delete contents of directory
 res:
@@ -117,7 +117,7 @@ std::filesystem::path sys::get_steam_path()
     {
         return std::filesystem::canonical(path_flatpak);
     }
-    A_error("Steam not detected!");
+    A_error(ErrorLevel::OOPS,"Steam not detected!");
     return std::filesystem::path("");
 #endif
 }

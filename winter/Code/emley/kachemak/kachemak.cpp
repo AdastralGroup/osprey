@@ -199,7 +199,7 @@ int Kachemak::install()
     int download_status = torrent::libtorrent_download(download_uri, temp_path.string(), &event_system);
     if (download_status != 0)
     {
-        A_error("[Kachemak/install] Download failed - ret val %d \n", download_status);
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/install] Download failed - ret val %d \n", download_status);
         return download_status;
     }
     A_printf("[Kachemak/install] Download complete: extracting...");
@@ -237,7 +237,7 @@ int Kachemak::install_path(std::filesystem::path custom_path)
     // true,&event_system);
     if (download_status != 0)
     {
-        A_error("[Kachemak/InstallInPath] Download failed - ret val %d \n", download_status);
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/InstallInPath] Download failed - ret val %d \n", download_status);
         return download_status;
     }
     A_printf("[Kachemak/InstallInPath] Download complete: extracting...");
@@ -272,7 +272,7 @@ int Kachemak::extract(const std::string &input_file, const std::string &output_d
     int ret = sys::extract_zip((temp_path / input_file).string(), output_directory);
     if (ret != 0)
     {
-        A_error("[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
         return -1;
     }
     installed_version_code = get_latest_version_code();
@@ -294,7 +294,7 @@ int Kachemak::extract_path(const std::string &input_file, const std::string &out
     int ret = sys::extract_zip((temp_path / input_file).string(), output_directory);
     if (ret != 0)
     {
-        A_error("[Kachemak/ExtractInPath] Extraction Failed - %s\n", zip_strerror(ret));
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/ExtractInPath] Extraction Failed - %s\n", zip_strerror(ret));
         return -1;
     }
     installed_version_code = get_latest_version_code();
@@ -438,7 +438,7 @@ int Kachemak::butler_parse_command(const std::string &command)
             }
             else if (message_type.compare("error") == NULL)
             {
-                ErrorMessage message(json_buffer["message"].get<std::string>());
+                ErrorMessage message(json_buffer["message"].get<std::string>(),ErrorLevel::PANIC);
                 event_system.trigger_event(message);
             }
         }
