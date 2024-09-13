@@ -100,7 +100,7 @@ std::filesystem::path sys::get_steam_path()
     if (valueData[0] == 0)
     {
         // Registry key did not exist/had no value
-        A_error("Steam not detected!");
+        A_error(ErrorLevel::OOPS,"Steam not detected!");
         return std::filesystem::path();
     }
 
