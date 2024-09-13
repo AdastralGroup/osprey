@@ -70,7 +70,7 @@ jobs:
           cp -r ../winter/Code/binding/lib/* build/windows
           godot -v --export-release --headless "Windows Desktop" build/windows/adastral.exe
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: windows
           path: belmont/build/windows/

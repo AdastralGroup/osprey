@@ -50,7 +50,7 @@ jobs:
           mkdir -v -p build/linux
           godot -v --export-debug --headless "Linux/X11" build/linux/adastral.x86_64
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: linux
           path: belmont/build/linux
