@@ -270,7 +270,7 @@ int palace::launch_game(const std::string &game_name, const std::string &argumen
 
     if (CreateProcessA(sdk_app_binary.c_str(), command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, (LPSTR)sourcemods_path.string().c_str(), &dummy_si, &dummy_pi) == 0)
     {
-        A_error("[Palace/launch_game] win32: CreateProcessA failed!");
+        A_error(ErrorLevel::SERIOUS,"[Palace/launch_game] win32: CreateProcessA failed!");
         return 1;
     }
 #else
