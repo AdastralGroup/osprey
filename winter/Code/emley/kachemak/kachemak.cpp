@@ -70,7 +70,7 @@ std::optional<KachemakVersion> Kachemak::get_latest_km_version()
     return get_km_version(parsed_version["latest"]);
 }
 
-/*
+/**
 description:
   check free space for specific category provided.
 res:
@@ -127,7 +127,7 @@ int Kachemak::verify()
     return 0;
 }
 
-/*
+/**
 description:
   routine for updating whatever is installed
 res:
@@ -254,7 +254,7 @@ int Kachemak::install_path(std::filesystem::path custom_path)
     return 1;
 }
 
-/*
+/**
 desc:
         extract .zip file to directory
 res:
@@ -302,7 +302,7 @@ int Kachemak::extract_path(const std::string &input_file, const std::string &out
     return 0;
 }
 
-/*
+/**
 description:
   wrapper for butler cli to verify installation
 res:
