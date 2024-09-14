@@ -15,14 +15,8 @@
 #endif
 
 inline EventSystem *A_error_system;
-enum error_level
-{
-    INFO,
-    WARNING,
-    SERIOUS,
-    PANIC
-};
-inline std::map<error_level, std::string> error_string_map{{INFO, "info"}, {WARNING, "warning"}, {SERIOUS, "serious"}, {PANIC, "panic"}};
+
+//inline std::map<error_level, std::string> error_string_map{{INFO, "info"}, {WARNING, "warning"}, {SERIOUS, "serious"}, {PANIC, "panic"}};
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 #define popen _popen
 #define BUTLER "butler.exe"
@@ -45,13 +39,13 @@ template <typename... Args> std::string string_format(const std::string &format,
     std::snprintf(buf.get(), size, format.c_str(), args...);
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
-template <typename... Args> void A_error(const std::string &format, Args... args)
+template <typename... Args> void A_error(ErrorLevel error_level, const std::string &format, Args... args)
 {
     std::string error_detail = string_format(format, args...);
     A_printf("### ERROR: %s", error_detail.c_str());
 #ifndef GODOT
 #else
-    ErrorMessage e = ErrorMessage(std::move(error_detail));
+    ErrorMessage e = ErrorMessage(std::move(error_detail),error_level);
     A_error_system->trigger_event(e);
 #endif
 }
