@@ -41,7 +41,7 @@ void palace::fetch_server_data()
     }
     catch (nlohmann::json::parse_error &ex)
     {
-        A_error("Can't fetch southbank. Check your internet connection!");
+        A_error(ErrorLevel::PANIC,"Can't fetch southbank. Check your internet connection!");
     }
 }
 
@@ -248,7 +248,7 @@ int palace::launch_game(const std::string &game_name, const std::string &argumen
     std::filesystem::path sdk_app_path = get_app_path(SOURCE_SDK_2013_APP_ID);
     if (!std::filesystem::exists(sdk_app_path))
     {
-        A_error("[Palace/launch_game] sdk path doesn't exist...");
+        A_error(ErrorLevel::SERIOUS,"[Palace/launch_game] sdk path doesn't exist...");
         return 1;
     }
 #ifdef WIN32
@@ -261,7 +261,7 @@ int palace::launch_game(const std::string &game_name, const std::string &argumen
 
     if (CreateProcessA(sdk_app_binary.c_str(), command_line, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, (LPSTR)sourcemods_path.string().c_str(), &dummy_si, &dummy_pi) == 0)
     {
-        A_error("[Palace/launch_game] win32: CreateProcessA failed!");
+        A_error(ErrorLevel::SERIOUS,"[Palace/launch_game] win32: CreateProcessA failed!");
         return 1;
     }
 #else

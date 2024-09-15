@@ -70,7 +70,7 @@ std::optional<KachemakVersion> Kachemak::get_latest_km_version()
     return get_km_version(parsed_version["latest"]);
 }
 
-/*
+/**
 description:
   check free space for specific category provided.
 res:
@@ -122,7 +122,7 @@ int Kachemak::verify()
     return 0;
 }
 
-/*
+/**
 description:
   routine for updating whatever is installed
 res:
@@ -172,7 +172,7 @@ int Kachemak::update()
     int patch_ret = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, game_path.string(), patch.value().temp_required);
     if(patch_ret != 0)
     {
-        A_error("Patching failed - error code %d\n",patch_ret);
+        A_error(ErrorLevel::SERIOUS,"Patching failed - error code %d\n",patch_ret);
         return patch_ret;
     }
     installed_version_code = get_latest_version_code();
@@ -198,7 +198,7 @@ int Kachemak::install(std::filesystem::path path)
     int download_status = torrent::libtorrent_download(download_uri, temp_path.string(), &event_system);
     if (download_status != 0)
     {
-        A_error("[Kachemak/install] Download failed - ret val %d \n", download_status);
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/install] Download failed - ret val %d \n", download_status);
         return download_status;
     }
     A_printf("[Kachemak/install] Download complete: extracting...");
@@ -214,7 +214,7 @@ int Kachemak::install(std::filesystem::path path)
     return 1;
 }
 
-/*
+/**
 desc:
         extract .zip file to directory
 res:
@@ -232,7 +232,7 @@ int Kachemak::extract(const std::string &input_file, const std::string &output_d
     int ret = sys::extract_zip((temp_path / input_file).string(), output_directory);
     if (ret != 0)
     {
-        A_error("[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
         return -1;
     }
     installed_version_code = get_latest_version_code();
@@ -240,7 +240,7 @@ int Kachemak::extract(const std::string &input_file, const std::string &output_d
     return 0;
 }
 
-/*
+/**
 description:
   wrapper for butler cli to verify installation
 res:
@@ -376,7 +376,7 @@ int Kachemak::butler_parse_command(const std::string &command)
             }
             else if (message_type.compare("error") == NULL)
             {
-                ErrorMessage message(json_buffer["message"].get<std::string>());
+                ErrorMessage message(json_buffer["message"].get<std::string>(),ErrorLevel::PANIC);
                 event_system.trigger_event(message);
             }
         }

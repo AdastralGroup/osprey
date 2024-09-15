@@ -22,7 +22,7 @@ script = ExtResource("1_v8uiu")
 material = SubResource("CanvasItemMaterial_2ld2c")
 layout_mode = 0
 offset_right = 770.0
-offset_bottom = 350.0
+offset_bottom = 352.0
 color = Color(0.713726, 0.207843, 0.219608, 1)
 metadata/_edit_group_ = true
 
@@ -73,3 +73,4 @@ theme_override_font_sizes/font_size = 27
 text = "Error: -1 (Error has not been inputted.)
 "
 horizontal_alignment = 1
+autowrap_mode = 3
