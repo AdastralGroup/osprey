@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://d2fac2xibuh1b"]
+[gd_scene load_steps=31 format=3 uid="uid://d2fac2xibuh1b"]
 
 [ext_resource type="Theme" uid="uid://bqpi1momfja7u" path="res://themes/base.tres" id="1_iqqha"]
 [ext_resource type="FontVariation" uid="uid://th0tjv2xcuen" path="res://fonts/main_font.tres" id="3_qwbhy"]
@@ -153,14 +153,6 @@ theme_override_fonts/font = ExtResource("15_m18sp")
 theme_override_font_sizes/font_size = 22
 text = "WIP, subject to change"
 
-[node name="GradientBar" type="Panel" parent="Main/TopPanel"]
-visible = false
-layout_mode = 0
-offset_top = 64.0
-offset_right = 770.0
-offset_bottom = 68.0
-theme_type_variation = &"GradientBar"
-
 [node name="Panel2" type="Panel" parent="Main"]
 layout_mode = 0
 offset_left = 81.0
@@ -171,7 +163,6 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_fdqvn")
 metadata/_edit_group_ = true
 
 [node name="Background" type="TextureRect" parent="Main/Panel2"]
-visible = false
 material = SubResource("ShaderMaterial_r15we")
 layout_mode = 0
 offset_left = -1.0
@@ -373,7 +364,6 @@ offset_left = 124.0
 offset_top = 13.0
 offset_right = 448.0
 offset_bottom = 337.0
-texture = ExtResource("12_qhs8s")
 expand_mode = 1
 stretch_mode = 4
 

@@ -11,7 +11,6 @@ var theme_json = {"adastral": ## needed - adastral theme isn't stored remotely
 		"star": "res://assets/adastral.png"}}
 var games: Dictionary
 var s : binding
-var current_screen : String # use an enum damnit!!!!
 var current_game = ""
 var advanced_open = false
 signal change_to(game)
@@ -252,6 +251,7 @@ func apply_theme(theme_name):
 		$Panel2/Background.show()
 		#$Panel2.show()
 	$LatestVersion.text = "[left]Latest Version: [b]%s[/b]" % s.get_latest_version(theme_name)
+	begin_bulk_theme_override()
 	set_buttons(theme_name)
 	var newbgtexture = load_image(pallete["bg"])
 	var newstar = load_image(pallete["star"])
@@ -292,10 +292,10 @@ func apply_theme(theme_name):
 	tween.tween_property($Verify.get_theme_stylebox("hover"),"bg_color", Color(pallete["light"]), 0.2)
 	##tween.tween_property($Install.get_theme_stylebox("disabled"),"bg_color",Color(pallete["dark"],0.2) tween disabled when we need to
 	tween.tween_property($Verify.get_theme_stylebox("pressed"),"bg_color", Color(pallete["click"]), 0.2)
-	tween.tween_property($Verify.get_theme_stylebox("pressed"),"bg_color", Color(pallete["click"]), 0.2)
 	tween.tween_property($ProgressBar.get_theme_stylebox("fill"),"bg_color", Color(pallete["accent"]), 0.2)
 	tween.tween_property($ProgressBar.get_theme_stylebox("background"),"bg_color", Color(pallete["light"]), 0.2)
 	set_button_colours(Color(pallete["light"]),0.2)
+	end_bulk_theme_override()
 	await get_tree().create_timer(0.2).timeout
 	if pallete.has("wordmark"):
 		$Wordmark.texture = load_image(pallete["wordmark"]) # yes I know we load it twice but I'm not exactly the best at codeflow as you can see
