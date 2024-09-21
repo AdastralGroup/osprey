@@ -2,11 +2,24 @@
 
 #include "event.hpp"
 
-class ErrorMessage : public Event {
- public:
-  ErrorMessage(std::string message);
-  const std::string& get_message();
+enum ErrorLevel
+{
+    INFO = 0,
+    WARNING = 1,
+    SERIOUS = 2,
+    OOPS = 3,
+    PANIC = 4
+};
 
- private:
-  std::string m_szMessage;
+
+class ErrorMessage : public Event
+{
+  public:
+    ErrorMessage(std::string message, ErrorLevel error_level);
+    const std::string &get_message();
+    const ErrorLevel &get_error_level();
+
+  private:
+    ErrorLevel error_level;
+    std::string message;
 };

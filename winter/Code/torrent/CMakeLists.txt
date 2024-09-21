@@ -16,9 +16,4 @@ target_include_directories(torrent PUBLIC ../net)
 # get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
 
 
-
-
-
-
-
 target_link_libraries(torrent PRIVATE CURL::libcurl nlohmann_json::nlohmann_json LibtorrentRasterbar::torrent-rasterbar net)
