@@ -35,10 +35,9 @@ std::optional<KachemakVersion> Kachemak::get_km_version(const std::string &versi
 
     KachemakVersion ret = {
         .file_name = jsonVersion["file"].get<std::string>(),
-        //      .download_url = jsonVersion["url"].get<std::string>(),
-        .download_url = jsonVersion["file_p2p"].get<std::string>(),
-        //      .download_size = jsonVersion["presz"].get<std::size_t>(),
-        //      .extract_size = jsonVersion["postsz"].get<std::size_t>(),
+        .download_url_p2p = jsonVersion["file_p2p"].get<std::string>(),
+        .download_size = jsonVersion["file_size"].get<std::size_t>(),
+        .extract_size = jsonVersion["ext_size"].get<std::size_t>(),
         .version = version,
         .signature = jsonVersion["sig"].get<std::string>(),
     };
@@ -83,13 +82,13 @@ int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategor
     switch (category)
     {
     case FreeSpaceCheckCategory::Temporary:
-        if (std::filesystem::space(temp_path).free < size)
+        if (std::filesystem::space(temp_path).free < size*1000)
         {
             return 1;
         }
         break;
     case FreeSpaceCheckCategory::Permanent:
-        if (std::filesystem::space(sourcemod_path).free < size)
+        if (std::filesystem::space(sourcemod_path).free < size*1000)
         {
             return 2;
         }
@@ -98,14 +97,6 @@ int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategor
     return 0;
 }
 
-int Kachemak::free_space_check_path(const uintmax_t size, const std::filesystem::path custom_path)
-{
-    if (std::filesystem::space(custom_path).free < size)
-    {
-        return 1;
-    }
-    return 0;
-}
 
 int Kachemak::verify()
 {
@@ -169,14 +160,17 @@ int Kachemak::update()
     std::filesystem::path data_dir_path = sourcemod_path / folder_name;
     std::stringstream heal_url;
     heal_url << source_url << km_installed_version.value().file_name;
-    int verifyRes = butler_verify(sig_url_full.str(), data_dir_path.string(), heal_url.str());
+    int verify_ret = butler_verify(sig_url_full.str(), data_dir_path.string(), heal_url.str());
     std::stringstream patch_url_full;
     patch_url_full << source_url << patch.value().url;
     std::filesystem::path staging_path = sourcemod_path / ("butler-staging-" + folder_name.string());
     A_printf("[Kachemak/update] Patching %s from %s to %s, with staging dir at %s. ", folder_name.c_str(), km_installed_version.value().version.c_str(), get_latest_version_code().c_str(),
              staging_path.c_str());
-    int patchRes = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, data_dir_path.string(), patch.value().temp_required);
-
+    int patch_ret = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, data_dir_path.string(), patch.value().temp_required);
+    if(patch_ret != 0)
+    {
+        A_error("Failiure writing version!");
+    }
     installed_version_code = get_latest_version_code();
     write_version();
     return 0;
@@ -194,7 +188,7 @@ int Kachemak::install()
     {
         return disk_space_status;
     }
-    std::string download_uri = source_url + latest_version.value().download_url;
+    std::string download_uri = source_url + latest_version.value().download_url_p2p;
     A_printf("[Kachemak/install] Downloading via torrent...");
     int download_status = torrent::libtorrent_download(download_uri, temp_path.string(), &event_system);
     if (download_status != 0)
@@ -212,10 +206,7 @@ int Kachemak::install()
         write_version();
         return 0;
     }
-    else
-    {
-        return 1;
-    }
+    return 1;
 }
 
 int Kachemak::install_path(std::filesystem::path custom_path)
@@ -230,7 +221,7 @@ int Kachemak::install_path(std::filesystem::path custom_path)
     {
         return disk_space_status;
     }
-    std::string download_uri = source_url + latest_version.value().download_url;
+    std::string download_uri = source_url + latest_version.value().download_url_p2p;
     A_printf("[Kachemak/InstallInPath] Downloading via torrent...");
     int download_status = torrent::libtorrent_download(download_uri, temp_path.string(), &event_system);
     // std::filesystem::path path = net::download_to_temp(downloadUri, latestVersion.value().file_name,

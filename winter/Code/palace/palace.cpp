@@ -179,7 +179,7 @@ int palace::update_game(const std::string &game_name)
     // }
     else
     {
-        server_games[game_name]->l1->update();
+        return server_games[game_name]->l1->update();
     }
     return 0;
 }
