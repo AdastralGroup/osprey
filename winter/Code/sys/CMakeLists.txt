@@ -1,5 +1,5 @@
 project(sys)
-add_library(${PROJECT_NAME} STATIC sys.cpp zip/zip.c)
+add_library(${PROJECT_NAME} STATIC sys.cpp zip/zip.c tinyfiledialogs.c)
 target_include_directories(sys PUBLIC ../${PROJECT_NAME})
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
