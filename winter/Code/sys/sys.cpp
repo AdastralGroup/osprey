@@ -121,3 +121,10 @@ std::filesystem::path sys::get_steam_path()
     return std::filesystem::path("");
 #endif
 }
+
+
+std::filesystem::path sys::folder_dialog(const std::string& default_path)
+{
+    char const* folder = tinyfd_selectFolderDialog("Choose Install Folder",default_path.c_str());
+    return std::filesystem::path(folder);
+}
