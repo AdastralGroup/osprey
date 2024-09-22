@@ -67,6 +67,7 @@ func transition():
 
 
 	
+
 func _on_error(error_level,error_detail):
 	if error_level < ErrorLevel.OOPS:
 		print(error_detail)
