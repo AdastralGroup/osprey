@@ -84,13 +84,13 @@ int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategor
     case FreeSpaceCheckCategory::Temporary:
         if (std::filesystem::space(temp_path).free < size*1000)
         {
-            return 1;
+            return (int)StatusCode::OOTemp;
         }
         break;
     case FreeSpaceCheckCategory::Permanent:
         if (std::filesystem::space(sourcemod_path).free < size*1000)
         {
-            return 2;
+            return (int)StatusCode::OOPerm;
         }
         break;
     }
@@ -103,7 +103,7 @@ int Kachemak::verify()
     std::optional<KachemakVersion> installed_km_version = get_km_version(installed_version_code);
     if (!installed_km_version)
     {
-        return 4;
+        return (int)StatusCode::NoVer;
     }
     // full signature url
     std::stringstream sig_url_full;
@@ -115,7 +115,7 @@ int Kachemak::verify()
     butler_verify(sig_url_full.str(), dataDir_path.string(), heal_url.str());
     force_verify = false;
     write_version();
-    return 0;
+    return (int)StatusCode::Ok;
 }
 
 /*
@@ -126,6 +126,7 @@ res:
   1: symlink fail
   2: space check fail
   3: already on latest / verification needed first
+  4: installed versiobn doesn't exist in version file
 */
 
 int Kachemak::update()
@@ -133,24 +134,24 @@ int Kachemak::update()
     A_printf("[Kachemak/update] Updating %s... ", folder_name.c_str());
     if (installed_version_code == get_latest_version_code() || force_verify)
     {
-        return 3;
+        return (int)StatusCode::Already;
     }
 
     std::optional<KachemakPatch> patch = get_patch(installed_version_code);
     if (!patch)
     {
-        return 3;
+        return (int)StatusCode::Already;
     }
 
-    if (free_space_check(patch.value().temp_required, FreeSpaceCheckCategory::Permanent) != 0)
+    if (free_space_check(patch.value().temp_required, FreeSpaceCheckCategory::Temporary) != 0)
     {
-        return 2;
+        return (int)StatusCode::OOTemp;
     }
 
     std::optional<KachemakVersion> km_installed_version = get_km_version(installed_version_code);
     if (!km_installed_version)
     {
-        return 4;
+        return (int)StatusCode::NoVer;
     }
 
     // full signature url
@@ -167,22 +168,22 @@ int Kachemak::update()
     A_printf("[Kachemak/update] Patching %s from %s to %s, with staging dir at %s. ", folder_name.c_str(), km_installed_version.value().version.c_str(), get_latest_version_code().c_str(),
              staging_path.c_str());
     int patch_ret = butler_patch(patch_url_full.str(), staging_path.string(), patch.value().filename, data_dir_path.string(), patch.value().temp_required);
+    installed_version_code = get_latest_version_code();
+    write_version();
     if(patch_ret != 0)
     {
         A_error("Failiure writing version!");
+        return (int)StatusCode::PatchFail;
     }
-    installed_version_code = get_latest_version_code();
-    write_version();
-    return 0;
+    else
+    {
+        return (int)StatusCode::Ok;
+    }
 }
 
 int Kachemak::install()
 {
     std::optional<KachemakVersion> latest_version = get_latest_km_version();
-    if (!latest_version)
-    {
-        return 2;
-    }
     int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary);
     if (disk_space_status != 0)
     {
@@ -194,7 +195,7 @@ int Kachemak::install()
     if (download_status != 0)
     {
         A_error("[Kachemak/install] Download failed - ret val %d \n", download_status);
-        return download_status;
+        return (int)StatusCode::DlFail;
     }
     A_printf("[Kachemak/install] Download complete: extracting...");
     std::filesystem::create_directory(sourcemod_path.string() / folder_name);
@@ -204,9 +205,9 @@ int Kachemak::install()
         A_printf("[Kachemak/install] Extraction done!");
         installed_version_code = get_latest_version_code();
         write_version();
-        return 0;
+        return (int)StatusCode::Ok;
     }
-    return 1;
+    return (int)StatusCode::ExtFail;
 }
 
 int Kachemak::install_path(std::filesystem::path custom_path)
@@ -258,13 +259,13 @@ int Kachemak::extract(const std::string &input_file, const std::string &output_d
     if (free_space_check(size * 2, FreeSpaceCheckCategory::Permanent) != 0)
     {
         A_printf("[Kachemak/extract] Not enough space. Exiting.");
-        return 1;
+        return (int)StatusCode::OOPerm;
     }
     int ret = sys::extract_zip((temp_path / input_file).string(), output_directory);
     if (ret != 0)
     {
         A_error("[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
-        return -1;
+        return (int)StatusCode::ExtFail;
     }
     installed_version_code = get_latest_version_code();
     write_version();

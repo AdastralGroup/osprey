@@ -171,7 +171,7 @@ int palace::update_game(const std::string &game_name)
     A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
     if (server_games[game_name]->l1->get_installed_version_code().empty())
     {
-        server_games[game_name]->l1->install();
+        return server_games[game_name]->l1->install();
     }
     // else if(server_games[game_name]->l1->get_installed_version() == server_games[game_name]->l1->GetLatestVersion() ||
     // server_games[game_name]->l1->force_verify){
@@ -195,7 +195,7 @@ int palace::update_game_with_path(const std::string &game_name, const std::strin
     // Then we practically do the same thing except inserting the sanitized path to the overloaded install function.
     if (server_games[game_name]->l1->get_installed_version_code().empty())
     {
-        server_games[game_name]->l1->install_path(sanitized_path);
+        return server_games[game_name]->l1->install_path(sanitized_path);
     }
     // else if(server_games[game_name]->l1->get_installed_version() == server_games[game_name]->l1->GetLatestVersion() ||
     // server_games[game_name]->l1->force_verify){

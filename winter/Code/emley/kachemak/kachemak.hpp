@@ -32,6 +32,19 @@ enum class FreeSpaceCheckCategory
   Temporary,
   Permanent
 };
+enum class StatusCode
+{
+  Ok,
+  OOTemp,
+  OOPerm,
+  Already,
+  NoVer,
+  ESymlink,
+  PatchFail,
+  ExtFail,
+  DlFail,
+};
+
 
 class Kachemak : public Version
 {
