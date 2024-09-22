@@ -17,10 +17,17 @@ Github Actions is set up for both Windows and Linux, so builds can be grabbed of
 To build winter, you'll need to install ``libtorrent-rasterbar`` and ``curl`` (and ``libnotify`` on linux), then configure with cmake
 - include the following on the command line when running cmake to enable building the bindings:
 ```-DGODOT=1 -DGODOT_GDEXTENSION_DIR="gdextension" -DGODOT_CPP_SYSTEM_HEADERS=ON```
-- Then just move the libraries located in `winter/Code/binding/lib` (especially `winter-64-debug`) to `belmont/bin`
-- you should be good to launch the godot project and fire up Adastral.
+- Then just move the libraries located in `winter/Code/binding/lib` (especially `winter-x64-debug`) to `belmont/bin`
+- You should be good to launch the Godot project and fire up Adastral.
 
 
 ## License
 
-Adastral is licensed under the GPLv3. 
+Adastral is licensed under the GPLv3.
+
+Winter uses various libraries and components under different licenses:
+- libtorrent-rasterbar: BSD 2-Clause Licence
+- [zip](https://github.com/kuba--/zip): MIT License
+- sha256.cpp: zlib License
+- tinyfiledialogs: zlib License
+- libcurl: curl License
