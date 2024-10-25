@@ -45,17 +45,16 @@ corner_radius_bottom_left = 5
 shadow_color = Color(0, 0, 0, 0.12549)
 shadow_size = 4
 
-[sub_resource type="StyleBoxFlat" id="11"]
-bg_color = Color(0.933333, 0.92549, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dlymu"]
+bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
-shadow_color = Color(0, 0, 0, 0.121569)
-shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.12549)
+shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="19"]
-bg_color = Color(0, 0.933333, 0.101961, 1)
 border_color = Color(0.239216, 0.160784, 0.317647, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -70,7 +69,7 @@ shadow_color = Color(0, 0, 0, 0.168627)
 shadow_size = 5
 
 [sub_resource type="StyleBoxFlat" id="37"]
-bg_color = Color(0.831373, 0.611765, 0.419608, 1)
+bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -117,7 +116,7 @@ Button/colors/font_pressed_color = Color(0.65098, 0.572549, 0, 1)
 Button/styles/disabled = SubResource("20")
 Button/styles/focus = SubResource("StyleBoxFlat_v3ljb")
 Button/styles/hover = SubResource("22")
-Button/styles/normal = SubResource("11")
+Button/styles/normal = SubResource("StyleBoxFlat_dlymu")
 Button/styles/pressed = SubResource("19")
 GradientBar/base_type = &"Panel"
 GradientBar/styles/panel = SubResource("39")

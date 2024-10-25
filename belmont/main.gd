@@ -82,7 +82,7 @@ func _on_install_pressed():
 	games[current_game]["status"] = "installing"
 	s.update_game(current_game)
 	$Install.disabled = true
-	$Install.text = "Installing..."
+	$Install/Label.text = "Installing..."
 	$Verify.disabled = true
 	var tween = get_tree().create_tween()
 	$ProgressBar.show()
@@ -93,7 +93,7 @@ func _on_verify_pressed():
 	print("[Belmont/VerifyPressed] Verifying %s" % [current_game])
 	s.verify_game(current_game)
 	$Install.disabled = true
-	$Verify.text = "Verifying..."
+	$Verify/Label.text = "Verifying..."
 	$Verify.disabled = true
 	var tween = get_tree().create_tween()
 	$ProgressBar.show()
@@ -196,9 +196,9 @@ func set_buttons(game_name):
 		if game_name in games.keys():
 			if "status" in games[game_name].keys(): # currently installing
 				if games[game_name]["status"] == "installing":
-					$Install.text = "Installing.."
+					$Install/Label.text = "Installing.."
 			else:
-				$Install.text = "Install"
+				$Install/Label.text = "Install"
 		$InstalledVersion.text = "[left]Not Installed!"
 		$Verify.disabled = true
 		$Install.disabled = false
@@ -206,21 +206,23 @@ func set_buttons(game_name):
 		if game_name in games.keys(): # this is insanely cooked
 			if "status" in games[game_name].keys():
 				if games[game_name]["status"] == "installing":
-					$Install.text = "Installing.."
+					$Install/Label.text = "Installing.."
 				else:
-					$Install.text = "Install"
+					$Install/Label.text = "Install"
 		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game_name)
 		$Install.disabled = false
 		$Verify.disabled = false
-		$Verify.text = "Verify"
+		$Verify/Label.text = "Verify"
 		if s.get_installed_version(game_name) == s.get_latest_version(game_name): ## on latest
-			$Install.text = "Launch"
+			$Install/Label.text = "Launch"
 		else:
-			$Install.text = "Update"
+			$Install/Label.text = "Update"
 		
 
 
 func apply_theme(theme_name):
+	if theme_name == current_game:
+		return
 	pallete = theme_json[theme_name]
 	var base_theme = load("res://themes/base.tres") ## we shouldn't be doing this
 	if not pallete.has("secondary"):
@@ -281,19 +283,26 @@ func apply_theme(theme_name):
 	tween.tween_method(func(x): $TopPanel/Adastral2.add_theme_color_override("font_color",x),base_theme.get_color("font_color","TopLabels"),Color(pallete["light"]),0.2)
 	tween.tween_method(func(x): $InstalledVersion.add_theme_color_override("default_color",x),base_theme.get_color("default_color","PositiveRTL"),Color(pallete["light"]),0.2)
 	tween.tween_method(func(x): $LatestVersion.add_theme_color_override("default_color",x),base_theme.get_color("default_color","PositiveRTL"),Color(pallete["light"]),0.2)
-	tween.tween_property($BottomPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["main"]), 0.2)
-	tween.tween_property($TopPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["dark"]), 0.2)
-	tween.tween_property($SidePanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["secondary"]), 0.2)
-	tween.tween_property($Install.get_theme_stylebox("normal"),"bg_color", Color(pallete["accent"]), 0.2)
-	tween.tween_property($AdvancedPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["accent"]), 0.2)
-	tween.tween_property($AdvancedPanel/Panel.get_theme_stylebox("panel"),"bg_color", Color(pallete["secondary"]), 0.2)
-	tween.tween_property($Install.get_theme_stylebox("hover"),"bg_color", Color(pallete["accent"]), 0.2)
-	tween.tween_property($Verify.get_theme_stylebox("normal"),"bg_color", Color(pallete["light"]), 0.2)
-	tween.tween_property($Verify.get_theme_stylebox("hover"),"bg_color", Color(pallete["light"]), 0.2)
-	##tween.tween_property($Install.get_theme_stylebox("disabled"),"bg_color",Color(pallete["dark"],0.2) tween disabled when we need to
-	tween.tween_property($Verify.get_theme_stylebox("pressed"),"bg_color", Color(pallete["click"]), 0.2)
-	tween.tween_property($ProgressBar.get_theme_stylebox("fill"),"bg_color", Color(pallete["accent"]), 0.2)
-	tween.tween_property($ProgressBar.get_theme_stylebox("background"),"bg_color", Color(pallete["light"]), 0.2)
+	#tween.tween_property($BottomPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["main"]), 0.2)
+	tween.tween_property($BottomPanel,"self_modulate", Color(pallete["main"]), 0.2)
+	tween.tween_property($SidePanel,"self_modulate",Color(pallete["secondary"]), 0.2)
+	tween.tween_property($AdvancedPanel,"self_modulate", Color(pallete["accent"]), 0.2)
+	tween.tween_property($AdvancedPanel/Panel,"self_modulate", Color(pallete["secondary"]), 0.2)
+	#tween.tween_property($TopPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["dark"]), 0.2)
+	tween.tween_property($TopPanel,"color",Color(pallete["dark"]), 0.2)
+	#tween.tween_property($SidePanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["secondary"]), 0.2)
+	tween.tween_property($Install,"self_modulate",Color(pallete["accent"]),0.2)
+	tween.tween_property($Install/Label,"self_modulate",Color(pallete["light"]),0.2)
+	tween.tween_property($Verify,"self_modulate", Color(pallete["light"]), 0.2)
+	tween.tween_property($Verify/Label,"self_modulate", Color(pallete["lightfg"]), 0.2)
+	#tween.tween_property($Install.get_theme_stylebox("normal"),"bg_color", Color(pallete["accent"]), 0.2)
+	#tween.tween_property($Install.get_theme_stylebox("hover"),"bg_color", Color(pallete["accent"]), 0.2)
+	#tween.tween_property($Verify.get_theme_stylebox("normal"),"bg_color", Color(pallete["light"]), 0.2)
+	#tween.tween_property($Verify.get_theme_stylebox("hover"),"bg_color", Color(pallete["light"]), 0.2)
+	#tween.tween_property($Install.get_theme_stylebox("disabled"),"bg_color",Color(pallete["dark"]),0.2)
+	#tween.tween_property($Verify.get_theme_stylebox("pressed"),"bg_color", Color(pallete["click"]), 0.2)
+	#tween.tween_property($ProgressBar.get_theme_stylebox("fill"),"bg_color", Color(pallete["accent"]), 0.2)
+	#tween.tween_property($ProgressBar.get_theme_stylebox("background"),"bg_color", Color(pallete["light"]), 0.2)
 	set_button_colours(Color(pallete["light"]),0.2)
 	end_bulk_theme_override()
 	await get_tree().create_timer(0.2).timeout
@@ -304,20 +313,14 @@ func apply_theme(theme_name):
 		$Wordmark.hide()
 	$TopPanel/AdastralLogo.texture = newstar
 	$Panel2/Background.texture = newbgtexture
-	set_stylebox_colour(base_theme.get_stylebox("panel","AccentPanel"),Color(pallete["main"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","AdvancedPanel"),Color(pallete["main"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","LightPanel"),Color(pallete["light"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","TopPanel"),Color(pallete["dark"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","SidePanel"),Color(pallete["secondary"]))
-	set_stylebox_colour(base_theme.get_stylebox("normal","Button"),Color(pallete["light"]))
+	#set_stylebox_colour(base_theme.get_stylebox("normal","Button"),Color(pallete["light"]))
 	set_stylebox_colour(base_theme.get_stylebox("disabled","Button"),disabled(Color(pallete["light"])))
 	set_stylebox_colour(base_theme.get_stylebox("pressed","Button"),Color(pallete["click"]))
-	set_stylebox_colour(base_theme.get_stylebox("normal","ImportantButton"),Color(pallete["accent"]))
+	#set_stylebox_colour(base_theme.get_stylebox("normal","ImportantButton"),Color(pallete["accent"]))
 	set_stylebox_colour(base_theme.get_stylebox("disabled","ImportantButton"),disabled(Color(pallete["accent"])))
 	set_stylebox_colour(base_theme.get_stylebox("pressed","ImportantButton"),Color(pallete["click_t"]))
 	set_stylebox_colour(base_theme.get_stylebox("background","ProgressBar"),Color(pallete["light"]))
 	set_stylebox_colour(base_theme.get_stylebox("fill","ProgressBar"),Color(pallete["accent"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","TopPanel"),Color(pallete["dark"]))
 	$Install.remove_theme_color_override("font_color")
 	$Verify.remove_theme_color_override("font_color")
 	$Verify.remove_theme_color_override("font_hover_color")
