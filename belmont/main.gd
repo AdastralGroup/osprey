@@ -60,6 +60,8 @@ func _on_progress_update(game,progress):
 	call_deferred("t_progress_update",game,progress)
 
 func _on_HomeButton_pressed():
+	if advanced_open:
+		return
 	apply_theme("adastral")
 
 func _on_game_verified(status,game):
@@ -110,6 +112,8 @@ func set_button_colours(colour,time):
 
 
 func change_game(game):
+	if advanced_open:
+		return
 	if "progress" in games[game]:
 		if games[game]["progress"] != 0:
 			$ProgressBar.show()
@@ -353,3 +357,10 @@ func _on_label_pressed():
 
 func _on_label2_pressed():
 	pass # Replace with function body.
+
+
+func _on_button_pressed() -> void:
+	$FileDialog.popup()
+
+func _on_file_dialog_dir_selected(dir: String) -> void:
+	$AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer/InstallPath.text = dir

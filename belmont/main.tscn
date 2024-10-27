@@ -102,6 +102,15 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("6")
 
+[node name="FileDialog" type="FileDialog" parent="Main"]
+disable_3d = true
+title = "Open a Directory"
+initial_position = 2
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
 [node name="TopPanel" type="ColorRect" parent="Main"]
 layout_mode = 0
 offset_right = 770.0
@@ -336,9 +345,9 @@ theme_override_font_sizes/font_size = 22
 
 [node name="Label" type="Label" parent="Main/Install"]
 layout_mode = 0
-offset_left = 21.0
+offset_left = 4.0
 offset_top = 8.0
-offset_right = 94.0
+offset_right = 109.0
 offset_bottom = 38.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 22
@@ -356,9 +365,9 @@ theme_override_font_sizes/font_size = 22
 
 [node name="Label" type="Label" parent="Main/Verify"]
 layout_mode = 0
-offset_left = 30.0
+offset_left = 4.0
 offset_top = 8.0
-offset_right = 103.0
+offset_right = 129.0
 offset_bottom = 38.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 22
@@ -474,16 +483,15 @@ text = "Install Path"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="Button" type="Button" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-text = "Apply"
+text = "Open"
 
 [node name="InstallPath" type="Label" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="FileDialog" type="FileDialog" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer"]
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Main/AdvancedPanel/Panel/VBoxContainer"]
 layout_mode = 2
@@ -494,14 +502,15 @@ text = "Launch Options"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2"]
 layout_mode = 2
-
-[node name="LaunchOptions" type="LineEdit" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
 [node name="Button" type="Button" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
 layout_mode = 2
 text = "Apply"
+
+[node name="LaunchOptions" type="LineEdit" parent="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="TextureRect" type="TextureRect" parent="."]
 visible = false
@@ -511,6 +520,7 @@ offset_right = 770.0
 offset_bottom = 350.0
 expand_mode = 1
 
+[connection signal="dir_selected" from="Main/FileDialog" to="Main" method="_on_file_dialog_dir_selected"]
 [connection signal="pressed" from="Main/TopPanel/HomeButton" to="Main" method="_on_HomeButton_pressed"]
 [connection signal="pressed" from="Main/TopPanel/AdvancedButton" to="Main" method="_on_Button4_pressed"]
 [connection signal="pressed" from="Main/Install" to="Main" method="_on_install_pressed"]
@@ -518,3 +528,5 @@ expand_mode = 1
 [connection signal="pressed" from="Main/AdvancedPanel/VBoxContainer/HBoxContainer/Label" to="Main" method="_on_label_pressed"]
 [connection signal="pressed" from="Main/AdvancedPanel/VBoxContainer/HBoxContainer2/Label" to="Main" method="_on_label2_pressed"]
 [connection signal="pressed" from="Main/AdvancedPanel/VBoxContainer/HBoxContainer3/Label" to="Main" method="_on_label2_pressed"]
+[connection signal="pressed" from="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer/Button" to="Main" method="_on_button_pressed"]
+[connection signal="pressed" from="Main/AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/Button" to="Main" method="_on_button_pressed"]
