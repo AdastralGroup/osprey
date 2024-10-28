@@ -34,15 +34,15 @@ enum class FreeSpaceCheckCategory
 };
 enum class StatusCode
 {
-  Ok,
-  OOTemp,
-  OOPerm,
-  Already,
-  NoVer,
-  ESymlink,
-  PatchFail,
-  ExtFail,
-  DlFail,
+  Ok, // all good
+  OOTemp, // out of temp space
+  OOPerm, // out of perm. space
+  Already, // already installed
+  NoVer, // version doesn't exist?
+  ESymlink, // error creating symlink
+  PatchFail, // error patching
+  ExtFail, // error extracting
+  DlFail, // error downloading
 };
 
 

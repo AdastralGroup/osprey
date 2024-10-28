@@ -97,6 +97,15 @@ int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategor
     return 0;
 }
 
+int Kachemak::free_space_check_path(const uintmax_t size, const std::filesystem::path custom_path)
+{
+    if (std::filesystem::space(custom_path).free < size*1000)
+    {
+        return (int)StatusCode::OOPerm;
+    }
+    return 0;
+}
+
 
 int Kachemak::verify()
 {
@@ -172,7 +181,7 @@ int Kachemak::update()
     write_version();
     if(patch_ret != 0)
     {
-        A_error("Failiure writing version!");
+        A_error(ErrorLevel::SERIOUS,"Failiure writing version!");
         return (int)StatusCode::PatchFail;
     }
     else
@@ -194,7 +203,7 @@ int Kachemak::install()
     int download_status = torrent::libtorrent_download(download_uri, temp_path.string(), &event_system);
     if (download_status != 0)
     {
-        A_error("[Kachemak/install] Download failed - ret val %d \n", download_status);
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/install] Download failed - ret val %d \n", download_status);
         return (int)StatusCode::DlFail;
     }
     A_printf("[Kachemak/install] Download complete: extracting...");
@@ -264,7 +273,7 @@ int Kachemak::extract(const std::string &input_file, const std::string &output_d
     int ret = sys::extract_zip((temp_path / input_file).string(), output_directory);
     if (ret != 0)
     {
-        A_error("[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/extract] Extraction Failed - %s\n", zip_strerror(ret));
         return (int)StatusCode::ExtFail;
     }
     installed_version_code = get_latest_version_code();
