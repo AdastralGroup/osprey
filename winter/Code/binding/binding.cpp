@@ -8,7 +8,7 @@ void binding::_bind_methods()
     ADD_SIGNAL(MethodInfo("game_updated", PropertyInfo(Variant::STRING, "status"), PropertyInfo(Variant::STRING, "game")));
     ADD_SIGNAL(MethodInfo("progress_update", PropertyInfo(Variant::FLOAT, "progress"), PropertyInfo(Variant::STRING, "game")));
     ADD_SIGNAL(MethodInfo("palace_started"));
-    ADD_SIGNAL(MethodInfo("error", PropertyInfo(Variant::STRING, "error_details")));
+    ADD_SIGNAL(MethodInfo("error", PropertyInfo(Variant::STRING, "error_details"), PropertyInfo(Variant::INT, "error_level")));
     ClassDB::bind_method(D_METHOD("desktop_notification"), &binding::desktop_notification);
     ClassDB::bind_method(D_METHOD("init_palace"), &binding::init_palace);
     ClassDB::bind_method(D_METHOD("sanity_checks"), &binding::sanity_checks);
@@ -28,7 +28,17 @@ void binding::_bind_methods()
 
 binding::binding()
 {
-    UtilityFunctions::print("[binding] Initialised. Ready to fire up palace.");
+    A_init_error_system();
+    A_error_system->register_listener(EventType::OnError,
+                                      [this](Event &ev) { emit_signal("error", static_cast<ErrorMessage &>(ev).get_error_level(), String(static_cast<ErrorMessage &>(ev).get_message().c_str())); });
+    UtilityFunctions::print("[binding/init] Error system initialised. Ready to fire up palace.");
+    std::set_terminate(
+        []()
+        {
+            A_error(ErrorLevel::PANIC, "EXCEPTION NOT HANDLED.... EXPLODING IN 5 SECONDS");
+            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+            abort();
+        });
 }
 
 Dictionary binding::get_game_assets(String game_name)
@@ -74,8 +84,7 @@ void binding::init_palace()
 
 void binding::_init_palace()
 {
-    A_init_error_system();
-    A_error_system->register_listener(EventType::OnError, [this](Event &ev) { emit_signal("error", String(static_cast<ErrorMessage &>(ev).get_message().c_str())); });
+    throw 1;
     UtilityFunctions::print("[binding] Firing up palace!");
     try
     {
@@ -83,7 +92,7 @@ void binding::_init_palace()
     }
     catch (std::runtime_error &e)
     {
-        A_error(e.what());
+        A_error(ErrorLevel::PANIC, e.what());
         return;
     }
     emit_signal("palace_started");
@@ -138,11 +147,11 @@ int binding::init_games()
     for (auto i : p->server_games)
     {
         i.second->l1->event_system.register_listener(EventType::OnUpdate,
-                                                       [this, i](Event &ev)
-                                                       {
-                                                           double prog = ((ProgressUpdateMessage &)ev).get_progress();
-                                                           emit_signal("progress_update", i.first.c_str(), prog);
-                                                       });
+                                                     [this, i](Event &ev)
+                                                     {
+                                                         double prog = ((ProgressUpdateMessage &)ev).get_progress();
+                                                         emit_signal("progress_update", i.first.c_str(), prog);
+                                                     });
     }
     return ret;
 }

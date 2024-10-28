@@ -69,7 +69,7 @@ std::optional<KachemakVersion> Kachemak::get_latest_km_version()
     return get_km_version(parsed_version["latest"]);
 }
 
-/*
+/**
 description:
   check free space for specific category provided.
 res:
@@ -118,7 +118,7 @@ int Kachemak::verify()
     return (int)StatusCode::Ok;
 }
 
-/*
+/**
 description:
   routine for updating whatever is installed
 res:
@@ -229,7 +229,7 @@ int Kachemak::install_path(std::filesystem::path custom_path)
     // true,&event_system);
     if (download_status != 0)
     {
-        A_error("[Kachemak/InstallInPath] Download failed - ret val %d \n", download_status);
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/InstallInPath] Download failed - ret val %d \n", download_status);
         return download_status;
     }
     A_printf("[Kachemak/InstallInPath] Download complete: extracting...");
@@ -246,7 +246,7 @@ int Kachemak::install_path(std::filesystem::path custom_path)
     return 1;
 }
 
-/*
+/**
 desc:
         extract .zip file to directory
 res:
@@ -286,7 +286,7 @@ int Kachemak::extract_path(const std::string &input_file, const std::string &out
     int ret = sys::extract_zip((temp_path / input_file).string(), output_directory);
     if (ret != 0)
     {
-        A_error("[Kachemak/ExtractInPath] Extraction Failed - %s\n", zip_strerror(ret));
+        A_error(ErrorLevel::SERIOUS,"[Kachemak/ExtractInPath] Extraction Failed - %s\n", zip_strerror(ret));
         return -1;
     }
     installed_version_code = get_latest_version_code();
@@ -294,7 +294,7 @@ int Kachemak::extract_path(const std::string &input_file, const std::string &out
     return 0;
 }
 
-/*
+/**
 description:
   wrapper for butler cli to verify installation
 res:
@@ -430,7 +430,7 @@ int Kachemak::butler_parse_command(const std::string &command)
             }
             else if (message_type.compare("error") == NULL)
             {
-                ErrorMessage message(json_buffer["message"].get<std::string>());
+                ErrorMessage message(json_buffer["message"].get<std::string>(),ErrorLevel::PANIC);
                 event_system.trigger_event(message);
             }
         }

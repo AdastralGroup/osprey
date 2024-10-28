@@ -109,7 +109,7 @@ done:
 }
 catch (std::exception &e)
 {
-    A_error(e.what());
+    A_error(ErrorLevel::OOPS,e.what());
     A_printf("[torrent] Error: %s", e.what());
     return 1;
 }
