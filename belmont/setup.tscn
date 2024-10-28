@@ -1,57 +1,156 @@
-[gd_scene load_steps=3 format=3 uid="uid://dsp33e8s172n5"]
+[gd_scene load_steps=8 format=3 uid="uid://dsp33e8s172n5"]
 
+[ext_resource type="FontFile" uid="uid://pskwpwxk0pd4" path="res://fonts/HankenGrotesk-SemiBold.ttf" id="1_1dlgu"]
 [ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="1_e5qvj"]
+[ext_resource type="Script" path="res://setup.gd" id="1_f76jo"]
+[ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="2_8waqd"]
+[ext_resource type="Theme" uid="uid://c0s3qk3x2pdh8" path="res://themes/default.tres" id="3_xwwfr"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_37v2i"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v42cq"]
 bg_color = Color(0, 0.392157, 0.678431, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_py78p"]
+bg_color = Color(0.407843, 0.407843, 0.407843, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="Setup" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+script = ExtResource("1_f76jo")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="Panel3" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 770.0
+offset_right = 1540.0
+offset_bottom = 350.0
+color = Color(0, 0, 0, 1)
+
+[node name="Label2" type="Label" parent="Panel3"]
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 623.0
+offset_bottom = 69.0
+theme_override_fonts/font = ExtResource("1_1dlgu")
+theme_override_font_sizes/font_size = 40
+text = "Where to install your games?"
+
+[node name="DefaultButton" type="Button" parent="Panel3"]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 80.0
+offset_right = 449.0
+offset_bottom = 339.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_v42cq")
+
+[node name="Label" type="Label" parent="Panel3/DefaultButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 88.0
+offset_right = 440.0
+offset_bottom = 141.0
+theme_override_fonts/font = ExtResource("2_8waqd")
+theme_override_font_sizes/font_size = 40
+text = "Easy Install"
+
+[node name="Label2" type="Label" parent="Panel3/DefaultButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 144.0
+offset_right = 416.0
+offset_bottom = 246.0
+theme_override_fonts/font = ExtResource("1_e5qvj")
+theme_override_font_sizes/font_size = 24
+text = "Default settings - If you don't know what to press, press this. It will install all games in the sourcemods folder."
+autowrap_mode = 3
+
+[node name="CustomButton" type="Button" parent="Panel3"]
+offset_left = 462.0
+offset_top = 80.0
+offset_right = 750.0
+offset_bottom = 339.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_py78p")
+
+[node name="Label" type="Label" parent="Panel3/CustomButton"]
+offset_left = 8.0
+offset_top = 96.0
+offset_right = 440.0
+offset_bottom = 149.0
+theme_override_fonts/font = ExtResource("2_8waqd")
+theme_override_font_sizes/font_size = 40
+text = "Custom Path"
+
+[node name="Label2" type="Label" parent="Panel3/CustomButton"]
+offset_left = 8.0
+offset_top = 144.0
+offset_right = 288.0
+offset_bottom = 246.0
+theme_override_fonts/font = ExtResource("1_e5qvj")
+theme_override_font_sizes/font_size = 24
+text = "Choose a different install path. All games will work as usual."
+autowrap_mode = 3
+
+[node name="Panel2" type="ColorRect" parent="."]
 layout_mode = 0
 offset_right = 770.0
 offset_bottom = 350.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_37v2i")
 
-[node name="Label" type="Label" parent="."]
+[node name="ColorRect" type="ColorRect" parent="Panel2"]
 layout_mode = 0
-offset_left = 7.0
-offset_top = 7.0
-offset_right = 172.0
-offset_bottom = 56.0
-theme_override_fonts/font = ExtResource("1_e5qvj")
-text = "Welcome to Adastral.
-let's get you set up!"
+offset_left = 150.0
+offset_top = -249.0
+offset_right = 750.0
+offset_bottom = 393.0
+rotation = 0.785398
+color = Color(0, 0.392157, 0.678431, 1)
 
-[node name="Label2" type="Label" parent="."]
+[node name="Label" type="Label" parent="Panel2"]
 layout_mode = 0
-offset_left = 6.0
-offset_top = 65.0
-offset_right = 301.0
-offset_bottom = 88.0
+offset_left = 16.0
+offset_top = 80.0
+offset_right = 365.0
+offset_bottom = 227.0
 theme_override_fonts/font = ExtResource("1_e5qvj")
-text = "Sourcemod path:"
+theme_override_font_sizes/font_size = 20
+text = "To play sourcemods, you will need Source SDK 2013 Multiplayer.
 
-[node name="Label3" type="Label" parent="."]
-layout_mode = 0
-offset_left = 7.0
-offset_top = 91.0
-offset_right = 302.0
-offset_bottom = 114.0
-theme_override_fonts/font = ExtResource("1_e5qvj")
-text = "TF2:"
+You can download this on Steam if you haven't installed it yet."
+autowrap_mode = 3
 
-[node name="Label4" type="Label" parent="."]
-layout_mode = 0
-offset_left = 6.0
-offset_top = 116.0
-offset_right = 301.0
-offset_bottom = 139.0
-theme_override_fonts/font = ExtResource("1_e5qvj")
-text = "SDK 2013 Multiplayer:"
+[node name="Button" type="Button" parent="Panel2"]
+offset_left = 16.0
+offset_top = 256.0
+offset_right = 368.0
+offset_bottom = 297.0
+theme = ExtResource("3_xwwfr")
+text = "I have the SDK Installed"
+
+[node name="Label2" type="Label" parent="Panel2"]
+offset_left = 18.0
+offset_top = 16.0
+offset_right = 297.0
+offset_bottom = 69.0
+theme_override_fonts/font = ExtResource("1_1dlgu")
+theme_override_font_sizes/font_size = 40
+text = "Set up Adastral"
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a Directory"
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[connection signal="pressed" from="Panel3/DefaultButton" to="." method="_on_default_button_pressed"]
+[connection signal="pressed" from="Panel3/CustomButton" to="." method="_on_custom_button_pressed"]
+[connection signal="pressed" from="Panel2/Button" to="." method="_on_button_pressed"]
+[connection signal="dir_selected" from="FileDialog" to="." method="_on_file_dialog_dir_selected"]
