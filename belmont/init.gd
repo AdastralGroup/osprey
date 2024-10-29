@@ -13,6 +13,21 @@ const ErrorLevel = {
 	PANIC = 4
 }
 
+func get_config_file():
+	if FileAccess.file_exists("user://config.json"):
+		var file = FileAccess.open("user://config.json", FileAccess.READ)
+		var content = file.get_as_text()
+		file.close()
+		return content
+	else:
+		return ""
+
+
+func set_config_file(data):
+	var file = FileAccess.open("user://config.json", FileAccess.WRITE)
+	file.store_string(data)
+	file.close()
+
 func _ready():
 	s = binding.new()
 	s.connect("palace_started",init)
@@ -27,16 +42,47 @@ func launch():
 	$Control/Main.s = s
 	$Control/Main.ready_after_winter_init()
 	$Control.modulate = Color.TRANSPARENT
-	transition()
-	
+	transition_main()
+
+
+func setup():
+	transition_setup()
+
+
+func finish_setup():
+	var custom_path = $Setup.path
+	write_path_to_config(custom_path)
+	var t = create_tween()
+	t.tween_property($Camera2D,"position",Vector2(0,0),1)
+	await get_tree().create_timer(1).timeout
+	init()
+
+
+func write_path_to_config(path):
+	var conf = get_config_file()
+	var json
+	if conf == "":
+		json = JSON.stringify({"default_install_path": path})
+	else:
+		var config = JSON.parse_string(conf)
+		config["default_install_path"] = path
+		json = JSON.stringify(config)
+	set_config_file(json)
+
 
 func init():
-	if(s.find_sourcemod_path() == ""):
-		get_tree().change_scene_to_file("res://oops.tscn")
-	s.init_games()
-	call_deferred("launch")
+	var conf = get_config_file()
+	if conf == "" or JSON.parse_string(conf) == null:
+		call_deferred("setup")
+	else:
+		call_deferred("free_setup")
+		if(s.find_sourcemod_path() == ""):
+			get_tree().change_scene_to_file("res://oops.tscn")
+		s.init_games()
+		call_deferred("launch")
 
-func transition():
+
+func transition_main():
 	$Label.hide()
 	spin_tween = create_tween().set_loops().set_parallel()
 	var tween = create_tween().set_parallel()
@@ -66,7 +112,15 @@ func transition():
 	await get_tree().create_timer(0.5).timeout
 
 
-	
+func free_setup():
+	$Setup.queue_free()
+
+
+func transition_setup():
+	var t = get_tree().create_tween()
+	t.tween_property($Camera2D,"position",Vector2(0,-640),1)
+	await get_tree().create_timer(1).timeout
+
 
 func _on_error(error_level,error_detail):
 	if error_level < ErrorLevel.OOPS:

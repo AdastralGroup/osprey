@@ -3,7 +3,7 @@ var pallete
 var theme_json = {"adastral": ## needed - adastral theme isn't stored remotely
 	{"id":"adastral","dark":"#00000000","light": "#f8f3ee",
 		"main": "#0064ad",
-		"accent": "#b76300",
+		"accent": "#d49c6b",
 		"lightfg": "#8d847b",
 		"click":"#ffdd63",
 		"click_t":"#000000",

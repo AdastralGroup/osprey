@@ -1,14 +1,33 @@
-[gd_scene load_steps=7 format=3 uid="uid://cds1iuxdlfc86"]
+[gd_scene load_steps=14 format=3 uid="uid://cds1iuxdlfc86"]
 
 [ext_resource type="Theme" uid="uid://bqpi1momfja7u" path="res://themes/base.tres" id="1_1k54t"]
 [ext_resource type="Script" path="res://init.gd" id="2_vhxfp"]
 [ext_resource type="Texture2D" uid="uid://diee7uq3voana" path="res://assets/adastral-256.svg" id="3_gsxu1"]
 [ext_resource type="FontVariation" uid="uid://th0tjv2xcuen" path="res://fonts/main_font.tres" id="4_6hwq1"]
 [ext_resource type="FontFile" uid="uid://cknx8yer7op7k" path="res://fonts/HankenGrotesk.ttf" id="5_ej7of"]
+[ext_resource type="Script" path="res://setup.gd" id="6_ugg5k"]
+[ext_resource type="FontFile" uid="uid://pskwpwxk0pd4" path="res://fonts/HankenGrotesk-SemiBold.ttf" id="7_gwamk"]
+[ext_resource type="FontFile" uid="uid://4fvodi04j1og" path="res://fonts/HankenGrotesk-Bold.ttf" id="8_e2or0"]
+[ext_resource type="FontFile" uid="uid://culcak1g0byvy" path="res://fonts/HankenGrotesk-Medium.ttf" id="9_vp280"]
+[ext_resource type="Theme" uid="uid://c0s3qk3x2pdh8" path="res://themes/default.tres" id="10_4kkr4"]
 
 [sub_resource type="FontVariation" id="FontVariation_lse8k"]
 base_font = ExtResource("5_ej7of")
 spacing_glyph = -3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_atgf7"]
+bg_color = Color(0, 0.392157, 0.678431, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8i42"]
+bg_color = Color(0.407843, 0.407843, 0.407843, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="root" type="Control"]
 layout_mode = 3
@@ -19,6 +38,9 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_1k54t")
 script = ExtResource("2_vhxfp")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
 
 [node name="TextureRect" type="TextureRect" parent="."]
 modulate = Color(1, 1, 1, 0.137255)
@@ -136,3 +158,151 @@ theme_override_font_sizes/font_size = 75
 text = "Adastral"
 visible_characters = 0
 visible_ratio = 0.0
+
+[node name="Setup" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -1.0
+offset_top = -640.0
+offset_right = -1.0
+offset_bottom = -640.0
+script = ExtResource("6_ugg5k")
+
+[node name="Panel3" type="ColorRect" parent="Setup"]
+offset_left = 770.0
+offset_right = 1540.0
+offset_bottom = 350.0
+color = Color(0, 0, 0, 1)
+
+[node name="Label2" type="Label" parent="Setup/Panel3"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 623.0
+offset_bottom = 69.0
+theme_override_fonts/font = ExtResource("7_gwamk")
+theme_override_font_sizes/font_size = 40
+text = "Where to install your games?"
+
+[node name="DefaultButton" type="Button" parent="Setup/Panel3"]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 80.0
+offset_right = 449.0
+offset_bottom = 339.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_atgf7")
+
+[node name="Label" type="Label" parent="Setup/Panel3/DefaultButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 88.0
+offset_right = 440.0
+offset_bottom = 141.0
+theme_override_fonts/font = ExtResource("8_e2or0")
+theme_override_font_sizes/font_size = 40
+text = "Easy Install"
+
+[node name="Label2" type="Label" parent="Setup/Panel3/DefaultButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 144.0
+offset_right = 416.0
+offset_bottom = 246.0
+theme_override_fonts/font = ExtResource("9_vp280")
+theme_override_font_sizes/font_size = 24
+text = "Default settings - If you don't know what to press, press this. It will install all games in the sourcemods folder."
+autowrap_mode = 3
+
+[node name="CustomButton" type="Button" parent="Setup/Panel3"]
+layout_mode = 0
+offset_left = 462.0
+offset_top = 80.0
+offset_right = 750.0
+offset_bottom = 339.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_d8i42")
+
+[node name="Label" type="Label" parent="Setup/Panel3/CustomButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 96.0
+offset_right = 440.0
+offset_bottom = 149.0
+theme_override_fonts/font = ExtResource("8_e2or0")
+theme_override_font_sizes/font_size = 40
+text = "Custom Path"
+
+[node name="Label2" type="Label" parent="Setup/Panel3/CustomButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 144.0
+offset_right = 288.0
+offset_bottom = 246.0
+theme_override_fonts/font = ExtResource("9_vp280")
+theme_override_font_sizes/font_size = 24
+text = "Choose a different install path. All games will work as usual."
+autowrap_mode = 3
+
+[node name="Panel2" type="ColorRect" parent="Setup"]
+offset_right = 770.0
+offset_bottom = 350.0
+
+[node name="ColorRect" type="ColorRect" parent="Setup/Panel2"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = -249.0
+offset_right = 750.0
+offset_bottom = 393.0
+rotation = 0.785398
+color = Color(0, 0.392157, 0.678431, 1)
+
+[node name="Label" type="Label" parent="Setup/Panel2"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 80.0
+offset_right = 365.0
+offset_bottom = 227.0
+theme_override_fonts/font = ExtResource("9_vp280")
+theme_override_font_sizes/font_size = 20
+text = "To play sourcemods, you will need Source SDK 2013 Multiplayer.
+
+You can download this on Steam if you haven't installed it yet."
+autowrap_mode = 3
+
+[node name="Button" type="Button" parent="Setup/Panel2"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 256.0
+offset_right = 368.0
+offset_bottom = 297.0
+theme = ExtResource("10_4kkr4")
+text = "I have the SDK Installed"
+
+[node name="Label2" type="Label" parent="Setup/Panel2"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 16.0
+offset_right = 297.0
+offset_bottom = 69.0
+theme_override_fonts/font = ExtResource("7_gwamk")
+theme_override_font_sizes/font_size = 40
+text = "Set up Adastral"
+
+[node name="FileDialog" type="FileDialog" parent="Setup"]
+auto_translate_mode = 1
+title = "Open a Directory"
+size = Vector2i(207, 175)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_top = -290.0
+offset_right = 769.0
+offset_bottom = -9.0
+color = Color(0, 0, 0, 1)
+
+[connection signal="pressed" from="Setup/Panel3/DefaultButton" to="Setup" method="_on_default_button_pressed"]
+[connection signal="pressed" from="Setup/Panel3/CustomButton" to="Setup" method="_on_custom_button_pressed"]
+[connection signal="pressed" from="Setup/Panel2/Button" to="Setup" method="_on_button_pressed"]
+[connection signal="dir_selected" from="Setup/FileDialog" to="Setup" method="_on_file_dialog_dir_selected"]
