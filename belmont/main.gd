@@ -13,6 +13,7 @@ var games: Dictionary
 var s : binding
 var current_screen : String # use an enum damnit!!!!
 var current_game = ""
+var config
 signal change_to(game)
 signal update_game(game)
 signal verify_game(game)
@@ -42,8 +43,23 @@ func load_image(path):
 	else:
 		return ImageTexture.create_from_image(Image.load_from_file(path))
 
+func get_config(): # config may be null... make sure to check!
+	if FileAccess.file_exists("user://config.json"):
+		var file = FileAccess.open("user://config.json", FileAccess.READ)
+		var content = file.get_as_text()
+		file.close()
+		config = JSON.parse_string(content)
+	else:
+		oops("You have no config file! Run Adastral again and generate it.")
+
+
+func save_config():
+	var file = FileAccess.open("user://config.json", FileAccess.WRITE)
+	file.store_string(JSON.stringify(config))
+	file.close()
+
 func _ready():
-	pass
+	get_config()
 	
 func _on_Button4_pressed():
 	pass
