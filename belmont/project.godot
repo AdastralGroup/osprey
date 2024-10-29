@@ -12,6 +12,8 @@ config_version=5
 
 config/name="Adastral (osprey)"
 run/main_scene="res://boot.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="Adastral/osprey"
 config/features=PackedStringArray("4.3", "Mobile")
 run/low_processor_mode=true
 boot_splash/bg_color=Color(0, 0.392157, 0.639216, 1)
