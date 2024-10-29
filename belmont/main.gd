@@ -88,7 +88,10 @@ func _on_install_pressed():
 		print(s.launch_game(current_game,""))
 		return
 	games[current_game]["status"] = "installing"
-	s.update_game(current_game)
+	if config.exists("path") and s.get_installed_version(current_game) != "":
+		s.install_game(current_game,config["path"])
+	else:
+		s.update_game(current_game)
 	$Install.disabled = true
 	$Install.text = "Installing..."
 	$Verify.disabled = true

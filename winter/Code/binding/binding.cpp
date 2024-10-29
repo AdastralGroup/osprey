@@ -85,7 +85,6 @@ void binding::init_palace()
 
 void binding::_init_palace()
 {
-    throw 1;
     UtilityFunctions::print("[binding] Firing up palace!");
     try
     {
