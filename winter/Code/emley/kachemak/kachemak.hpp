@@ -12,7 +12,7 @@
 struct KachemakVersion
 {
   std::string file_name;
-  std::string download_url;
+  std::string download_url_p2p;
   std::size_t download_size;
   std::size_t extract_size;
   std::string version;
@@ -24,6 +24,7 @@ struct KachemakPatch
   std::string url;
   std::string filename;
   std::size_t temp_required;
+
 };
 
 enum class FreeSpaceCheckCategory
@@ -31,6 +32,19 @@ enum class FreeSpaceCheckCategory
   Temporary,
   Permanent
 };
+enum class StatusCode
+{
+  Ok, // all good
+  OOTemp, // out of temp space
+  OOPerm, // out of perm. space
+  Already, // already installed
+  NoVer, // version doesn't exist?
+  ESymlink, // error creating symlink
+  PatchFail, // error patching
+  ExtFail, // error extracting
+  DlFail, // error downloading
+};
+
 
 class Kachemak : public Version
 {

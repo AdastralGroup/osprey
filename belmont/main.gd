@@ -19,6 +19,27 @@ signal update_game(game)
 signal verify_game(game)
 var oops_s = preload("res://oops.tscn")
 var panic_s = preload("res://panic.tscn")
+enum status_code{
+	Ok = 0,
+	OOTemp = 1,
+	Already = 2,
+	NoVer = 3,
+	ESymlink,
+	PatchFail,
+	ExtFail,
+	DlFail
+}
+
+var code_dict_map = {
+	status_code.OOTemp : "Out of temporary space! Free up some space on your computer.",
+	status_code.Already : "You're already on the latest version... this shouldn't happen.",
+	status_code.NoVer : "The version you're trying to update to doesn't exist in the file.",
+	status_code.ESymlink : "Error creating symlink. Try installing somewhere else.",
+	status_code.PatchFail : "Error patching game.",
+	status_code.ExtFail : "Error extracting game ZIP",
+	status_code.DlFail : "Error downloading game."
+}
+
 
 func panic(err_string):
 	var z = panic_s.instantiate()
@@ -71,11 +92,11 @@ func _on_HomeButton_pressed():
 	apply_theme("adastral")
 
 func _on_game_verified(status,game):
-	print("[Belmont/GameVerified] %s verified" % [game])
-	call_deferred("t_game_verified",game)
+	call_deferred("t_game_verified",game,status
+	)
 	
 func _on_game_updated(status,game):
-	call_deferred("t_game_updated",game)
+	call_deferred("t_game_updated",game,status)
 	
 func _on_error(error_detail):
 	print(error_detail)
@@ -166,27 +187,33 @@ func add_side_icons():
 func t_progress_update(game,progress):
 	games[game]["progress"] = progress*100
 
-func t_game_verified(game):
+func t_game_verified(game,status):
 	change_game(game)
-	games[game]["progress"] = 0
-	if current_game == game:
-		var tween = get_tree().create_tween()
-		tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
-		await get_tree().create_timer(0.2).timeout
-		$ProgressBar.hide()
-		set_buttons(current_game)
+	if status == status_code.Ok:
+		games[game]["progress"] = 0
+		if current_game == game:
+			var tween = get_tree().create_tween()
+			tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
+			await get_tree().create_timer(0.2).timeout
+			$ProgressBar.hide()
+			set_buttons(current_game)
+	else:
+		panic(code_dict_map)
 
-func t_game_updated(game):
+func t_game_updated(game,status):
 	change_game(game)
-	$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game)
-	games[game]["status"] = ""
-	games[game]["progress"] = 0
-	if current_game == game:
-		var tween = get_tree().create_tween()
-		tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
-		await get_tree().create_timer(0.2).timeout
-		$ProgressBar.hide()
-		set_buttons(current_game)
+	if status == status_code.Ok:
+		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game)
+		games[game]["status"] = ""
+		games[game]["progress"] = 0
+		if current_game == game:
+			var tween = get_tree().create_tween()
+			tween.tween_property($ProgressBar,"modulate",Color.TRANSPARENT,0.2)
+			await get_tree().create_timer(0.2).timeout
+			$ProgressBar.hide()
+			set_buttons(current_game)
+	else:
+		panic(code_dict_map[status])
 
 
 func disabled(color):

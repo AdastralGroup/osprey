@@ -4,8 +4,8 @@ using namespace godot;
 
 void binding::_bind_methods()
 {
-    ADD_SIGNAL(MethodInfo("game_verified", PropertyInfo(Variant::STRING, "status"), PropertyInfo(Variant::STRING, "game")));
-    ADD_SIGNAL(MethodInfo("game_updated", PropertyInfo(Variant::STRING, "status"), PropertyInfo(Variant::STRING, "game")));
+    ADD_SIGNAL(MethodInfo("game_verified", PropertyInfo(Variant::INT, "status"), PropertyInfo(Variant::STRING, "game")));
+    ADD_SIGNAL(MethodInfo("game_updated", PropertyInfo(Variant::INT, "status"), PropertyInfo(Variant::STRING, "game")));
     ADD_SIGNAL(MethodInfo("progress_update", PropertyInfo(Variant::FLOAT, "progress"), PropertyInfo(Variant::STRING, "game")));
     ADD_SIGNAL(MethodInfo("palace_started"));
     ADD_SIGNAL(MethodInfo("error", PropertyInfo(Variant::STRING, "error_details"), PropertyInfo(Variant::INT, "error_level")));
@@ -84,7 +84,6 @@ void binding::init_palace()
 
 void binding::_init_palace()
 {
-    throw 1;
     UtilityFunctions::print("[binding] Firing up palace!");
     try
     {
@@ -114,7 +113,7 @@ int binding::update_game(godot::String game_name)
 void binding::_update_game(String game_name)
 {
     int z = p->update_game(game_name.utf8().get_data());
-    emit_signal("game_updated", String(std::to_string(z).c_str()), game_name);
+    emit_signal("game_updated", z, game_name);
 }
 
 int binding::verify_game(godot::String game_name)
@@ -128,7 +127,7 @@ int binding::verify_game(godot::String game_name)
 void binding::_verify_game(String game_name)
 {
     int z = p->verify_game(game_name.utf8().get_data());
-    emit_signal("game_verified", String(std::to_string(z).c_str()), game_name);
+    emit_signal("game_verified", z, game_name);
 }
 
 bool binding::is_app_installed(String app_id)
