@@ -82,7 +82,7 @@ int Kachemak::free_space_check(const uintmax_t size, const FreeSpaceCheckCategor
 {
     if (perm_path.empty())
     {
-        perm_path = game_path;
+        perm_path = game_path.generic_string();
     }
     switch (category)
     {
@@ -187,7 +187,7 @@ int Kachemak::install(std::filesystem::path path)
     {
         return 2;
     }
-    int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary,path);
+    int disk_space_status = free_space_check(latest_version.value().download_size, FreeSpaceCheckCategory::Temporary,path.generic_string());
     if (disk_space_status != 0)
     {
         // should we error here?
