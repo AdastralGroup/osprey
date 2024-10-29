@@ -12,6 +12,7 @@ shadow_color = Color(0, 0, 0, 0.168627)
 shadow_size = 4
 
 [resource]
+Button/colors/font_color = Color(0.875, 0.875, 0.875, 1)
 Button/font_sizes/font_size = 28
 Button/fonts/font = ExtResource("1_xqn4o")
 Button/styles/normal = SubResource("StyleBoxFlat_dry0n")
