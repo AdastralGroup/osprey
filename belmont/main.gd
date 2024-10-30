@@ -88,8 +88,11 @@ func _on_install_pressed():
 		print(s.launch_game(current_game,""))
 		return
 	games[current_game]["status"] = "installing"
-	if config.exists("path") and s.get_installed_version(current_game) != "":
-		s.install_game(current_game,config["path"])
+	if  s.get_installed_version(current_game) == "":
+		if config.has("default_install_path"):
+			s.install_game(current_game,config["default_install_path"])
+		else:
+			s.install_game(current_game)
 	else:
 		s.update_game(current_game)
 	$Install.disabled = true

@@ -184,8 +184,22 @@ int palace::install_game(const std::string &game_name,const std::string &install
     A_printf("[Palace/UpdateGame] Updating %s....", game_name.c_str());
     if (install_path != "")
     {
-        server_games[game_name]->l1->install(install_path);
-        std::filesystem::create_directory_symlink(std::filesystem::path(install_path) / game_name,sourcemods_path / game_name);
+        std::filesystem::remove(sourcemods_path / game_name); // remove vestigial symlink
+        if(std::filesystem::exists(std::filesystem::path(install_path) / game_name))
+        {
+            server_games[game_name]->l1->update();
+
+        }else
+        {
+            server_games[game_name]->l1->install(install_path);
+        }
+        try
+        {
+            std::filesystem::create_directory_symlink(std::filesystem::path(install_path) / game_name,sourcemods_path / game_name);
+        } catch(std::filesystem::filesystem_error& error)
+        {
+            A_error(SERIOUS, "Error symlinking!");
+        }
     }
     else
     {
