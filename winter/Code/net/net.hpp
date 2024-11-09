@@ -14,9 +14,26 @@
 class net
 {
  public:
+    /*!
+        Function to download items to a temporary folder.
+        \param url URL link to download from.
+        \param name Name of the temp folder.
+        \param progress State of the progress
+        \param event Kind of event enabled for downloading, defaults to nullptr.
+        \param path Path of the temporary folder, defaults to nullptr.
+    */
   static std::string download_to_temp(std::string url, std::string name, bool progress = false,
                                       EventSystem* event = nullptr, std::filesystem::path* path = nullptr);
+
+  /*!
+    Function to get string data from server.
+    \param url URL link to download from.
+  */
   std::string get_string_data_from_server(const std::string& url);
+  /*!
+  Function to get string data from server.
+  \param url URL link to download from.
+*/
   std::vector<char> get_bin_data_from_server(const std::string& url);
   // Get path object for the systems sourcemods folder (win/linux)
  private:
