@@ -18,5 +18,11 @@
 class torrent
 {
   public:
+    /*!
+    Function to download from a turrent file using libtorrent.
+    \param torrent_url URL of the torrent.
+    \param path Path to save the contents to.
+    \param event Events from the EventSystem.
+    */
     static int libtorrent_download(const std::string &torrent_url, const std::string &path, EventSystem *event = nullptr);
 };
