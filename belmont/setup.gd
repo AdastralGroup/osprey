@@ -15,4 +15,5 @@ func _on_custom_button_pressed() -> void:
 
 func _on_file_dialog_dir_selected(dir: String) -> void:
 	print($FileDialog.current_path)
+	path = dir
 	get_node("/root/root").finish_setup()

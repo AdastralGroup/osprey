@@ -24,6 +24,7 @@ void binding::_bind_methods()
     ClassDB::bind_method(D_METHOD("set_sourcemod_path"), &binding::set_sourcemod_path);
     ClassDB::bind_method(D_METHOD("get_installed_version"), &binding::get_installed_version);
     ClassDB::bind_method(D_METHOD("get_latest_version"), &binding::get_latest_version);
+    ClassDB::bind_method(D_METHOD("install_game"), &binding::install_game,DEFVAL(""));
 }
 
 binding::binding()
@@ -84,7 +85,6 @@ void binding::init_palace()
 
 void binding::_init_palace()
 {
-    throw 1;
     UtilityFunctions::print("[binding] Firing up palace!");
     try
     {
@@ -111,11 +111,26 @@ int binding::update_game(godot::String game_name)
     return 0;
 }
 
-void binding::_update_game(String game_name)
+void binding::_update_game(godot::String game_name)
 {
     int z = p->update_game(game_name.utf8().get_data());
     emit_signal("game_updated", String(std::to_string(z).c_str()), game_name);
 }
+
+
+int binding::install_game(godot::String game_name,godot::String install_path)
+{
+    std::thread thread_obj(&binding::_install_game, this, game_name, install_path);
+    thread_obj.detach();
+    return 0;
+}
+
+void binding::_install_game(godot::String game_name,godot::String install_path)
+{
+    int z = p->install_game(game_name.utf8().get_data(),install_path.utf8().get_data());
+    emit_signal("game_updated", String(std::to_string(z).c_str()), game_name);
+}
+
 
 int binding::verify_game(godot::String game_name)
 {
