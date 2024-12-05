@@ -330,9 +330,9 @@ text = "Installing to: /this/is/a/very/long/directory/open_fortress"
 modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_left = 80.0
-offset_top = 260.0
+offset_top = 254.0
 offset_right = 770.0
-offset_bottom = 281.0
+offset_bottom = 275.0
 
 [node name="Install" type="Button" parent="Main"]
 layout_mode = 0
@@ -378,9 +378,9 @@ horizontal_alignment = 1
 material = SubResource("ShaderMaterial_ikao0")
 layout_mode = 0
 offset_left = 85.0
-offset_top = 155.0
+offset_top = 147.0
 offset_right = 485.0
-offset_bottom = 255.0
+offset_bottom = 247.0
 theme_type_variation = &"WMPanel"
 expand_mode = 1
 stretch_mode = 4

@@ -30,6 +30,7 @@ class binding : public Node
     int sanity_checks();
     int init_games();
     int update_game(godot::String game_name);
+    int install_game(godot::String game_name, godot::String install_path = "");
     int verify_game(godot::String game_name);
     int launch_game(String app_id, String arguments);
     int desktop_notification(String title, String desc);
@@ -43,8 +44,9 @@ class binding : public Node
     godot::String is_installed(godot::String game_name);
 
   private:
-    void _verify_game(String game_name);
-    void _update_game(String game_name);
+    void _install_game(godot::String game_name,godot::String install_path);
+    void _verify_game(godot::String game_name);
+    void _update_game(godot::String game_name);
     void _init_palace();
     palace *p;
 };
