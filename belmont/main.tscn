@@ -125,7 +125,7 @@ offset_bottom = 49.0
 theme_type_variation = &"TopLabels"
 theme_override_fonts/font = ExtResource("3_qwbhy")
 theme_override_font_sizes/font_size = 25
-text = "Adastral (alpha 3)"
+text = "Adastral (alpha 4)"
 
 [node name="AdastralLogo" type="TextureRect" parent="Main/TopPanel"]
 material = SubResource("ShaderMaterial_spum4")
