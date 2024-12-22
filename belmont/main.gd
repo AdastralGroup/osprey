@@ -11,8 +11,8 @@ var theme_json = {"adastral": ## needed - adastral theme isn't stored remotely
 		"star": "res://assets/adastral.png"}}
 var games: Dictionary
 var s : binding
-var current_screen : String # use an enum damnit!!!!
 var current_game = ""
+var advanced_open = false
 var config
 signal change_to(game)
 signal update_game(game)
@@ -62,12 +62,22 @@ func _ready():
 	get_config()
 	
 func _on_Button4_pressed():
-	pass
+	if current_game == "adastral":
+		return
+	var t = get_tree().create_tween()
+	if not advanced_open:
+		t.tween_property($AdvancedPanel,"position",Vector2(221,60),0.5).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+		advanced_open = true
+	else:
+		t.tween_property($AdvancedPanel,"position",Vector2(770,60),0.5).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+		advanced_open = false
 
 func _on_progress_update(game,progress):
 	call_deferred("t_progress_update",game,progress)
 
 func _on_HomeButton_pressed():
+	if advanced_open:
+		return
 	apply_theme("adastral")
 
 func _on_game_verified(status,game):
@@ -84,8 +94,11 @@ func _on_error(error_detail):
 		
 	
 func _on_install_pressed():
-	if s.get_installed_version(current_game) == s.get_latest_version(current_game):
-		print(s.launch_game(current_game,""))
+	if s.get_installed_version(current_game) == s.get_latest_version(current_game) and s.get_latest_version(current_game) != "" :
+		if config[current_game].has("launch_options"):
+			print(s.launch_game(current_game,config[current_game]["launch_options"]))
+		else:
+			print(s.launch_game(current_game,""))
 		return
 	games[current_game]["status"] = "installing"
 	if  s.get_installed_version(current_game) == "":
@@ -96,7 +109,7 @@ func _on_install_pressed():
 	else:
 		s.update_game(current_game)
 	$Install.disabled = true
-	$Install.text = "Installing..."
+	$Install/Label.text = "Installing..."
 	$Verify.disabled = true
 	var tween = get_tree().create_tween()
 	$ProgressBar.show()
@@ -107,7 +120,7 @@ func _on_verify_pressed():
 	print("[Belmont/VerifyPressed] Verifying %s" % [current_game])
 	s.verify_game(current_game)
 	$Install.disabled = true
-	$Verify.text = "Verifying..."
+	$Verify/Label.text = "Verifying..."
 	$Verify.disabled = true
 	var tween = get_tree().create_tween()
 	$ProgressBar.show()
@@ -124,6 +137,8 @@ func set_button_colours(colour,time):
 
 
 func change_game(game):
+	if advanced_open:
+		return
 	if "progress" in games[game]:
 		if games[game]["progress"] != 0:
 			$ProgressBar.show()
@@ -210,9 +225,9 @@ func set_buttons(game_name):
 		if game_name in games.keys():
 			if "status" in games[game_name].keys(): # currently installing
 				if games[game_name]["status"] == "installing":
-					$Install.text = "Installing.."
+					$Install/Label.text = "Installing.."
 			else:
-				$Install.text = "Install"
+				$Install/Label.text = "Install"
 		$InstalledVersion.text = "[left]Not Installed!"
 		$Verify.disabled = true
 		$Install.disabled = false
@@ -220,21 +235,23 @@ func set_buttons(game_name):
 		if game_name in games.keys(): # this is insanely cooked
 			if "status" in games[game_name].keys():
 				if games[game_name]["status"] == "installing":
-					$Install.text = "Installing.."
+					$Install/Label.text = "Installing.."
 				else:
-					$Install.text = "Install"
+					$Install/Label.text = "Install"
 		$InstalledVersion.text = "[left]Installed Version: [b]%s[/b]" % s.get_installed_version(game_name)
 		$Install.disabled = false
 		$Verify.disabled = false
-		$Verify.text = "Verify"
+		$Verify/Label.text = "Verify"
 		if s.get_installed_version(game_name) == s.get_latest_version(game_name): ## on latest
-			$Install.text = "Launch"
+			$Install/Label.text = "Launch"
 		else:
-			$Install.text = "Update"
+			$Install/Label.text = "Update"
 		
 
 
 func apply_theme(theme_name):
+	if theme_name == current_game:
+		return
 	pallete = theme_json[theme_name]
 	var base_theme = load("res://themes/base.tres") ## we shouldn't be doing this
 	if not pallete.has("secondary"):
@@ -265,6 +282,7 @@ func apply_theme(theme_name):
 		$Panel2/Background.show()
 		#$Panel2.show()
 	$LatestVersion.text = "[left]Latest Version: [b]%s[/b]" % s.get_latest_version(theme_name)
+	begin_bulk_theme_override()
 	set_buttons(theme_name)
 	var newbgtexture = load_image(pallete["bg"])
 	var newstar = load_image(pallete["star"])
@@ -294,19 +312,28 @@ func apply_theme(theme_name):
 	tween.tween_method(func(x): $TopPanel/Adastral2.add_theme_color_override("font_color",x),base_theme.get_color("font_color","TopLabels"),Color(pallete["light"]),0.2)
 	tween.tween_method(func(x): $InstalledVersion.add_theme_color_override("default_color",x),base_theme.get_color("default_color","PositiveRTL"),Color(pallete["light"]),0.2)
 	tween.tween_method(func(x): $LatestVersion.add_theme_color_override("default_color",x),base_theme.get_color("default_color","PositiveRTL"),Color(pallete["light"]),0.2)
-	tween.tween_property($BottomPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["main"]), 0.2)
-	tween.tween_property($TopPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["dark"]), 0.2)
-	tween.tween_property($SidePanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["secondary"]), 0.2)
-	tween.tween_property($Install.get_theme_stylebox("normal"),"bg_color", Color(pallete["accent"]), 0.2)
-	tween.tween_property($Install.get_theme_stylebox("hover"),"bg_color", Color(pallete["accent"]), 0.2)
-	tween.tween_property($Verify.get_theme_stylebox("normal"),"bg_color", Color(pallete["light"]), 0.2)
-	tween.tween_property($Verify.get_theme_stylebox("hover"),"bg_color", Color(pallete["light"]), 0.2)
-	##tween.tween_property($Install.get_theme_stylebox("disabled"),"bg_color",Color(pallete["dark"],0.2) tween disabled when we need to
-	tween.tween_property($Verify.get_theme_stylebox("pressed"),"bg_color", Color(pallete["click"]), 0.2)
-	tween.tween_property($Verify.get_theme_stylebox("pressed"),"bg_color", Color(pallete["click"]), 0.2)
-	tween.tween_property($ProgressBar.get_theme_stylebox("fill"),"bg_color", Color(pallete["accent"]), 0.2)
-	tween.tween_property($ProgressBar.get_theme_stylebox("background"),"bg_color", Color(pallete["light"]), 0.2)
+	#tween.tween_property($BottomPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["main"]), 0.2)
+	tween.tween_property($BottomPanel,"self_modulate", Color(pallete["main"]), 0.2)
+	tween.tween_property($SidePanel,"self_modulate",Color(pallete["secondary"]), 0.2)
+	tween.tween_property($AdvancedPanel,"self_modulate", Color(pallete["accent"]), 0.2)
+	tween.tween_property($AdvancedPanel/Panel,"self_modulate", Color(pallete["secondary"]), 0.2)
+	#tween.tween_property($TopPanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["dark"]), 0.2)
+	tween.tween_property($TopPanel,"color",Color(pallete["dark"]), 0.2)
+	#tween.tween_property($SidePanel.get_theme_stylebox("panel"),"bg_color", Color(pallete["secondary"]), 0.2)
+	tween.tween_property($Install,"self_modulate",Color(pallete["accent"]),0.2)
+	tween.tween_property($Install/Label,"self_modulate",Color(pallete["light"]),0.2)
+	tween.tween_property($Verify,"self_modulate", Color(pallete["light"]), 0.2)
+	tween.tween_property($Verify/Label,"self_modulate", Color(pallete["lightfg"]), 0.2)
+	#tween.tween_property($Install.get_theme_stylebox("normal"),"bg_color", Color(pallete["accent"]), 0.2)
+	#tween.tween_property($Install.get_theme_stylebox("hover"),"bg_color", Color(pallete["accent"]), 0.2)
+	#tween.tween_property($Verify.get_theme_stylebox("normal"),"bg_color", Color(pallete["light"]), 0.2)
+	#tween.tween_property($Verify.get_theme_stylebox("hover"),"bg_color", Color(pallete["light"]), 0.2)
+	#tween.tween_property($Install.get_theme_stylebox("disabled"),"bg_color",Color(pallete["dark"]),0.2)
+	#tween.tween_property($Verify.get_theme_stylebox("pressed"),"bg_color", Color(pallete["click"]), 0.2)
+	#tween.tween_property($ProgressBar.get_theme_stylebox("fill"),"bg_color", Color(pallete["accent"]), 0.2)
+	#tween.tween_property($ProgressBar.get_theme_stylebox("background"),"bg_color", Color(pallete["light"]), 0.2)
 	set_button_colours(Color(pallete["light"]),0.2)
+	end_bulk_theme_override()
 	await get_tree().create_timer(0.2).timeout
 	if pallete.has("wordmark"):
 		$Wordmark.texture = load_image(pallete["wordmark"]) # yes I know we load it twice but I'm not exactly the best at codeflow as you can see
@@ -315,18 +342,14 @@ func apply_theme(theme_name):
 		$Wordmark.hide()
 	$TopPanel/AdastralLogo.texture = newstar
 	$Panel2/Background.texture = newbgtexture
-	set_stylebox_colour(base_theme.get_stylebox("panel","AccentPanel"),Color(pallete["main"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","TopPanel"),Color(pallete["dark"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","SidePanel"),Color(pallete["secondary"]))
-	set_stylebox_colour(base_theme.get_stylebox("normal","Button"),Color(pallete["light"]))
+	#set_stylebox_colour(base_theme.get_stylebox("normal","Button"),Color(pallete["light"]))
 	set_stylebox_colour(base_theme.get_stylebox("disabled","Button"),disabled(Color(pallete["light"])))
 	set_stylebox_colour(base_theme.get_stylebox("pressed","Button"),Color(pallete["click"]))
-	set_stylebox_colour(base_theme.get_stylebox("normal","ImportantButton"),Color(pallete["accent"]))
+	#set_stylebox_colour(base_theme.get_stylebox("normal","ImportantButton"),Color(pallete["accent"]))
 	set_stylebox_colour(base_theme.get_stylebox("disabled","ImportantButton"),disabled(Color(pallete["accent"])))
 	set_stylebox_colour(base_theme.get_stylebox("pressed","ImportantButton"),Color(pallete["click_t"]))
 	set_stylebox_colour(base_theme.get_stylebox("background","ProgressBar"),Color(pallete["light"]))
 	set_stylebox_colour(base_theme.get_stylebox("fill","ProgressBar"),Color(pallete["accent"]))
-	set_stylebox_colour(base_theme.get_stylebox("panel","TopPanel"),Color(pallete["dark"]))
 	$Install.remove_theme_color_override("font_color")
 	$Verify.remove_theme_color_override("font_color")
 	$Verify.remove_theme_color_override("font_hover_color")
@@ -345,9 +368,36 @@ func apply_theme(theme_name):
 	base_theme.set_color("font_color","ImportantButton",Color(pallete["light"]))
 	theme = base_theme
 	current_game = theme_name
-	
+	if current_game != "adastral":
+		if not config.has(current_game):
+			config[current_game] = {}
+		elif config[current_game].has("launch_options"):
+			$AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/LaunchOptions.text = config[current_game]["launch_options"]
+
+
 func _process(delta):
 	if games != {} and current_game != "" and current_game != "adastral":
 		if "progress" in games[current_game].keys():
 			if games[current_game]["progress"] != 0:
 				$ProgressBar.value = games[current_game]["progress"]
+
+
+func _on_label_pressed():
+	pass # Replace with function body.
+
+
+func _on_label2_pressed():
+	pass # Replace with function body.
+
+
+func _on_button_pressed() -> void:
+	$FileDialog.popup()
+
+func _on_file_dialog_dir_selected(dir: String) -> void:
+	$AdvancedPanel/Panel/VBoxContainer/VBoxContainer/HBoxContainer/InstallPath.text = dir
+
+
+func _on_launch_options_button_pressed() -> void:
+	var launch_opts = $AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/LaunchOptions.text
+	config[current_game]["launch_options"] = launch_opts
+	save_config()
