@@ -95,8 +95,8 @@ func _on_error(error_detail):
 	
 func _on_install_pressed():
 	if s.get_installed_version(current_game) == s.get_latest_version(current_game) and s.get_latest_version(current_game) != "" :
-		if config[current_game].has("launch_options"):
-			print(s.launch_game(current_game,config[current_game]["launch_options"]))
+		if config["games"][current_game].has("launch_options"):
+			print(s.launch_game(current_game,config["games"][current_game]["launch_options"]))
 		else:
 			print(s.launch_game(current_game,""))
 		return
@@ -369,10 +369,12 @@ func apply_theme(theme_name):
 	theme = base_theme
 	current_game = theme_name
 	if current_game != "adastral":
-		if not config.has(current_game):
-			config[current_game] = {}
-		elif config[current_game].has("launch_options"):
-			$AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/LaunchOptions.text = config[current_game]["launch_options"]
+		if not config.has("games"):
+			config["games"] = {}
+		if not config["games"].has(current_game):
+			config["games"][current_game] = {}
+		elif config["games"][current_game].has("launch_options"):
+			$AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/LaunchOptions.text = config["games"][current_game]["launch_options"]
 
 
 func _process(delta):
@@ -399,5 +401,5 @@ func _on_file_dialog_dir_selected(dir: String) -> void:
 
 func _on_launch_options_button_pressed() -> void:
 	var launch_opts = $AdvancedPanel/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/LaunchOptions.text
-	config[current_game]["launch_options"] = launch_opts
+	config["games"][current_game]["launch_options"] = launch_opts
 	save_config()

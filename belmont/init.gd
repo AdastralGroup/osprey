@@ -53,7 +53,7 @@ func finish_setup():
 	var custom_path = $Setup.path
 	write_path_to_config(custom_path)
 	var t = create_tween()
-	t.tween_property($Camera2D,"position",Vector2(0,0),1)
+	t.tween_property($Camera2D,"position",Vector2(0,0),1).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	await get_tree().create_timer(1).timeout
 	init()
 
@@ -65,7 +65,7 @@ func write_path_to_config(path):
 		json = JSON.stringify({"default_install_path": path})
 	else:
 		var config = JSON.parse_string(conf)
-		config["default_install_path"] = path
+		config["games"]["default_install_path"] = path
 		json = JSON.stringify(config)
 	set_config_file(json)
 
@@ -118,7 +118,7 @@ func free_setup():
 
 func transition_setup():
 	var t = get_tree().create_tween()
-	t.tween_property($Camera2D,"position",Vector2(0,-640),1)
+	t.tween_property($Camera2D,"position",Vector2(0,-640),1).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	await get_tree().create_timer(1).timeout
 
 
