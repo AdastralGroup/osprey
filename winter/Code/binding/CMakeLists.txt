@@ -39,9 +39,9 @@ FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
         ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_SOURCE_DIR}/../belmont/bin 
         ${CONFIG_UPPER}_OUTPUT_NAME winter-${WINTER_ARCHITECTURE}-${CONFIG_LOWER})
 ENDFOREACH(config)
-    
-if (DEFINED ${CMAKE_BUILD_TYPE})
-    message(hello wrold)
+
+if (DEFINED CMAKE_BUILD_TYPE)
+    message("Setup custom build type: " ${CMAKE_BUILD_TYPE})
     string(TOLOWER ${CMAKE_BUILD_TYPE} CONFIG_LOWER)
     string(TOUPPER ${CMAKE_BUILD_TYPE} CONFIG_UPPER)
     set_target_properties(${PROJECT_NAME}
@@ -49,7 +49,7 @@ if (DEFINED ${CMAKE_BUILD_TYPE})
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../belmont/bin 
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../belmont/bin 
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/../belmont/bin 
-        ${CONFIG_UPPER}_OUTPUT_NAME winter-${WINTER_ARCHITECTURE}-${CONFIG_LOWER})
+        OUTPUT_NAME winter-${WINTER_ARCHITECTURE}-${CONFIG_LOWER})
 
     set_target_properties(${PROJECT_NAME}
         PROPERTIES 
