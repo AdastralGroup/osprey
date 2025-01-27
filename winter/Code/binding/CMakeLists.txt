@@ -23,13 +23,23 @@ add_library(${PROJECT_NAME} SHARED binding.cpp register_types.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC ../palace)
 target_include_directories(${PROJECT_NAME} PUBLIC ../shared)
 
-set_target_properties(${PROJECT_NAME}
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/"
-        ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/"
-        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib/"
-        OUTPUT_NAME "winter-x64-debug" # make this suck less later
-)
+if (CMAKE_SIZE_OF_VOID_P EQUAL 4)
+    set(WINTER_ARCHITECTURE x86)
+else()
+    set(WINTER_ARCHITECTURE x64)
+endif()
+
+FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
+    string(TOLOWER ${config} CONFIG_LOWER)
+    string(TOUPPER ${config} CONFIG_UPPER)
+    set_target_properties(${PROJECT_NAME}
+        PROPERTIES 
+        RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_SOURCE_DIR}/../belmont/bin 
+        LIBRARY_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_SOURCE_DIR}/../belmont/bin 
+        ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_SOURCE_DIR}/../belmont/bin 
+        ${CONFIG_UPPER}_OUTPUT_NAME winter-${WINTER_ARCHITECTURE}-${CONFIG_LOWER})
+ENDFOREACH(config)
+    
 IF (WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC shared nlohmann_json::nlohmann_json godot::cpp palace)
 ELSE ()
